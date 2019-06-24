@@ -1,0 +1,4 @@
+[submodule "OneBranch"]
+	path = OneBranch
+	url = https://msazure.visualstudio.com/DefaultCollection/One/_git/Submodules-OneBranch-CBT
+	branch = release

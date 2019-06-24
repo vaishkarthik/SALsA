@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <EnableCBT_NoTarget>true</EnableCBT_NoTarget>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+  <PropertyGroup>
+    <PackageRoot>$(RepoRoot)\packages</PackageRoot>
+    
+    <!-- if you do not define this warning that Microsoft.Common.targets is imported again -->
+    <LanguageTargets>empty</LanguageTargets>
+    
+    <APSignMSBuild>$(PackageRoot)\ServiceSignTask.10.8.5005.4550\content</APSignMSBuild>
+    
+    <!-- Referenced by ServiceSignTask.10.8.5005.4550\content\FolderSigning.targets -->
+    <PkgMsBuild_Extension_Pack>$(PackageRoot)\MSBuild.Extension.Pack.1.6.0</PkgMsBuild_Extension_Pack>
+    
+    <!-- need the specific folder structure that was defined in LocalSigning package for CoreXT -->
+    <PkgLocalSigning>$(PackageRoot)\LocalSigning.2.0.9.3</PkgLocalSigning>
+    <PkgCorext_Tools>$(PackageRoot)\CoreXT.Tools.3.0.1</PkgCorext_Tools>
+
+  </PropertyGroup>
+ 
+  <Import Project="$(PackageRoot)\ServiceSignTask.10.8.5005.4550\content\FolderSigning.targets"
+          Condition="Exists('$(PackageRoot)\ServiceSignTask.10.8.5005.4550\content\FolderSigning.targets')" />
+
+  <ItemGroup>
+    <QCustomInput Include="$(PackageRoot)\ServiceSignTask.10.8.5005.4550\content\Microsoft.Autopilot.Postbuild.Tasks.dll" />
+    <QCustomInput Include="$(PackageRoot)\Apservicesigner.Tools.1.0.0\lib\DirSigner.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SrcRoot)\Samples\ConsoleApplication\ConsoleApplication.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Packages.config" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <!-- This is the folder that will be signed by default -->
+    <APPOutput>$(BinariesBuildTypeArchDirectory)\PfSign\</APPOutput>
+    <ModernAPSigning>true</ModernAPSigning>
+    <APServiceSigner>$(PackageRoot)\ServiceSignTask.10.8.5005.4550\content</APServiceSigner>
+    <AvoidRename>true</AvoidRename>
+    <FileNameCheckSpace>false</FileNameCheckSpace>
+
+    <!-- If set to true, legacy cert (Autopilot Root CA) signing header will appear in build drop manifest file. -->
+    <!-- If not set, default is true. -->
+    <IsLegacyBuildDropManifestSigningEnabled>false</IsLegacyBuildDropManifestSigningEnabled>
+
+    <!-- If set to true, Esrp signing header will appear in build drop manifest file. -->
+    <!-- If not set, default is false. -->
+    <IsEsrpBuildDropManifestSigningEnabled>true</IsEsrpBuildDropManifestSigningEnabled>
+
+    <!-- App catalog signing should either be 'legacy' (using Autopilot Root CA cert) or 'esrp' (Microsoft Azure Catalog Code Sign). --> 
+    <!-- If not set, default is 'legacy'. -->
+    <AppCatalogSigning>esrp</AppCatalogSigning>
+
+    <IsLocalSigningEnabled>true</IsLocalSigningEnabled>
+
+    <BuildDependsOn>
+    $(BuildDependsOn);
+    GeneratePathsForSigning;
+    $(SignOutputDependsOn)
+    </BuildDependsOn>
+  </PropertyGroup>
+  <ItemGroup>  
+    <FinalOutputDirectory Include="$(APPOutput)" />
+    <QCustomInput Include="@(FinalOutputDirectory -> '%(Identity)\**')" />
+  </ItemGroup>  
+
+  <Target Name="_CopyPFBinaries" BeforeTargets="GeneratePathsForSigning" >
+    <Copy SourceFiles="$(BinariesBuildTypeArchDirectory)\ConsoleApplication\ConsoleApplication.exe"
+          DestinationFiles="$(APPOutput)\ConsoleApplication.exe"
+          ContinueOnError="false" />
+  </Target>
+
+  <!-- Set default value for signing-->
+  <Target Name="GeneratePathsForSigning" Condition="'$(APPOutput)' != ''" >
+    <!-- If you defined FoldersToSign ItemGroup, those folders will be signed as well, default will be APPOutput defined above -->
+    <ItemGroup>
+      <FoldersToSign Include="$(APPOutput)" />
+    </ItemGroup>
+    <Message Text="FoldersToSign = @(FoldersToSign)" />
+
+    <!-- in some cases (OutputPath), base on build env settings, can be missing creating explicitly -->
+    <MakeDir Directories="$(OutputPath)"/>
+
+    <Error Condition="!Exists('%(FoldersToSign.Identity)')" Text="Path %(FoldersToSign.Identity) not exists" /> 
+  </Target>
+
+  <Import Project="$(NoTargets)" Condition="Exists('$(NoTargets)')" />
+
+</Project>

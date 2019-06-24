@@ -1,0 +1,81 @@
+{
+  "parameterDefaults": {
+    "hostingType": "consumer",
+    "connectionProviderName": "slack",
+    "connectionProviderDisplayName": "Slack",
+    "connectionProviderDescription": "Slack is a team communication tool, that brings together all of your team communications in one place, instantly searchable and available wherever you go.",
+    "connectionProviderIconUrl": "https://tip1icons.azureedge.net/slack.png",
+    "serviceUrl": "https://slack.com/api/",
+    "apiDefinitionUrl": "https://powerappsconnectorsdf.blob.core.windows.net/codelessapis/slack.swagger.json"
+  },
+  "variables":
+  {
+    "connectionProviderIconUrls": {
+      "DOGFOOD": "https://tip1icons.azureedge.net/slack.png",
+      "PRODUCTION": "https://az818438.vo.msecnd.net/icons/slack.png",
+    },
+    "apiDefinitionUrls": {
+      "DOGFOOD": "https://powerappsconnectorsdf.blob.core.windows.net/codelessapis/slack.swagger.json",
+      "PRODUCTION": "http://cpgeneralstore.blob.core.windows.net/codelessapis/slack.swagger.json"
+    },
+    "connectionProviderIconUrl": "[variables('connectionProviderIconUrls')[variables('flavor')]]",
+    "apiDefinitionUrl": "[variables('apiDefinitionUrls')[variables('flavor')]]"
+  },
+  "uniqueParameters": {
+    "clientId": {
+      "type": "string",
+      "metadata": {
+        "description": "OAuth2 clientId",
+        "secret": "AppPlat/Connectors/$($secretPrefix)Slack/ClientID"
+      }
+    },
+    "clientSecret": {
+      "type": "securestring",
+      "metadata": {
+        "description": "OAuth2 clientSecret",
+        "secret": "AppPlat/Connectors/$($secretPrefix)Slack/ClientSecret"
+      }
+    }
+  },
+  "api": {
+    "generalInformation": {
+      "tier": "Standard",
+      "scopes": {
+        "will": [
+        ],
+        "wont": [
+        ]
+      }
+    },
+    "interfaces": {
+    },
+    "policies": "@policies.xml",
+    "metadata": {
+      "source": "marketplace",
+      "brandColor": "#6ecadc"
+    },
+    "capabilities": [
+      "actions"
+    ],
+    "connectionParameters": {
+      "Token": {
+        "type": "oauthSetting",
+        "oauthSettings": {
+          "identityProvider": "Slack",
+          "ClientId": "[parameters('clientId')]",
+          "ClientSecret": "[parameters('clientSecret')]",
+          "scopes": [
+          ]
+        },
+        "uiDefinition": {
+          "displayName": "Login with Slack Credentials",
+          "description": "Login with Slack Credentials",
+          "tooltip": "Provide Slack Credentials",
+          "constraints": {
+            "required": "true"
+          }
+        }
+      }
+    }
+  }
+}

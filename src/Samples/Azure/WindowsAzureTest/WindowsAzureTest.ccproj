@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <ProjectGuid>090257d8-4846-4162-a903-f116ef7a23e1</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WindowsAzureTest</RootNamespace>
+    <AssemblyName>WindowsAzureTest</AssemblyName>
+    <StartDevelopmentStorage>True</StartDevelopmentStorage>
+    <Name>WindowsAzureTest23</Name>
+    <AssemblyClsCompliant>false</AssemblyClsCompliant>
+    <AzureVersion>2.9</AzureVersion>
+    <ProductVersion>2.9</ProductVersion>
+    <!-- Call the publish target during the build. -->
+    <IsExecutingPublishTarget>true</IsExecutingPublishTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- This project should use x64 by default, but it uses AnyCPU (VS changes it automatically). 
+       In case x64 will be set, the above configuration is there to be picked up -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- Items for the project -->
+  <ItemGroup>
+    <ServiceDefinition Include="ServiceDefinition.csdef" />
+    <ServiceConfiguration Include="ServiceConfiguration.Local.cscfg" />
+    <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebRole1\WebRole1.csproj">
+      <Name>WebRole1</Name>
+      <Project>{5f66c03d-38d1-4cc2-a126-c6b021c19618}</Project>
+      <Private>True</Private>
+      <RoleType>Web</RoleType>
+      <RoleName>WebRole1</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
+    <ProjectReference Include="..\WorkerRole1\WorkerRole1.csproj">
+      <Name>WorkerRole1</Name>
+      <Project>{afc4565b-614f-4422-8717-7856eea86eb9}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>WorkerRole1</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">15.0</VisualStudioVersion>
+    <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Windows Azure Tools\2.9\</CloudExtensionsDir>
+  </PropertyGroup>
+  <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />
+  <PropertyGroup>
+    <!-- Workaround for publishing cloud projects in Visual Studio. Must happen after CoreXT extension target import. -->
+    <ServiceOutputDirectory Condition="'$(BuildingInsideVisualStudio)' == 'true'">csx\VSMSBuild\</ServiceOutputDirectory>
+    <OutDir Condition="'$(BuildingInsideVisualStudio)' == 'true'">$(MSBuildProjectDirectory)\obj\$(BuildArchitecture)\</OutDir>
+
+    <CorePublishDependsOn>
+      PrepareForPublishing;
+      CleanPublishFolder;
+    </CorePublishDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="PackageCloud" AfterTargets="AfterBuild">
+    <Message Text="Creating package for cloud deployment ..."/>
+    <CallTarget
+      Targets="Publish"/>
+  </Target>
+  
+  <Target Name="AfterPublishTarget" AfterTargets="PackageCloud">
+    <ItemGroup>
+      <CopyAppPublish Include="$(PublishDir)\**\*" />
+    </ItemGroup>
+    
+    <PropertyGroup>
+      <_PublishFolder>$(OutputPath)TestingAppPublishPackage</_PublishFolder>
+      <_PublishFolder Condition="'$(BinariesBuildTypeArchDirectory)' != ''">$(BinariesBuildTypeArchDirectory)\TestingAppPublishPackage</_PublishFolder>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_PublishFolder)" Condition="!Exists('$(_PublishFolder)')" />
+
+    <Copy
+      SourceFiles="@(CopyAppPublish)"
+      DestinationFolder="$(_PublishFolder)\%(RecursiveDir)" 
+      SkipUnchangedFiles="true"
+      OverwriteReadOnlyFiles="true" 
+      Retries="3"
+      RetryDelayMilliseconds="300"/>
+  </Target>
+  
+  <UsingTask TaskName="SetEnvironment" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Name ParameterType="System.String" Required="true" />
+      <Value ParameterType="System.String" Required="false" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+            try {
+                Log.LogMessage("Setting {0}={1}", new object[] { Name, Value });
+                Environment.SetEnvironmentVariable(Name, Value, System.EnvironmentVariableTarget.Process);
+            }
+            catch  { }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  
+  <Target Name="ConfigureOacrProject"
+          BeforeTargets="BeforeBuild"
+          Condition="'$(_CSPACK_USE_FULL_SCHEMA_)' != 'true'">
+
+    <!-- Always set the environment variable when running oacrcsc to work around environment bleeding -->
+    <SetEnvironment 
+      Name="_CSPACK_USE_FULL_SCHEMA_"
+      Value="true" />
+      
+  </Target>
+</Project>

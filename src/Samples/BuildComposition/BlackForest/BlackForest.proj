@@ -1,0 +1,82 @@
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <EnableCBT_NoTarget>true</EnableCBT_NoTarget>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+
+  <PropertyGroup>
+    <TargetDestination>BCDTManifest</TargetDestination>
+    <ManifestOutputFile>BlackForest.xml</ManifestOutputFile>
+    <BuildVersionXml>$(EnlistmentRoot)\.config\.inc\versions.xml</BuildVersionXml>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputRoot Condition="'$(OutputRoot)' == '' AND '$(CBT_UnifiedOutputRootDir)' != ''">$(CBT_UnifiedOutputRootDir)</OutputRoot>
+    <BinariesDirectory Condition="'$(OutputRoot)' != ''">$(OutputRoot)</BinariesDirectory>
+  </PropertyGroup>
+
+  <Import Project="$(NoTargets)" Condition="Exists('$(NoTargets)')" />
+  <Import Project="..\Common.props" />
+  <Import Project="$(EnlistmentRoot)\packages\BCDT.amd64.2.0.4-CBT2\OneBranch.BuildComposition.targets"
+          Condition="Exists('$(EnlistmentRoot)\packages\BCDT.amd64.2.0.4-CBT2\OneBranch.BuildComposition.targets')" />
+
+  <Target Name="BuildGeneratedGroupItems" DependsOnTargets="$(BuildGeneratedGroupItemsDependsOn)">
+    <ItemGroup>
+      <CompositionItemsTemp Include="$(BinariesBuildTypeArchDirectory)\WebRole22\**\*">
+        <CompositionOutputPath>ReleaseCreator</CompositionOutputPath>
+      </CompositionItemsTemp>
+    </ItemGroup>
+    <ItemGroup>
+      <CompositionItems Include="@(CompositionItemsTemp)" >
+        <CompositionOutputPath>$([System.String]::Copy('%(CompositionOutputPath)\%(RecursiveDir)').Trim('\'))</CompositionOutputPath>
+      </CompositionItems>
+    </ItemGroup>
+    <ItemGroup>
+      <CompositionItemsTemp Remove="@(CompositionItemsTemp)"/>
+    </ItemGroup>
+  </Target>
+    
+  <ItemGroup>
+    <!-- Build dependency -->
+    <ProjectReference Include="$(EnlistmentRoot)\src\Samples\Azure\WindowsAzureTest\WindowsAzureTest.ccproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <CopyBuildOutputToOutputDirectory>False</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>False</CopyOutputSymbolsToOutputDirectory>
+    <SkipCopyWinMDArtifact>True</SkipCopyWinMDArtifact>
+  </PropertyGroup>
+  
+  <!--
+    To test the replacement logic of the BCDT manifest generation which will be read from Drop server, \\reddog
+    example:
+    <ItemGroup>
+      <CompositionItems Include="Agent1.ini">
+        <CompositionOutputPath>\RDTools\Somefolder\</CompositionOutputPath>
+      ->  <SourceFilePath>\\reddog\Builds\branches\git_Engsys_DevServices_Build_master\1.0.5.1\release-x64\RDTools\Somefolder\Agent1.ini</SourceFilePath>
+        <SHA256Hash>E38014C8AB3B16C7D7AD9B41190FE5B950300225E0D13B32686E7BC6DFE9AD39</SHA256Hash>
+      </CompositionItems>
+      <CompositionItems Include="Agent1Service.exe">
+        <CompositionOutputPath>\RDTools\Somefolder\</CompositionOutputPath>
+      ->  <SourceFilePath>\\reddog\Builds\branches\git_Engsys_DevServices_Build_master\1.0.5.1\release-x64\RDTools\Somefolder\Agent1Service.exe</SourceFilePath>
+        <SHA256Hash>73079D30A6F6B8A19A83DA8C466AE58748B6CB8E350D93FCD08451BB7EE2D1D4</SHA256Hash>
+      </CompositionItems>
+      
+      Set the OfficialBuildDropRoot property to test locally through msbuild,
+      or
+      from cmd prompt: "set OfficialBuildDropRoot=\\testing\this\replacement"
+      Once set, locally SourceFilePath in the generated XML should look like this:
+      
+      <SourceFilePath>\\testing\this\replacement\release-x64\RDTools\Somefolder\Agent1.ini</SourceFilePath>
+      and
+      <SourceFilePath>\\testing\this\replacement\\release-x64\RDTools\Somefolder\Agent1Service.exe</SourceFilePath>
+      
+      The SourceFilePath in most cases should contain the Configuration-Platform (release-x64) to allow the BCDT.exe process to understand 
+      where to get the file source from \\reddog for BCDT replication process.
+  -->
+  <PropertyGroup>
+    <OfficialBuildDropRoot Condition="'$(IsOfficialBuild)' != 'true'">\\testing\this\replacement</OfficialBuildDropRoot>
+  </PropertyGroup>
+</Project>
+
+

@@ -1,0 +1,2 @@
+src\samples\azure\webrole1\objd\amd64\webrole22.dll
+src\samples\azure\workerrole1\objd\amd64\workerrole22.dll

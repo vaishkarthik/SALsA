@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <!--
+    Versioning
+  -->
+  <PropertyGroup>
+    <AssemblyInfoProduct>Cloud Engineering Systems Team</AssemblyInfoProduct>
+    <AssemblyInfoCompany>Microsoft Azure</AssemblyInfoCompany>
+    <AssemblyInfoCopyright>Copyright (C) 2018</AssemblyInfoCopyright>
+    <AssemblyInfoCLSCompliant>false</AssemblyInfoCLSCompliant>
+
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>0</VersionMinor>
+    <VersionBuildNumberStartDate>2018-01-01</VersionBuildNumberStartDate>
+    <BuildVersionXml Condition="Exists('$(EnlistmentRoot)\.config\.inc\versions.xml')">$(EnlistmentRoot)\.config\.inc\versions.xml</BuildVersionXml>
+  </PropertyGroup>
+  
+</Project>
