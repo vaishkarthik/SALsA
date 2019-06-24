@@ -11,10 +11,12 @@
 ; developer2
 ; *developer3
 
-AaBerg
-DmIvanov
-DoJean
-FabV
-MiDemyan
-NiHara
-VlBelov
+aydjella
+*larohra
+*romalh
+*wjack
+*zpeng
+*narrieta
+*nkuchta
+*pagombar
+*vameru
