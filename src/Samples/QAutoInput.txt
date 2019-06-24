@@ -1,2 +1,0 @@
-src\samples\classlibrary.unittest\objd\amd64\classlibrary.unittest.dll
-src\samples\entityframework\objd\amd64\entityframeworktest.exe
