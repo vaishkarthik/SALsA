@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Activation;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +35,10 @@ namespace LivesiteAutomation
                     new System.IO.FileInfo(Constants.LogDefaultPath).Directory.Create();
                     sw = File.AppendText(Constants.LogDefaultPath);
                 }
+            }
+            else
+            {
+                sw = File.AppendText(Constants.LogDefaultPath);
             }
         }
         private static Log instance = null;
@@ -69,6 +75,12 @@ namespace LivesiteAutomation
         public void Critical(string ss, params object[] arg)
         {
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Critical);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public void Exception(Exception ex)
+        {
+            InternalLog(String.Format(CultureInfo.InvariantCulture, "Exception originating from {0} :\n{1}", new StackFrame(1, true).GetMethod().Name, ex.ToString()), LogLevel.Error);
         }
 
         private void InternalLog(string ss, LogLevel lvl)

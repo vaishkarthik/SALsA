@@ -10,11 +10,12 @@ namespace LivesiteAutomation
     {
         static void Main(string[] args)
         {
-            Authentication abcdef = new Authentication();
+            // Initialise singletons;
+            _ = Log.Instance;
+            _ = Authentication.Instance;
 
-            Log.Instance.Verbose("Test");
-            Log.Instance.Verbose("Test", "2");
-            Log.Instance.Verbose("Test {0}", "2");
+            var myIcm = new ICM("119051511");
+            myIcm.getICM();
         }
     }
 }
