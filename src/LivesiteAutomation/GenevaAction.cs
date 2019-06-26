@@ -18,16 +18,26 @@ namespace LivesiteAutomation
         private ConnectionParameters cp;
         private GenevaActionsRestAPIClient client;
         private OperationRequest operationRequest;
+        private OperationResult operationResult;
+        string operationName;
+        string extensionName;
+        Dictionary<string, string> actionParam;
+        ActionsEnvironments actionsEnvironments;
 
-        GenevaAction(string extensionName, string operationName, Dictionary<string, string> actionParam, ActionsEnvironments aEnv = ActionsEnvironments.Public)
+        GenevaAction(string extensionName, string operationName, Dictionary<string, string> actionParam, ActionsEnvironments actionsEnvironments = ActionsEnvironments.Public)
         {
             try
             {
+                this.extensionName = extensionName;
+                this.operationName = operationName;
+                this.actionParam = actionParam;
+                this.actionsEnvironments = actionsEnvironments;
+
                 Log.Instance.Verbose("Creating GenevaAction for {0}: {1}, with parameters : ", extensionName, operationName,
                     actionParam.Select(kvp => kvp.Key + ": " + kvp.Value.ToString()));
 
                 sts = new ClientHomeSts(new Uri("https://ch1-dsts.dsts.core.windows.net"));
-                cp = ConnectionParameters.Create(aEnv, Authentication.Instance.cert, sts, X509CertCredentialType.SubjectNameCredential);
+                cp = ConnectionParameters.Create(actionsEnvironments, Authentication.Instance.cert, sts, X509CertCredentialType.SubjectNameCredential);
                 client = new GenevaActionsRestAPIClient(cp);
                 Log.Instance.Verbose("Client created for {0}: {1}", extensionName, operationName);
 
@@ -50,23 +60,25 @@ namespace LivesiteAutomation
                 Log.Instance.Exception(ex);
             }
         }
-
+        /* This function is same as RunOperationManualPollAsync, but without the verbose polling
         private async Task RunOperationAndPollAsync()
         {
             try
             {
                 OperationResult operationResult = await client.Operations.RunOperationAndPollForResultsAsync(operationRequest);
 
-                Console.WriteLine("\nOperation Result using PollForResultsAsync method: \n" + operationResult.ResultMessage);
+                Log.Instance.Information("Operation <{0}: {1}> Result using PollForResultsAsync method: {2}", extensionName, operationName, operationResult.ResultMessage);
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("Operation execution failed. \nError Message: " + e.Message);
+                Log.Instance.Error("Operation <{0}: {1}>  execution failed.", extensionName, operationName);
+                Log.Instance.Exception(ex);
             }
         }
+        */
 
-        private async Task RunOperationManualPollAsync(GenevaActionsRestAPIClient client, OperationRequest operationRequest)
+        private async Task RunOperationManualPollAsync()
         {
             try
             {
@@ -77,39 +89,53 @@ namespace LivesiteAutomation
                     if (status.Status.IsStateComplete())
                     {
                         // Operation reached a final state, get the result.
-                        OperationResult operationResult = await client.Operations.GetOperationResultsAsync(operationRunning.Id);
-                        Console.WriteLine("\nOperation has completed execution. Operation Result is: \n" + operationResult.ResultMessage);
+                        operationResult = await client.Operations.GetOperationResultsAsync(operationRunning.Id);
+                        Log.Instance.Information("Operation has completed execution for {0}: {1}. Operation Result is:{2}{3}", extensionName, operationName, System.Environment.NewLine, operationResult.ResultMessage);
                         return;
                     }
                     // Warning: Setting too short a delay could result in requests being throttled
-                    Console.WriteLine("Operation is still in process, polling status again in 5 seconds");
+                    Log.Instance.Verbose("Operation <{0}: {1}> is still in process, polling status again in 5 seconds", extensionName, operationName);
                     await Task.Delay(5000);
                 }
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("Operation execution failed. \nError Message: " + e.Message);
+                Log.Instance.Error("Operation <{0}: {1}> execution failed.", extensionName, operationName);
+                Log.Instance.Exception(ex);
             }
         }
 
-        private async Task GetOperationFileOutputAsync(GenevaActionsRestAPIClient client, OperationRequest operationRequest, string filePath)
+        private async Task GetOperationFileOutputAsync(string filePath)
         {
             try
             {
-                OperationResult operationResult = await client.Operations.RunOperationAndPollForResultsAsync(operationRequest);
-
-                Console.WriteLine("\nOperation Result using PollForResultsAsync method: \n" + operationResult.ResultMessage);
-
-                var fileOutputStream = await client.Operations.GetOperationFileOutputWithHttpMessagesAsync(operationResult.ExecutionId);
+                var fileOutputStream = await client.Operations.GetOperationFileOutputWithHttpMessagesAsync(operationResult?.ExecutionId);
                 var fileData = await fileOutputStream.Response.Content.ReadAsByteArrayAsync();
                 File.WriteAllBytes(filePath, fileData);
 
-                Console.WriteLine("File written at path: " + filePath);
+                Log.Instance.Information("Operation <{0}: {1}> File written at path: {2}", extensionName, operationName, filePath);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("Operation execution failed. \nError Message: " + e.Message);
+                Console.WriteLine("Operation <{0}: {1}> output to file failed");
+                Log.Instance.Exception(ex);
+            }
+        }
+
+        private async Task GetOperationResultOutputAsync()
+        {
+            try
+            {
+                var result = await client.Operations.GetBatchOperationResultsWithHttpMessagesAsync(operationResult?.ExecutionId);
+                var output = await result.Response.Content.ReadAsStringAsync();
+
+                Log.Instance.Information("Operation <{0}: {1}> get result Success", extensionName, operationName);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Operation <{0}: {1}> output to file failed");
+                Log.Instance.Exception(ex);
             }
         }
     }
