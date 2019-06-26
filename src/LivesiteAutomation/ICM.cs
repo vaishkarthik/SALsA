@@ -45,7 +45,7 @@ namespace LivesiteAutomation
         {
             var fullurl = String.Format("{0}({1})", url, this.id);
             var request = (HttpWebRequest)WebRequest.Create(fullurl);
-            request.ClientCertificates.Add(Authentication.Instance.cert);
+            request.ClientCertificates.Add(Authentication.Instance.Cert);
             return request;
         }
     }

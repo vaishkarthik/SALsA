@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication.cs" />
+    <Compile Include="BlobStorage.cs" />
     <Compile Include="GenevaAction.cs" />
     <Compile Include="ICM.cs" />
     <Compile Include="Constants.cs" />

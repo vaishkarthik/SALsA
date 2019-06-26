@@ -37,7 +37,7 @@ namespace LivesiteAutomation
                     actionParam.Select(kvp => kvp.Key + ": " + kvp.Value.ToString()));
 
                 sts = new ClientHomeSts(new Uri("https://ch1-dsts.dsts.core.windows.net"));
-                cp = ConnectionParameters.Create(actionsEnvironments, Authentication.Instance.cert, sts, X509CertCredentialType.SubjectNameCredential);
+                cp = ConnectionParameters.Create(actionsEnvironments, Authentication.Instance.Cert, sts, X509CertCredentialType.SubjectNameCredential);
                 client = new GenevaActionsRestAPIClient(cp);
                 Log.Instance.Verbose("Client created for {0}: {1}", extensionName, operationName);
 

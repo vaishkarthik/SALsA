@@ -17,5 +17,8 @@ namespace LivesiteAutomation
 
         // ICM.cs
         public const string ICMGetIncidentURL = "https://icm.ad.msft.net/api/cert/incidents";
+
+        // BlobStorage.cs
+        public const string BlobStorageConnection = "https://genevaautomation.blob.core.windows.net/incidents/";
     }
 }
