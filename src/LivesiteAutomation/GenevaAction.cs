@@ -60,23 +60,6 @@ namespace LivesiteAutomation
                 Log.Instance.Exception(ex);
             }
         }
-        /* This function is same as RunOperationManualPollAsync, but without the verbose polling
-        private async Task RunOperationAndPollAsync()
-        {
-            try
-            {
-                OperationResult operationResult = await client.Operations.RunOperationAndPollForResultsAsync(operationRequest);
-
-                Log.Instance.Information("Operation <{0}: {1}> Result using PollForResultsAsync method: {2}", extensionName, operationName, operationResult.ResultMessage);
-            }
-
-            catch (Exception ex)
-            {
-                Log.Instance.Error("Operation <{0}: {1}>  execution failed.", extensionName, operationName);
-                Log.Instance.Exception(ex);
-            }
-        }
-        */
 
         private async Task RunOperationManualPollAsync()
         {
@@ -106,36 +89,36 @@ namespace LivesiteAutomation
             }
         }
 
-        private async Task GetOperationFileOutputAsync(string filePath)
+        private async Task<Stream> GetOperationFileOutputAsync()
         {
             try
             {
-                var fileOutputStream = await client.Operations.GetOperationFileOutputWithHttpMessagesAsync(operationResult?.ExecutionId);
-                var fileData = await fileOutputStream.Response.Content.ReadAsByteArrayAsync();
-                File.WriteAllBytes(filePath, fileData);
-
-                Log.Instance.Information("Operation <{0}: {1}> File written at path: {2}", extensionName, operationName, filePath);
+                var fileOutputStream = await client.Operations.GetOperationFileOutputAsync(operationResult?.ExecutionId);
+                Log.Instance.Information("Operation <{0}: {1}> get stream Success", extensionName, operationName);
+                return fileOutputStream;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Operation <{0}: {1}> output to file failed");
                 Log.Instance.Exception(ex);
+                return null;
             }
         }
 
-        private async Task GetOperationResultOutputAsync()
+        public async Task<String> GetOperationResultOutputAsync()
         {
             try
             {
                 var result = await client.Operations.GetBatchOperationResultsWithHttpMessagesAsync(operationResult?.ExecutionId);
                 var output = await result.Response.Content.ReadAsStringAsync();
-
                 Log.Instance.Information("Operation <{0}: {1}> get result Success", extensionName, operationName);
+                return output;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Operation <{0}: {1}> output to file failed");
                 Log.Instance.Exception(ex);
+                return null;
             }
         }
     }
