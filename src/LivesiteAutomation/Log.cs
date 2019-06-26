@@ -80,13 +80,15 @@ namespace LivesiteAutomation
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void Exception(Exception ex)
         {
-            InternalLog(String.Format(CultureInfo.InvariantCulture, "Exception originating from {0} :\n{1}", new StackFrame(1, true).GetMethod().Name, ex.ToString()), LogLevel.Error);
+            InternalLog(String.Format(CultureInfo.InvariantCulture, "EXCEPTION :\n{0}", ex.ToString()), LogLevel.Error);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void InternalLog(string ss, LogLevel lvl)
         {
+
             var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm: ss.fffffffZ", CultureInfo.InvariantCulture);
-            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} : {4}", UID, ICM, currentTime, lvl, ss);
+            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, ICM, currentTime, lvl, GetCallerMethod(3), ss);
             Console.WriteLine(logLine);
             System.Diagnostics.Trace.WriteLine(logLine);
             WriteToLog(logLine);
@@ -95,6 +97,13 @@ namespace LivesiteAutomation
         private void WriteToLog(string ss)
         {
             sw?.WriteLine(ss);
+        }
+
+        private string GetCallerMethod(int level = 2)
+        {
+            var caller = new StackFrame(level, true).GetMethod();
+            string callerPath = String.Format(CultureInfo.InvariantCulture, "{0}.{1}", caller.DeclaringType.FullName, caller.Name);
+            return callerPath;
         }
     }
 }
