@@ -25,6 +25,11 @@ namespace LivesiteAutomation
         public const string ICMDescriptionEntriesSuffix = "/DescriptionEntries?$inlinecount=allpages";
         public const string ICMAddDiscussionURL = "https://icm.ad.msft.net/api2/incidentapi/incidents";
 
+        // Analyser.cs
+        public const string AnalyzerSubscriptionIdField = "subscription";
+        public const string AnalyzerStartTimeField = "time";
+        public const string AnalyzerVMNameField = "vmname";
+        public const string AnalyzerResourceGroupField = "ResourceGroup";
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
