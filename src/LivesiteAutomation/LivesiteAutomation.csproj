@@ -137,9 +137,11 @@
   <ItemGroup>
     <Compile Include="Authentication.cs" />
     <Compile Include="BlobStorage.cs" />
+    <Compile Include="Commons.cs" />
     <Compile Include="GenevaAction.cs" />
     <Compile Include="ICM.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Incident.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

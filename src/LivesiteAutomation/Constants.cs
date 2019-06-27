@@ -19,8 +19,12 @@ namespace LivesiteAutomation
         public const string BlobStorageConnection = "https://genevaautomation.blob.core.windows.net/incidents/";
 
         // ICM.cs
+        public const string ICMIdentityName = "CN=azurevmguestagentsandextensions-manual.geneva.keyvault.com";
         public const string ICMGetIncidentURL = "https://icm.ad.msft.net/api/cert/incidents";
         public const string ICMTrnasferIncidentSuffix = "/TransferIncident";
+        public const string ICMDescriptionEntriesSuffix = "/DescriptionEntries?$inlinecount=allpages";
+        public const string ICMAddDiscussionURL = "https://icm.ad.msft.net/api2/incidentapi/incidents";
+
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */

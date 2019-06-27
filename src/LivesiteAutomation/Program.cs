@@ -14,8 +14,10 @@ namespace LivesiteAutomation
             _ = Log.Instance;
             _ = Authentication.Instance;
 
-            var myIcm = new ICM("119051511");
+            var myIcm = new ICM("129901901");
             myIcm.GetICM();
+            myIcm.GetICMDescrition();
+            myIcm.AddICMDiscussion("Jedi : Hello from Jedi");
         }
     }
 }
