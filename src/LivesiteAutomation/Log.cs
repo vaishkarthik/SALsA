@@ -56,6 +56,29 @@ namespace LivesiteAutomation
         // https://msdn.microsoft.com/en-us/magazine/ff714589.aspx
         private enum LogLevel { Verbose = 0x0010, Information = 0x0008, Warning = 0x0004, Error = 0x002, Critical = 0x001};
 
+        // Forcing toString on simple objects
+        public void Verbose(object obj)
+        {
+            Verbose("{0}", (string)(obj.ToString()));
+        }
+        public void Information(object obj)
+        {
+            Information("{0}", (string)(obj.ToString()));
+        }
+        public void Warning(object obj)
+        {
+            Warning("{0}", (string)(obj.ToString()));
+        }
+        public void Error(object obj)
+        {
+            Error("{0}", (string)(obj.ToString()));
+        }
+        public void Critical(object obj)
+        {
+            Critical("{0}", (string)(obj.ToString()));
+        }
+
+
         public void Verbose(string ss, params object[] arg)
         {
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Verbose);
@@ -88,7 +111,7 @@ namespace LivesiteAutomation
         {
 
             var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm: ss.fffffffZ", CultureInfo.InvariantCulture);
-            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, ICM, currentTime, lvl, GetCallerMethod(3), ss);
+            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, ICM, currentTime, lvl, GetCallerMethod(), ss);
             Console.WriteLine(logLine);
             System.Diagnostics.Trace.WriteLine(logLine);
             WriteToLog(logLine);
@@ -99,11 +122,26 @@ namespace LivesiteAutomation
             sw?.WriteLine(ss);
         }
 
-        private string GetCallerMethod(int level = 2)
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private string GetCallerMethod()
         {
-            var caller = new StackFrame(level, true).GetMethod();
-            string callerPath = String.Format(CultureInfo.InvariantCulture, "{0}.{1}", caller.DeclaringType.FullName, caller.Name);
-            return callerPath;
+            int level = 0;
+            string currentCaller = new StackFrame(level++, true).GetMethod().DeclaringType.FullName;
+            string caller;
+            try
+            {
+                do
+                {
+                    var callerMethod = new StackFrame(level++, true).GetMethod();
+                    caller = String.Format(CultureInfo.InvariantCulture, "{0}.{1}", callerMethod.DeclaringType.FullName, callerMethod.Name);
+                    level++;
+                } while (caller.StartsWith(currentCaller, StringComparison.InvariantCultureIgnoreCase));
+            }
+            catch
+            {
+                caller = "Unkwown function";
+            }
+            return caller;
         }
     }
 }

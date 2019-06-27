@@ -15,7 +15,7 @@ namespace LivesiteAutomation
             _ = Authentication.Instance;
 
             var myIcm = new ICM("119051511");
-            myIcm.getICM();
+            myIcm.GetICM();
         }
     }
 }
