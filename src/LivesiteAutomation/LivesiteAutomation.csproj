@@ -149,7 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="extensions\Microsoft.WindowsAzure.Security.Authentication.Events.man" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
