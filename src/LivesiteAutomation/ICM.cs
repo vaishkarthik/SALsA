@@ -55,7 +55,6 @@ namespace LivesiteAutomation
                 HttpWebResponse response = (HttpWebResponse)req.GetResponse();
                 Log.Instance.Verbose("Got response for IMC {0}", this.id);
                 icm = JObject.Parse(ReadResponseBody(response));
-                Log.Instance.Verbose("WTF");
                 Log.Instance.Verbose(icm);
             }
             catch (Exception ex)
