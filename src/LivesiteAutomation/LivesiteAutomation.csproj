@@ -138,7 +138,7 @@
     <Compile Include="Analyzer\Analyzer.cs" />
     <Compile Include="Connectors\Authentication.cs" />
     <Compile Include="Connectors\BlobStorage.cs" />
-    <Compile Include="Commons\Commons.cs" />
+    <Compile Include="Commons\Utility.cs" />
     <Compile Include="Connectors\GenevaAction.cs" />
     <Compile Include="Connectors\ICM.cs" />
     <Compile Include="Commons\Constants.cs" />

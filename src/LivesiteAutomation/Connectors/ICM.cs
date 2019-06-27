@@ -54,7 +54,7 @@ namespace LivesiteAutomation
                 HttpWebResponse response = (HttpWebResponse)req.GetResponse();
                 Log.Instance.Verbose("Got response for IMC {0}", this.ID);
 
-                CurrentICM = Commons.JsonToObject<Incident>(ReadResponseBody(response));
+                CurrentICM = Utility.JsonToObject<Incident>(ReadResponseBody(response));
                 Log.Instance.Verbose(CurrentICM);
             }
             catch (Exception ex)
@@ -70,7 +70,7 @@ namespace LivesiteAutomation
             try
             {
                 var body = new Transfer(owningTeam);
-                var req = BuildRequestWithBody(Commons.ObjectToJson(body), "POST", Constants.ICMTrnasferIncidentSuffix);
+                var req = BuildRequestWithBody(Utility.ObjectToJson(body), "POST", Constants.ICMTrnasferIncidentSuffix);
                 HttpWebResponse response = (HttpWebResponse)req.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -97,7 +97,7 @@ namespace LivesiteAutomation
             {
                 var req = BuildGetRequest(Constants.ICMDescriptionEntriesSuffix);
                 var response = (HttpWebResponse)req.GetResponse();
-                Dictionary<string, object> de = Commons.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
+                Dictionary<string, object> de = Utility.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
 
                 DescriptionEntries = ((JArray)de["value"]).Select(x => new DescriptionEntry
                 {

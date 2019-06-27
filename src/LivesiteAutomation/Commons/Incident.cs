@@ -167,7 +167,7 @@ namespace LivesiteAutomation
         public Source Source { get; set; }
         public string SourceOrigin { get; set; }
         public string Status { get; set; }
-        public object SubscriptionId { get; set; }
+        public string SubscriptionId { get; set; }
         public string Summary { get; set; }
         public object SupportTicketId { get; set; }
         public string Title { get; set; }
