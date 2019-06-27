@@ -135,13 +135,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Authentication.cs" />
-    <Compile Include="BlobStorage.cs" />
-    <Compile Include="Commons.cs" />
-    <Compile Include="GenevaAction.cs" />
-    <Compile Include="ICM.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Incident.cs" />
+    <Compile Include="Analyzer\Analyzer.cs" />
+    <Compile Include="Connectors\Authentication.cs" />
+    <Compile Include="Connectors\BlobStorage.cs" />
+    <Compile Include="Commons\Commons.cs" />
+    <Compile Include="Connectors\GenevaAction.cs" />
+    <Compile Include="Connectors\ICM.cs" />
+    <Compile Include="Commons\Constants.cs" />
+    <Compile Include="Commons\Incident.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -151,5 +152,6 @@
     <None Include="extensions\Microsoft.WindowsAzure.Security.Authentication.Events.man" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
