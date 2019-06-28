@@ -113,10 +113,8 @@ namespace LivesiteAutomation
                 try
                 {
                     await RunOperationManualPollAsync();
-                    var result = await client.Operations.GetBatchOperationResultsWithHttpMessagesAsync(operationResult?.ExecutionId);
-                    var output = await result.Response.Content.ReadAsStringAsync();
                     Log.Instance.Information("Operation <{0}: {1}> get result Success", extensionName, operationName);
-                    return output;
+                    return operationResult.ResultMessage;
                 }
                 catch (Exception ex)
                 {

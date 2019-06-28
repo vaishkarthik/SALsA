@@ -135,7 +135,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analyzer\AnalyzeICM.cs" />
     <Compile Include="Analyzer\Analyzer.cs" />
+    <Compile Include="Analyzer\AnalyzerARM.cs" />
+    <Compile Include="Analyzer\AnalyzeRDFE.cs" />
     <Compile Include="GenevaAction\GetARMSubscription.cs" />
     <Compile Include="Connectors\Authentication.cs" />
     <Compile Include="Connectors\BlobStorage.cs" />
@@ -143,8 +146,11 @@
     <Compile Include="Connectors\GenevaAction.cs" />
     <Compile Include="Connectors\ICM.cs" />
     <Compile Include="Commons\Constants.cs" />
+    <Compile Include="GenevaAction\GetRDFESubscription.cs" />
+    <Compile Include="Json2Class\ARMSubscription.cs" />
     <Compile Include="Json2Class\GenevaOperations.cs" />
     <Compile Include="Json2Class\Incident.cs" />
+    <Compile Include="Json2Class\RDFESubscription.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

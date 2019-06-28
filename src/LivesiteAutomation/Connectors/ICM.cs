@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace LivesiteAutomation
 {
-    class ICM
+    public class ICM
     {
         private readonly string ID;
         public Incident CurrentICM { get; private set; }

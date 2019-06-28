@@ -30,10 +30,20 @@ namespace LivesiteAutomation
         public const string AnalyzerStartTimeField = "time";
         public const string AnalyzerVMNameField = "vmname";
         public const string AnalyzerResourceGroupField = "ResourceGroup";
+        public const string AnalyzerARMDeploymentExtensionType = "extensions";
+        public const string AnalyzerARMDeploymentIaaSType = "virtualMachines";
+        public const string AnalyzerARMDeploymentVMSSType = "virtualMachineScaleSets";
+        public const string AnalyzerARMDeploymentPaaSType = "domainNames";
+        public readonly static string[] AnalyszerARMDeploymentTypes = { AnalyzerARMDeploymentIaaSType, AnalyzerARMDeploymentVMSSType, AnalyzerARMDeploymentPaaSType };
 
         // GetARMSubscription.cs
         public const string GetARMSubscriptionExtensionName = "Azure Resource Manager";
         public const string GetARMSubscriptionOperationName = "GetSubscriptionResources";
+
+        // GetRDFESubscription.cs
+        public const string GetRDFESubscriptionExtensionName = "AzureRT";
+        public const string GetRDFESubscriptionOperationName = "GetSubscriptionWithDetails";
+        public const string GetRDFESubscriptionDetailLevel = "Subscription, HostedService, DeploymentBasic";
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
@@ -41,5 +51,6 @@ namespace LivesiteAutomation
                 {
                     { @"AZUREVMGUESTAGENTSANDEXTENSIONS\Triage", new Guid("b785142b-3f60-4a7f-a3fe-11ef0941ac1a") }
                 };
-            }
+
+    }
 }

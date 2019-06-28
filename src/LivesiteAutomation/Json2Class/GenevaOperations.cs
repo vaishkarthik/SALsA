@@ -8,9 +8,14 @@ namespace LivesiteAutomation.Json2Class
 {
     public class GenevaOperations
     {
-        public class GetSubscriptionResources
+        public class GetARMSubscriptionResources
         {
             public string wellknownsubscriptionid { get; set; }
+        }
+        public class GetRDFESubscriptionResources
+        {
+            public string wellknownsubscriptionid { get; set; }
+            public string detaillevel { get; set; }
         }
     }
 }
