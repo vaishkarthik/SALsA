@@ -31,11 +31,15 @@ namespace LivesiteAutomation
         public const string AnalyzerVMNameField = "vmname";
         public const string AnalyzerResourceGroupField = "ResourceGroup";
 
+        // GetARMSubscription.cs
+        public const string GetARMSubscriptionExtensionName = "Azure Resource Manager";
+        public const string GetARMSubscriptionOperationName = "GetSubscriptionResources";
+
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
-        public static Dictionary<string, Guid> ICMTeamToTenantLookupTable = new Dictionary<string, Guid>
-        {
-            { @"AZUREVMGUESTAGENTSANDEXTENSIONS\Triage", new Guid("b785142b-3f60-4a7f-a3fe-11ef0941ac1a") }
-        };
-    }
+        public readonly static Dictionary<string, Guid> ICMTeamToTenantLookupTable = new Dictionary<string, Guid>
+                {
+                    { @"AZUREVMGUESTAGENTSANDEXTENSIONS\Triage", new Guid("b785142b-3f60-4a7f-a3fe-11ef0941ac1a") }
+                };
+            }
 }

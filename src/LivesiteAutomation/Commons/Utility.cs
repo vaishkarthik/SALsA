@@ -21,19 +21,39 @@ namespace LivesiteAutomation
             return JsonConvert.DeserializeObject<T>(json, settings);
         }
 
-        public static string ObjectToJson(object obj)
+        public static string ObjectToJson(object obj, bool beautify = false)
         {
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                MissingMemberHandling = MissingMemberHandling.Ignore
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                Formatting = beautify == false ? Formatting.None : Formatting.Indented
             };
             return JsonConvert.SerializeObject(obj, settings);
         }
-        public static string StripHTML(string html)
+        public static string DecodeHtml(string html)
         {
             var regex = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
             return WebUtility.HtmlDecode((regex.Replace(html, "")));
+        }
+
+        public static string EncodeHtml(string ss)
+        {
+            ss = WebUtility.HtmlEncode(ss);
+            var lines = ss.Split(
+                            new[] { Environment.NewLine },
+                            StringSplitOptions.None
+                        );
+            var htmlLine = lines.Select(c => {
+                int sizeC = c.Length;
+                c = c.TrimStart();
+                sizeC -= c.Length;
+                string spaces = string.Concat(Enumerable.Repeat("&nbsp; ", sizeC));
+                c = String.Concat(spaces, c);
+                return c;
+            }).ToList();
+
+            return String.Join("<br />", htmlLine);
         }
     }
 }

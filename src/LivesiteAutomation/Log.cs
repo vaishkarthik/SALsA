@@ -15,7 +15,7 @@ namespace LivesiteAutomation
     public sealed class Log
     {
 
-        public string ICM { get; set; } = "N/A";
+        public string Icm { get; set; } = "N/A";
         private string UID;
         private StreamWriter sw = null;
         private Log()
@@ -54,7 +54,32 @@ namespace LivesiteAutomation
             }
         }
         // https://msdn.microsoft.com/en-us/magazine/ff714589.aspx
-        private enum LogLevel { Verbose = 0x0010, Information = 0x0008, Warning = 0x0004, Error = 0x002, Critical = 0x001};
+        private enum LogLevel { Online = 0x0020, Verbose = 0x0010, Information = 0x0008, Warning = 0x0004, Error = 0x002, Critical = 0x001};
+
+        public void Send(object obj)
+        {
+            Send("{0}", (string)(obj.ToString()));
+        }
+
+        public void Send(string ss, params object[] arg)
+        {
+            string toSend = String.Format(CultureInfo.InvariantCulture, ss, arg);
+            InternalLog(toSend, LogLevel.Online);
+            SendOnline(toSend);
+        }
+
+        // SendForce will force write the log entry, even if it already exists.
+        public void SendForce(object obj)
+        {
+            SendForce("{0}", (string)(obj.ToString()));
+        }
+
+        public void SendForce(string ss, params object[] arg)
+        {
+            string toSend = String.Format(CultureInfo.InvariantCulture, ss, arg);
+            InternalLog(toSend, LogLevel.Online);
+            SendOnline(toSend, true);
+        }
 
         // Forcing toString on simple objects
         public void Verbose(object obj)
@@ -111,7 +136,7 @@ namespace LivesiteAutomation
         {
 
             var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm: ss.fffffffZ", CultureInfo.InvariantCulture);
-            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, ICM, currentTime, lvl, GetCallerMethod(), ss);
+            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, Icm, currentTime, lvl, GetCallerMethod(), ss);
             Console.WriteLine(logLine);
             System.Diagnostics.Trace.WriteLine(logLine);
             WriteToLog(logLine);
@@ -143,5 +168,12 @@ namespace LivesiteAutomation
             }
             return caller;
         }
+
+
+        private void SendOnline(string ss, bool force = false)
+        {
+            ICM.IncidentMapping[Icm].AddICMDiscussion(ss, force);
+        }
+
     }
 }

@@ -19,9 +19,25 @@ namespace LivesiteAutomation
         private readonly string ID;
         public Incident CurrentICM { get; private set; }
         public List<DescriptionEntry> DescriptionEntries { get; private set; }
+        public static Dictionary<string, ICM> IncidentMapping { get; private set; }
 
-        public bool AddICMDiscussion(string entry)
+        public bool AddICMDiscussion(string entry, bool repeat = false)
         {
+            entry = Utility.EncodeHtml(entry);
+            if (repeat == false)
+            {
+                if (DescriptionEntries == null)
+                {
+                    GetICMDiscussion();
+                }
+                foreach (var de in DescriptionEntries)
+                {
+                    if(de.SubmittedBy == Constants.ICMIdentityName && de.Text == entry)
+                    {
+                        return false;
+                    }
+                }
+            }
             try
             {
                 var body = String.Format(CultureInfo.InvariantCulture, "{{\"Description\":\"{0}\",\"CustomFields\":[],\"Id\":{1}}}", entry, this.ID);
@@ -43,7 +59,8 @@ namespace LivesiteAutomation
         public ICM(string icmId)
         {
             this.ID = icmId;
-            Log.Instance.ICM = this.ID;
+            Log.Instance.Icm = this.ID;
+            IncidentMapping = new Dictionary<string, ICM>() { { icmId, this } };
         }
 
         public ICM GetICM()
@@ -91,7 +108,7 @@ namespace LivesiteAutomation
             }
         }
 
-        public void GetICMDescrition()
+        public void GetICMDiscussion()
         {
             try
             {

@@ -17,7 +17,7 @@ namespace LivesiteAutomation
             var myIcm = new ICM("129901901");
             myIcm.GetICM();
             _ =  new Analyzer(ref myIcm);
-            myIcm.GetICMDescrition();
+            myIcm.GetICMDiscussion();
             myIcm.AddICMDiscussion("Jedi : Hello from Jedi");
         }
     }

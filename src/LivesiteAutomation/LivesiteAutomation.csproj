@@ -136,13 +136,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analyzer\Analyzer.cs" />
+    <Compile Include="GenevaAction\GetARMSubscription.cs" />
     <Compile Include="Connectors\Authentication.cs" />
     <Compile Include="Connectors\BlobStorage.cs" />
     <Compile Include="Commons\Utility.cs" />
     <Compile Include="Connectors\GenevaAction.cs" />
     <Compile Include="Connectors\ICM.cs" />
     <Compile Include="Commons\Constants.cs" />
-    <Compile Include="Commons\Incident.cs" />
+    <Compile Include="Json2Class\GenevaOperations.cs" />
+    <Compile Include="Json2Class\Incident.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
