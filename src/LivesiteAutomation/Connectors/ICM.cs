@@ -18,7 +18,7 @@ namespace LivesiteAutomation
     {
         private readonly string ID;
         public Incident CurrentICM { get; private set; }
-        public List<DescriptionEntry> DescriptionEntries { get; private set; }
+        public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
         public static Dictionary<string, ICM> IncidentMapping { get; private set; }
 
         public bool AddICMDiscussion(string entry, bool repeat = false)
@@ -86,7 +86,7 @@ namespace LivesiteAutomation
         {
             try
             {
-                var body = new Transfer(owningTeam);
+                var body = new Incident.Transfer(owningTeam);
                 var req = BuildRequestWithBody(Utility.ObjectToJson(body), "POST", Constants.ICMTrnasferIncidentSuffix);
                 HttpWebResponse response = (HttpWebResponse)req.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -116,7 +116,7 @@ namespace LivesiteAutomation
                 var response = (HttpWebResponse)req.GetResponse();
                 Dictionary<string, object> de = Utility.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
 
-                DescriptionEntries = ((JArray)de["value"]).Select(x => new DescriptionEntry
+                DescriptionEntries = ((JArray)de["value"]).Select(x => new Incident.DescriptionEntry
                 {
                     DescriptionEntryId = (string)x["DescriptionEntryId"],
                     SubmittedBy = (string)x["SubmittedBy"],

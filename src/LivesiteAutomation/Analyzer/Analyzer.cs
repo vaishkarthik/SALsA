@@ -18,7 +18,7 @@ namespace LivesiteAutomation
         public DateTime StartTime { get; private set; }
         public Analyzer(ref ICM icm)
         {
-            (SubscriptionId, ResourceGroupName, VMName, StartTime) = AnalyzeICM(icm.CurrentICM);
+            (SubscriptionId, ResourceGroupName, VMName, StartTime) = AnalyzeICM(icm);
             Log.Instance.Send("{0}", Utility.ObjectToJson(this, true));
 
             var arm  = AnalyzeARMSubscription(SubscriptionId);

@@ -46,7 +46,7 @@ namespace LivesiteAutomation
                 {
                     tmp = Utility.JsonToObject<List<string>>(Utility.ObjectToJson(element.Deployment.text));
                 }
-                catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException _)
+                catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
                 {
                     Log.Instance.Warning("No deployment found for : {0}", element.ToString());
                     continue;

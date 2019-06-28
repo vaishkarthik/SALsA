@@ -9,7 +9,7 @@ namespace LivesiteAutomation
 {
     public partial class Analyzer
     {
-        private (Guid subscriptionId, string resourceGroupName, string VMName, DateTime startTime) AnalyzeICM(Incident currentICM)
+        private (Guid subscriptionId, string resourceGroupName, string VMName, DateTime startTime) AnalyzeICM(ICM currentICM)
         {
             var subscriptionId = GetSubscriptionId(currentICM); ;
             var resourceGroupName = GetCustomField(currentICM, Constants.AnalyzerResourceGroupField);
@@ -19,24 +19,24 @@ namespace LivesiteAutomation
             return (subscriptionId, resourceGroupName, VMName, startTime);
         }
 
-        private Guid GetSubscriptionId(Incident incident)
+        private Guid GetSubscriptionId(ICM icm)
         {
             try
             {
                 // Look for the custom field "subscription"
-                String subscriptionId = GetCustomField(incident, Constants.AnalyzerSubscriptionIdField);
+                String subscriptionId = GetCustomField(icm, Constants.AnalyzerSubscriptionIdField);
 
                 // Look in the ICM field for the subscriptionId
                 if (!CheckIfSubscriptionIdIsValid(subscriptionId))
                 {
                     Log.Instance.Verbose("Failed to get SubscriptionId from CustomField");
-                    subscriptionId = incident.SubscriptionId;
+                    subscriptionId = icm.CurrentICM.SubscriptionId;
                     // Look in the ICM description for the subscriptionId
                     if (!CheckIfSubscriptionIdIsValid(subscriptionId))
                     {
                         Log.Instance.Verbose("Failed to get SubscriptionId from SubscriptionId ICM Field");
                         var regex = new Regex("[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}", RegexOptions.IgnoreCase);
-                        Match m = regex.Match(incident.Summary);
+                        Match m = regex.Match(icm.CurrentICM.Summary);
                         subscriptionId = m.Value;
                         // If we coudnt find it, fail it.
                         if (!CheckIfSubscriptionIdIsValid(subscriptionId))
@@ -50,17 +50,17 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to find a valid subscription id for ICM : {0}", incident.Id);
+                Log.Instance.Error("Failed to find a valid subscription id for ICM : {0}", icm.CurrentICM.Id);
                 Log.Instance.Exception(ex);
                 throw ex;
             }
         }
 
-        private string GetCustomField(Incident incident, string lookup)
+        private string GetCustomField(ICM icm, string lookup)
         {
             try
             {
-                foreach (var fields in incident.CustomFieldGroups)
+                foreach (var fields in icm.CurrentICM.CustomFieldGroups)
                 {
                     var sid = fields.CustomFields.Find(x => x.Name == lookup);
                     if (sid != null)
@@ -71,7 +71,7 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to find a valid value for <{0}> in ICM : {1}", lookup, incident.Id);
+                Log.Instance.Error("Failed to find a valid value for <{0}> in ICM : {1}", lookup, icm.CurrentICM.Id);
                 Log.Instance.Exception(ex);
             }
             return null;
