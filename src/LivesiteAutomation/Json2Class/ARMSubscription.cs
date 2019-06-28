@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace LivesiteAutomation.Json2Class
 {
-    class ARMDeployment
+    public class ARMDeployment
     {
         public string subscriptions { get; set; }
         public string resourceGroups { get; set; }
         public string location { get; set; }
+        public string type { get; set; }
         public string name { get; set; }
         public List<string> extensions { get; set; } = new List<string>();
 

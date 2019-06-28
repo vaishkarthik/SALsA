@@ -43,7 +43,8 @@ namespace LivesiteAutomation
                     subscriptions = SubscriptionId.ToString(),
                     resourceGroups = id[4],
                     location = deployment.location,
-                    name = deployment.name.Contains("/") ? deployment.name.Split('/')[1] : deployment.name
+                    name = deployment.name.Contains("/") ? deployment.name.Split('/')[1] : deployment.name,
+                    type = deployment.type.Split('/')[1]
                 };
                 if (!armAnalysed.ContainsKey(dep.GetHashCode()))
                 {

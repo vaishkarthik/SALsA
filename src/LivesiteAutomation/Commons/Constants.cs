@@ -45,12 +45,19 @@ namespace LivesiteAutomation
         public const string GetRDFESubscriptionOperationName = "GetSubscriptionWithDetails";
         public const string GetRDFESubscriptionDetailLevel = "Subscription, HostedService, DeploymentBasic";
 
+        // GetVMScreenshot.cs
+        public const string GetVMSerialLogsExtensionName = "CRP";
+        public const string GetVMSerialLogsOperationName = "GetVMSerialLogs";
+
+        // GetVMScreenshot.cs
+        public const string GetVMScreenshotExtensionName = "CRP";
+        public const string GetVMScreenshotOperationName = "GetVMScreenshotLogs";
+
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
         public readonly static Dictionary<string, Guid> ICMTeamToTenantLookupTable = new Dictionary<string, Guid>
                 {
                     { @"AZUREVMGUESTAGENTSANDEXTENSIONS\Triage", new Guid("b785142b-3f60-4a7f-a3fe-11ef0941ac1a") }
                 };
-
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -31,6 +33,7 @@ namespace LivesiteAutomation
             };
             return JsonConvert.SerializeObject(obj, settings);
         }
+
         public static string DecodeHtml(string html)
         {
             var regex = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
@@ -54,6 +57,10 @@ namespace LivesiteAutomation
             }).ToList();
 
             return String.Join("<br />", htmlLine);
+        }
+        public static ZipArchive ExtractZip(Stream result)
+        {
+            return new ZipArchive(result, ZipArchiveMode.Create);
         }
     }
 }
