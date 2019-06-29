@@ -153,6 +153,7 @@
     <Compile Include="GenevaAction\GetVMModelAndInstanceView.cs" />
     <Compile Include="GenevaAction\GetVMScreenshot.cs" />
     <Compile Include="GenevaAction\GetVMSerialLogs.cs" />
+    <Compile Include="GenevaAction\InspectIaaSDiskForARMVM.cs" />
     <Compile Include="Json2Class\ARMSubscription.cs" />
     <Compile Include="Json2Class\GenevaOperations.cs" />
     <Compile Include="Json2Class\Incident.cs" />

@@ -40,18 +40,7 @@ namespace LivesiteAutomation
         }
         public static Task UploadStream(string icm, string blobName, Stream content, string contentType = "application/octet-stream")
         {
-            try
-            {
-                CloudBlockBlob blob = GetCloudBlob(icm, blobName);
-                blob.Properties.ContentType = contentType;
-                return blob.UploadFromStreamAsync(content);
-            }
-            catch (Exception ex)
-            {
-                Log.Instance.Error("Failed to write to blob : {0}", blobName);
-                Log.Instance.Exception(ex);
-                return null;
-            }
+            return UploadBytes(icm, blobName, Utility.StreamToBytes(content), contentType);
         }
         public static Task UploadBytes(string icm, string blobName, byte[] content, string contentType = "application/octet-stream")
         {

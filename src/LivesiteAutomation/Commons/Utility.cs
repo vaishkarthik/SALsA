@@ -140,5 +140,13 @@ namespace LivesiteAutomation
                 output.CopyTo(fileStream);
             }
         }
+        public static byte[] StreamToBytes(Stream input)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                input.CopyTo(ms);
+                return ms.ToArray();
+            }
+        }
     }
 }

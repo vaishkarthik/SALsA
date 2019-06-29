@@ -33,5 +33,16 @@ namespace LivesiteAutomation.Json2Class
         {
             public string smegetvmoptionparameter { get; set; }
         }
+        public class InspectIaaSDiskForARMVM
+        {
+            public string smecrpregion { get; set; }
+            public string wellknownsubscriptionid { get; set; }
+            public string smeresourcegroupname { get; set; }
+            public string smevmname { get; set; }
+            public string smelogextractmode { get; set; }
+            public string smeskiptostep { get; set; }
+            public int smetimeoutinmins { get; set; }
+        }
+        
     }
 }

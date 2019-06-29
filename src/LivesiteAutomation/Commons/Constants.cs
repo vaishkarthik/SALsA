@@ -31,6 +31,7 @@ namespace LivesiteAutomation
         public const string ICMTrnasferIncidentSuffix = "/TransferIncident";
         public const string ICMDescriptionEntriesSuffix = "/DescriptionEntries?$inlinecount=allpages";
         public const string ICMAddDiscussionURL = "https://icm.ad.msft.net/api2/incidentapi/incidents";
+        public const int ICMHttpRetryLimit = 5;
 
         // Analyser.cs
         public const string AnalyzerSubscriptionIdField = "subscription";
@@ -45,7 +46,7 @@ namespace LivesiteAutomation
         public const string AnalyzerConsoleSerialOutputFilename = "SerialConsole.log";
         public const string AnalyzerVMScreenshotOutputFilename = "VMScreenshot.png";
         public const string AnalyzerVMModelAndViewOutputFilename = "ModelAndView.json";
-        public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zi;p";
+        public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zip";
 
         // GetARMSubscription.cs
         public const string GetARMSubscriptionExtensionName = "Azure Resource Manager";
@@ -68,6 +69,13 @@ namespace LivesiteAutomation
         public const string GetVMInfoExtensionName = "CRP";
         public const string GetVMInfoOperationName = "GetVM";
         public readonly static string[] GetVMInfoOptions = { "VM model", "VM InstanceView" };
+
+        // InspectIaaSDiskForARMVM.cs
+        public const string InspectIaaSDiskForARMVMExtensionName = "AzLinux";
+        public const string InspectIaaSDiskForARMVMOperationName = "InspectIaaSDiskForARMVMEx";
+        public const string InspectIaaSDiskForARMVMMode = "Diagnostic";
+        public const string InspectIaaSDiskForARMVMStep = "0";
+        public const int InspectIaaSDiskForARMVMTimeout = 0;
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */

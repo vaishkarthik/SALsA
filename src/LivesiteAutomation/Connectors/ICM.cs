@@ -11,6 +11,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LivesiteAutomation
@@ -48,7 +49,7 @@ namespace LivesiteAutomation
                 var body = String.Format(CultureInfo.InvariantCulture, "{{\"Description\":\"{0}\",\"CustomFields\":[],\"Id\":{1}}}", entry, this.ID);
                 var req = BuildRequestWithBody(body, "PATCH", "", Constants.ICMAddDiscussionURL);
                                 
-                HttpWebResponse response = (HttpWebResponse)req.GetResponse();
+                HttpWebResponse response = TryGetResponse(req);
                 Log.Instance.Verbose("Got response for IMC {0}", this.ID);
                 return true;
  
@@ -59,6 +60,25 @@ namespace LivesiteAutomation
                 Log.Instance.Exception(ex);
                 return false;
             }
+        }
+
+        private static HttpWebResponse TryGetResponse(HttpWebRequest req)
+        {
+            Exception ex = new Exception();
+            for (int i = 0; i < Constants.ICMHttpRetryLimit; ++i)
+            {
+                try
+                {
+                    return (HttpWebResponse)req.GetResponse();
+                }
+                catch (Exception e)
+                {
+                    ex = e;
+                    Log.Instance.Error("Failed http request, retrying in {1}sec... Reason : {0}", e.Message, (int)Math.Pow(2, i));
+                    Thread.Sleep((int)Math.Pow(2, i) * 1000);
+                }
+            }
+            throw ex;
         }
 
         public ICM(string icmId)
