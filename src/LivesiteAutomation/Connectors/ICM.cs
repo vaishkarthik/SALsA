@@ -32,8 +32,9 @@ namespace LivesiteAutomation
                 }
                 foreach (var de in DescriptionEntries)
                 {
-                    if(de.SubmittedBy == Constants.ICMIdentityName && de.Text == entry)
+                    if(de.SubmittedBy == Constants.ICMIdentityName && Utility.DecodeHtml(de.Text).CompareTo(Utility.DecodeHtml(entry)) == 0)
                     {
+                        Log.Instance.Verbose("Did not add entry to ICM since already sent", this.ID);
                         return false;
                     }
                 }
