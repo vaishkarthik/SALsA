@@ -74,11 +74,11 @@ namespace LivesiteAutomation
 
         public static ZipArchive ExtractZip(Stream result)
         {
-            return new ZipArchive(result, ZipArchiveMode.Create);
+            return new ZipArchive(result, ZipArchiveMode.Read);
         }
         private static string UrlToHml(string name, string sasToken, int size = 30)
         {
-            return String.Format("<a  style=\"font-size: {2}px;\" href=\"{0}\">{1}</a>", name, sasToken, size);
+            return String.Format("<a style=\"font-size: {2}px;\" href=\"{0}\">{1}</a>", name, sasToken, size);
         }
 
         private static void SendSASToICM(string name)
@@ -90,14 +90,14 @@ namespace LivesiteAutomation
                 Log.Instance.Error("Failed to add to ICM discussion :  {0} with sasToken {1}", name, sasToken);
             }
         }
-        public static async void SaveAndSendBlobTask(string name, Task<String> task)
+        public static async Task SaveAndSendBlobTask(string name, Task<String> task)
         {
             var output = await task; 
             await BlobStorage.UploadText(Log.Instance.Icm, name, output);
             SendSASToICM(name);
             Utility.SaveToFile(name, output);
         }
-        public static async void SaveAndSendBlobTask(string name, Task<Image> task)
+        public static async Task SaveAndSendBlobTask(string name, Task<Image> task)
         {
             var output = await task;
             using (MemoryStream ms = new MemoryStream())
@@ -108,7 +108,7 @@ namespace LivesiteAutomation
             SendSASToICM(name);
             Utility.SaveToFile(name, output);
         }
-        public static async void SaveAndSendBlobTask(string name, Task<Stream> task)
+        public static async Task SaveAndSendBlobTask(string name, Task<Stream> task)
         {
             var output = await task;
             await BlobStorage.UploadStream(Log.Instance.Icm, name, output);

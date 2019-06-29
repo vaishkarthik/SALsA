@@ -17,6 +17,7 @@ namespace LivesiteAutomation
         public string ResourceGroupName { get; private set; }
         public string VMName { get; private set; }
         public DateTime StartTime { get; private set; }
+        public Task task { get; private set; }
         public Analyzer(ref ICM icm)
         {
             (SubscriptionId, ResourceGroupName, VMName, StartTime) = AnalyzeICM(icm);
@@ -29,19 +30,34 @@ namespace LivesiteAutomation
             switch (type)
             {
                 case ComputeType.IaaS:
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs((ARMDeployment)dep));
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot((ARMDeployment)dep));
-                    //Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView((ARMDeployment)dep));
-                    //Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM((ARMDeployment)dep));
+                    task = ExecuteAllActionsForIaaS((ARMDeployment)dep);
                     break;
                 case ComputeType.VMSS:
-                    // TODO
+                    task = ExecuteAllActionsForVMSS((ARMDeployment)dep);
                     break;
                 case ComputeType.PaaS:
+                    task = ExecuteAllActionsForPaaS((RDFEDeployment)dep);
                     break;
                 default:
                     break;
             }
+        }
+
+        private async Task ExecuteAllActionsForIaaS(ARMDeployment dep)
+        {
+            await Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(dep));
+            await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(dep));
+            //Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView((ARMDeployment)dep));
+            //Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM((ARMDeployment)dep));
+
+        }
+        private async Task ExecuteAllActionsForVMSS(ARMDeployment dep)
+        {
+
+        }
+        private async Task ExecuteAllActionsForPaaS(RDFEDeployment dep)
+        {
+
         }
 
         private (ComputeType type, object dep) DetectVMType(ARMSubscription arm, RDFESubscription rdfe)
