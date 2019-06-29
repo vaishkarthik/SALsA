@@ -30,7 +30,7 @@ namespace LivesiteAutomation
             {
                 case ComputeType.IaaS:
                     Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs((ARMDeployment)dep));
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMScreenshot((ARMDeployment)dep));
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot((ARMDeployment)dep));
                     //Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView((ARMDeployment)dep));
                     //Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM((ARMDeployment)dep));
                     break;

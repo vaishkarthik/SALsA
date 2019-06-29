@@ -56,9 +56,9 @@ namespace LivesiteAutomation
         public const string GetVMConsoleSerialLogsExtensionName = "CRP";
         public const string GetVMConsoleSerialLogsOperationName = "GetVMConsoleSerialLogs";
 
-        // GetVMScreenshot.cs
-        public const string GetVMScreenshotExtensionName = "CRP";
-        public const string GetVMScreenshotOperationName = "GetVMScreenshotLogs";
+        // GetVMConsoleScreenshot.cs
+        public const string GetVMConsoleScreenshotExtensionName = "CRP";
+        public const string GetVMConsoleScreenshotOperationName = "GetVMConsoleScreenshot";
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
