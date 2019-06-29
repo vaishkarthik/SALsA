@@ -64,6 +64,11 @@ namespace LivesiteAutomation
         public const string GetVMConsoleScreenshotExtensionName = "CRP";
         public const string GetVMConsoleScreenshotOperationName = "GetVMConsoleScreenshot";
 
+        // GetVMModelAndInstanceView.cs
+        public const string GetVMInfoExtensionName = "CRP";
+        public const string GetVMInfoOperationName = "GetVM";
+        public readonly static string[] GetVMInfoOptions = { "VM model", "VM InstanceView" };
+
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
         public readonly static Dictionary<string, Guid> ICMTeamToTenantLookupTable = new Dictionary<string, Guid>

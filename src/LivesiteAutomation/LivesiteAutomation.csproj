@@ -150,6 +150,7 @@
     <Compile Include="Connectors\ICM.cs" />
     <Compile Include="Commons\Constants.cs" />
     <Compile Include="GenevaAction\GetRDFESubscription.cs" />
+    <Compile Include="GenevaAction\GetVMModelAndInstanceView.cs" />
     <Compile Include="GenevaAction\GetVMScreenshot.cs" />
     <Compile Include="GenevaAction\GetVMSerialLogs.cs" />
     <Compile Include="Json2Class\ARMSubscription.cs" />

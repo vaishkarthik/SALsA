@@ -28,5 +28,10 @@ namespace LivesiteAutomation.Json2Class
         }
         public class GetVMConsoleSerialLogs : GetIaaSVMBase { }
         public class GetVMConsoleScreenshot : GetIaaSVMBase { }
+
+        public class GetVMModelAndInstanceView : GetIaaSVMBase
+        {
+            public string smegetvmoptionparameter { get; set; }
+        }
     }
 }
