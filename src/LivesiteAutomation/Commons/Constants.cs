@@ -35,6 +35,10 @@ namespace LivesiteAutomation
         public const string AnalyzerARMDeploymentVMSSType = "virtualMachineScaleSets";
         public const string AnalyzerARMDeploymentPaaSType = "domainNames";
         public readonly static string[] AnalyszerARMDeploymentTypes = { AnalyzerARMDeploymentIaaSType, AnalyzerARMDeploymentVMSSType, AnalyzerARMDeploymentPaaSType };
+        public const string AnalyzerSerialConsoleOutputFilename = "SerialConsole.log";
+        public const string AnalyzerVMScreenshotOutputFilename = "VMScreenshot.png";
+        public const string AnalyzerVMModelAndViewOutputFilename = "ModelAndView.json";
+        public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zi;p";
 
         // GetARMSubscription.cs
         public const string GetARMSubscriptionExtensionName = "Azure Resource Manager";

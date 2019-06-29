@@ -29,10 +29,10 @@ namespace LivesiteAutomation
             switch (type)
             {
                 case ComputeType.IaaS:
-                    var seriallogs = GenevaActions.GetVMSerialLogs((ARMDeployment)dep);
-                    var screenshot = GenevaActions.GetVMConsoleScreenshot((ARMDeployment)dep);
-                    //var modelAndView = GenevaActions.GetVMModelAndInstanceView((ARMDeployment)dep);
-                    //var logs = GenevaActions.InspectIaaSDiskForARMVM((ARMDeployment)dep);
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerSerialConsoleOutputFilename, GenevaActions.GetVMSerialLogs((ARMDeployment)dep));
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMScreenshot((ARMDeployment)dep));
+                    //Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView((ARMDeployment)dep));
+                    //Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM((ARMDeployment)dep));
                     break;
                 case ComputeType.VMSS:
                     // TODO

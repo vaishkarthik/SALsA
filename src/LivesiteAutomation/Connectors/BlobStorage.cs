@@ -22,6 +22,7 @@ namespace LivesiteAutomation
                                                             Authentication.Instance.StorageCredentials);
         }
 
+        // TODO : Refactor to use Templates <T> instead
         public static Task UploadText(string icm, string blobName, string content)
         {
             try

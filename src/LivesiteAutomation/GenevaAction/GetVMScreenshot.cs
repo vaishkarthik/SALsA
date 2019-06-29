@@ -1,6 +1,7 @@
 ﻿using LivesiteAutomation.Json2Class;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace LivesiteAutomation
     public partial class GenevaActions
     {
         // TODO : make sovereign cloud available
-        public static Task<Stream> GetVMConsoleScreenshot(ARMDeployment deployment)
+        public static Task<Image> GetVMScreenshot(ARMDeployment deployment)
         {
             var param = new GenevaOperations.GetVMConsoleScreenshot
             {
@@ -25,7 +26,7 @@ namespace LivesiteAutomation
 
             // VMSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
-                Utility.ExtractZip(task.Result).Entries.First().Open()
+                    Image.FromStream(Utility.ExtractZip(task.Result).Entries.First().Open())
                 )) ;
         }
     }
