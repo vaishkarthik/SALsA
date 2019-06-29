@@ -8,6 +8,9 @@ namespace LivesiteAutomation
 {
     static class Constants
     {
+        // CRP global
+        public readonly static string[] CRPRegions = { "AustraliaCentral", "AustraliaCentral2", "AustraliaEast", "AustraliaSouthEast", "BrazilSouth", "CanadaCentral", "CanadaEast", "CentralIndia", "CentralUS", "CentralUSEUAP", "EastAsia", "EastUS", "EastUS2", "EastUS2EUAP", "FranceCentral", "FranceSouth", "JapanEast", "JapanWest", "KoreaCentral", "KoreaSouth", "NorthCentralUS", "NorthEurope", "SouthAfricaNorth", "SouthAfricaWest", "SouthCentralUS", "SoutheastAsia", "SouthIndia", "UAECentral", "UAENorth", "UKNorth", "UKSouth", "UKSouth2", "UKWest", "WestCentralUS", "WestEurope", "WestIndia", "WestUS", "WestUS2", "WestUSValidation" };
+
         // Log.cs
         public static string LogDefaultPath = System.IO.Path.Combine(System.IO.Path.GetPathRoot(Environment.SystemDirectory), "Log", LogFileName);
         public const string LogFileName = "LivesiteAutomation.log";
@@ -49,7 +52,7 @@ namespace LivesiteAutomation
         public const string GetRDFESubscriptionOperationName = "GetSubscriptionWithDetails";
         public const string GetRDFESubscriptionDetailLevel = "Subscription, HostedService, DeploymentBasic";
 
-        // GetVMScreenshot.cs
+        // GetVMConsoleSerial.cs
         public const string GetVMConsoleSerialLogsExtensionName = "CRP";
         public const string GetVMConsoleSerialLogsOperationName = "GetVMConsoleSerialLogs";
 

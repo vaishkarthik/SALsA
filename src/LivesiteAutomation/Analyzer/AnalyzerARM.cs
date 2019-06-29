@@ -42,7 +42,7 @@ namespace LivesiteAutomation
                 {
                     subscriptions = SubscriptionId.ToString(),
                     resourceGroups = id[4],
-                    location = deployment.location,
+                    location = Constants.CRPRegions.Where(x => String.Equals(x, deployment.location, StringComparison.OrdinalIgnoreCase)).FirstOrDefault(),
                     name = deployment.name.Contains("/") ? deployment.name.Split('/')[1] : deployment.name,
                     type = deployment.type.Split('/')[1]
                 };
