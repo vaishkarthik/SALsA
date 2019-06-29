@@ -1,8 +1,16 @@
-﻿using Microsoft.Azure.KeyVault;
+﻿using LivesiteAutomation.Json2Class;
+using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Auth;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Rest;
+using Microsoft.Rest.Azure;
+using Microsoft.WindowsAzure.Security.CredentialsManagement.Client;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +22,8 @@ namespace LivesiteAutomation
         private X509Certificate2 cert = null;
         private StorageCredentials storageCredentials = null;
         private AzureServiceTokenProvider azToken = null;
+        private KeyVaultClient keyVaultClient = null;
+        private ServicePrincipal servicePrincipal = null;
         private static Authentication instance = null;
 
         public X509Certificate2 Cert
@@ -41,6 +51,19 @@ namespace LivesiteAutomation
             }
         }
 
+        public ServicePrincipal ServicePrincipal
+        {
+            get
+            {
+                if (servicePrincipal == null)
+                {
+                    Log.Instance.Information("First time calling servicePrincipal, creating servicePrincipal...");
+                    servicePrincipal = PopulateServicePrincipal();
+                }
+                return servicePrincipal;
+            }
+        }
+
         public static Authentication Instance
         {
             get
@@ -58,6 +81,7 @@ namespace LivesiteAutomation
             try
             {
                 this.azToken = new AzureServiceTokenProvider();
+                this.keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azToken.KeyVaultTokenCallback));
             }
             catch (Exception ex)
             {
@@ -71,9 +95,6 @@ namespace LivesiteAutomation
         {
             try
             {
-                // Creating client to connect with keyVault
-                var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azToken.KeyVaultTokenCallback));
-
                 // Getting secret cert in base64 form
                 SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationCertSecretURI).GetAwaiter().GetResult();
 
@@ -94,21 +115,20 @@ namespace LivesiteAutomation
             }
         }
 
+        private ServicePrincipal PopulateServicePrincipal()
+        {
+
+            SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationServicePrinciaplSecretURI).GetAwaiter().GetResult();
+            return Utility.JsonToObject<ServicePrincipal>(secret.Value);
+
+        }
+
         private StorageCredentials PopulateStorageCredentials()
         {
             try
-            { 
-                var tokenAndFrequency = TokenRenewerAsync(azToken,
-                                                          CancellationToken.None).GetAwaiter().GetResult();
-
-                // Create storage credentials using the initial token, and connect the callback function 
-                // to renew the token just before it expires
-                TokenCredential tokenCredential = new TokenCredential(tokenAndFrequency.Token,
-                                                                        TokenRenewerAsync,
-                                                                        azToken,
-                                                                        tokenAndFrequency.Frequency.Value);
-
-                return new StorageCredentials(tokenCredential);
+            {
+                SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationBlobConnectionStringSecretURI).GetAwaiter().GetResult();
+                return GetStorageCredentials(ParseStringIntoSettings(secret.Value));
             }
             catch (Exception ex)
             {
@@ -118,24 +138,46 @@ namespace LivesiteAutomation
             }
         }
 
-        private static async Task<NewTokenAndFrequency> TokenRenewerAsync(Object state, CancellationToken cancellationToken)
+        // Inspired from : https://msazure.visualstudio.com/One/_git/AAPT-Antares-Websites?path=%2Fsrc%2FHosting%2FAzure%2Ftools%2Fsrc%2FSasHelper%2FSasHelper.cs&version=GBdev
+        private static StorageCredentials GetStorageCredentials(IDictionary<string, string> settings)
         {
-            // Specify the resource ID for requesting Azure AD tokens for Azure Storage.
-            const string StorageResource = "https://storage.azure.com/";
+            string accountName;
+            settings.TryGetValue("AccountName", out accountName);
+            string keyValue;
+            settings.TryGetValue("AccountKey", out keyValue);
+            string keyName;
+            settings.TryGetValue("AccountKeyName", out keyName);
+            string sasToken;
+            settings.TryGetValue("SharedAccessSignature", out sasToken);
+            if (accountName != null && keyValue != null && sasToken == null)
+                return new StorageCredentials(accountName, keyValue, keyName);
+            if (accountName == null && keyValue == null && (keyName == null && sasToken != null))
+                return new StorageCredentials(sasToken);
+            return null;
+        }
 
-            // Use the same token provider to request a new token.
-            var authResult = await ((AzureServiceTokenProvider)state).GetAuthenticationResultAsync(StorageResource);
-
-            // Renew the token 5 minutes before it expires.
-            var next = (authResult.ExpiresOn - DateTimeOffset.UtcNow) - TimeSpan.FromMinutes(5);
-            if (next.Ticks < 0)
+        private static IDictionary<string, string> ParseStringIntoSettings(string connectionString)
+        {
+            IDictionary<string, string> dictionary = new Dictionary<string, string>();
+            string str1 = connectionString;
+            char[] separator1 = new char[1] { ';' };
+            int num = 1;
+            foreach (string str2 in str1.Split(separator1, (StringSplitOptions)num))
             {
-                next = default(TimeSpan);
-                Log.Instance.Verbose("Renewing Storage token...");
+                char[] separator2 = new char[1] { '=' };
+                int count = 2;
+                string[] strArray = str2.Split(separator2, count);
+                if (strArray.Length != 2)
+                {
+                    return null;
+                }
+                if (dictionary.ContainsKey(strArray[0]))
+                {
+                    return null;
+                }
+                dictionary.Add(strArray[0], strArray[1]);
             }
-
-            // Return the new token and the next refresh time.
-            return new NewTokenAndFrequency(authResult.AccessToken, next);
+            return dictionary;
         }
     }
 }

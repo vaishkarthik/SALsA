@@ -156,6 +156,7 @@
     <Compile Include="Json2Class\GenevaOperations.cs" />
     <Compile Include="Json2Class\Incident.cs" />
     <Compile Include="Json2Class\RDFESubscription.cs" />
+    <Compile Include="Json2Class\ServicePrincipal.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

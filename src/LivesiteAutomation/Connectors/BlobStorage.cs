@@ -23,11 +23,12 @@ namespace LivesiteAutomation
         }
 
         // TODO : Refactor to use Templates <T> instead
-        public static Task UploadText(string icm, string blobName, string content)
+        public static Task UploadText(string icm, string blobName, string content, string contentType = "text/plain")
         {
             try
             {
                 CloudBlockBlob blob = GetCloudBlob(icm, blobName);
+                blob.Properties.ContentType = contentType;
                 return blob.UploadTextAsync(content);
             }
             catch (Exception ex)
@@ -37,11 +38,12 @@ namespace LivesiteAutomation
                 return null;
             }
         }
-        public static Task UploadStream(string icm, string blobName, Stream content)
+        public static Task UploadStream(string icm, string blobName, Stream content, string contentType = "application/octet-stream")
         {
             try
             {
                 CloudBlockBlob blob = GetCloudBlob(icm, blobName);
+                blob.Properties.ContentType = contentType;
                 return blob.UploadFromStreamAsync(content);
             }
             catch (Exception ex)
@@ -51,11 +53,12 @@ namespace LivesiteAutomation
                 return null;
             }
         }
-        public static Task UploadBytes(string icm, string blobName, byte[] content)
+        public static Task UploadBytes(string icm, string blobName, byte[] content, string contentType = "application/octet-stream")
         {
             try
             {
                 CloudBlockBlob blob = GetCloudBlob(icm, blobName);
+                blob.Properties.ContentType = contentType;
                 return blob.UploadFromByteArrayAsync(content, 0, content.Length);
             }
             catch (Exception ex)
@@ -65,11 +68,12 @@ namespace LivesiteAutomation
                 return null;
             }
         }
-        public static Task UploadFile(string icm, string blobName, string path)
+        public static Task UploadFile(string icm, string blobName, string path, string contentType = "application/octet-stream")
         {
             try
             {
                 CloudBlockBlob blob = GetCloudBlob(icm, blobName);
+                blob.Properties.ContentType = contentType;
                 return blob.UploadFromFileAsync(path);
             }
             catch (Exception ex)
@@ -139,7 +143,7 @@ namespace LivesiteAutomation
                     SharedAccessExpiryTime = DateTime.UtcNow.AddHours(ExpiryInHours),
                     Permissions = SharedAccessBlobPermissions.Read
                 });
-                return sas;
+                return String.Format("{0}{1}", blob.StorageUri.PrimaryUri.AbsoluteUri, sas);
             }
             catch (Exception ex)
             {

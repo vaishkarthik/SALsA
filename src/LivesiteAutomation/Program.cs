@@ -13,6 +13,7 @@ namespace LivesiteAutomation
             // Initialise singletons;
             _ = Log.Instance;
             _ = Authentication.Instance;
+            _ = Authentication.Instance.StorageCredentials;
 
             var myIcm = new ICM("129901901");
             myIcm.GetICM();

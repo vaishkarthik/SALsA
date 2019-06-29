@@ -78,16 +78,16 @@ namespace LivesiteAutomation
         }
         private static string UrlToHml(string name, string sasToken, int size = 30)
         {
-            return String.Format("<a style=\"font-size: {2}px;\" href=\"{0}\">{1}</a>", name, sasToken, size);
+            return String.Format("<a style=\"font-size: {2}px;\" href=\"{0}\">{1}</a>", sasToken, name, size).Replace("\"", "\\\""); ;
         }
 
         private static void SendSASToICM(string name)
         {
             var sasToken = BlobStorage.GetSASToken(Log.Instance.Icm, name);
             // Since we build our own HTML, we directly call the AddICMDiscussion instead of callign Log.Instance.Online
-            if (!ICM.IncidentMapping[Log.Instance.Icm].AddICMDiscussion(Utility.UrlToHml(name, sasToken), false))
+            if (!ICM.IncidentMapping[Log.Instance.Icm].AddICMDiscussion(Utility.UrlToHml(name, sasToken), false, false))
             {
-                Log.Instance.Error("Failed to add to ICM discussion :  {0} with sasToken {1}", name, sasToken);
+                Log.Instance.Error("Failed to add to ICM discussion : {0} with sasToken {1}", name, sasToken);
             }
         }
         public static async Task SaveAndSendBlobTask(string name, Task<String> task)
@@ -103,7 +103,7 @@ namespace LivesiteAutomation
             using (MemoryStream ms = new MemoryStream())
             {
                 output.Save(ms, ImageFormat.Png);
-                await BlobStorage.UploadStream(Log.Instance.Icm, name, ms);
+                await BlobStorage.UploadBytes(Log.Instance.Icm, name, ms.ToArray(), "image/png");
             }
             SendSASToICM(name);
             Utility.SaveToFile(name, output);
@@ -117,10 +117,10 @@ namespace LivesiteAutomation
         }
         private static string CreateICMFolderInLogDirAndReturnFullPath(string name)
         {
-            var logDir = Path.Combine(Constants.LogDefaultPath, Log.Instance.Icm);
-            if (!File.Exists(Constants.LogDefaultPath))
+            var logDir = Path.Combine(Path.GetDirectoryName(Constants.LogDefaultPath), Log.Instance.Icm);
+            if (!Directory.Exists(logDir))
             {
-                new System.IO.FileInfo(Constants.LogDefaultPath).Directory.Create();
+                Directory.CreateDirectory(logDir);
             }
             return Path.Combine(logDir, name);
         }

@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,9 +22,12 @@ namespace LivesiteAutomation
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
         public static Dictionary<string, ICM> IncidentMapping { get; private set; }
 
-        public bool AddICMDiscussion(string entry, bool repeat = false)
+        public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
         {
-            entry = Utility.EncodeHtml(entry);
+            if (htmlfy)
+            { 
+                entry = Utility.EncodeHtml(entry);
+            }
             if (repeat == false)
             {
                 if (DescriptionEntries == null)

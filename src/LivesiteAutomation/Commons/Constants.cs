@@ -17,9 +17,13 @@ namespace LivesiteAutomation
 
         // Authentication.cs
         public const string AuthenticationCertSecretURI = "https://azvmagent-automation.vault.azure.net/secrets/azurevmguestagentsandextensions-manual/935a9dc4ac9e437d935c0bf26ccfa160";
+        public const string AuthenticationServicePrinciaplSecretURI = "https://azvmagent-automation.vault.azure.net/secrets/SP-Geneva-Automation/527a748977ff49bab1437c0723ce0267";
+        public const string AuthenticationBlobConnectionStringSecretURI = "https://azvmagent-automation.vault.azure.net/secrets/GenevaAutomationConnectionString/7c7bd5d6f9d144599500a4eb9d9ad4fc";
 
         // BlobStorage.cs
-        public const string BlobStorageConnection = "https://genevaautomation.blob.core.windows.net/incidents/";
+        public const string BlobStorageVault = "https://genevaautomation.blob.core.windows.net";
+        public const string BlobStorageAccount = "incidents";
+        public readonly static string BlobStorageConnection = string.Format("{0}/{1}", BlobStorageVault, BlobStorageAccount);
 
         // ICM.cs
         public const string ICMIdentityName = "CN=azurevmguestagentsandextensions-manual.geneva.keyvault.com";
