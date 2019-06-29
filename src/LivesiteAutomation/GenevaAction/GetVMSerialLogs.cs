@@ -11,9 +11,9 @@ namespace LivesiteAutomation
     public partial class GenevaActions
     {
         // TODO : make sovereign cloud available
-        public static Task<String> GetVMSerialLogs(ARMDeployment deployment)
+        public static Task<String> GetVMConsoleSerialLogs(ARMDeployment deployment)
         {
-            var param = new GenevaOperations.GetVMSerialLogs
+            var param = new GenevaOperations.GetVMConsoleSerialLogs
             {
                 smecrpregion = deployment.location,
                 smeresourcegroupnameparameter = deployment.resourceGroups,
@@ -21,9 +21,9 @@ namespace LivesiteAutomation
                 wellknownsubscriptionid = deployment.subscriptions
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
-            var task = new GenevaAction(Constants.GetVMSerialLogsExtensionName, Constants.GetVMSerialLogsOperationName, actionParam).GetOperationFileOutputAsync();
+            var task = new GenevaAction(Constants.GetVMConsoleSerialLogsExtensionName, Constants.GetVMConsoleSerialLogsOperationName, actionParam).GetOperationFileOutputAsync();
 
-            // VMSerialLog contain only one file, compressed in a zip.
+            // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
                 new StreamReader(Utility.ExtractZip(task.Result).Entries.First().Open(), System.Text.Encoding.UTF8).ReadToEnd()
                 ));

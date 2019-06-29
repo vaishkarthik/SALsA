@@ -26,7 +26,7 @@ namespace LivesiteAutomation.Json2Class
             public string smeresourcegroupnameparameter { get; set; }
             public string smevmnameparameter { get; set; }
         }
-        public class GetVMSerialLogs : GetIaaSVMBase { }
+        public class GetVMConsoleSerialLogs : GetIaaSVMBase { }
         public class GetVMConsoleScreenshot : GetIaaSVMBase { }
     }
 }

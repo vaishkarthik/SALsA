@@ -24,7 +24,7 @@ namespace LivesiteAutomation
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
             var task = new GenevaAction(Constants.GetVMScreenshotExtensionName, Constants.GetVMScreenshotOperationName, actionParam).GetOperationFileOutputAsync();
 
-            // VMSerialLog contain only one file, compressed in a zip.
+            // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
                     Image.FromStream(Utility.ExtractZip(task.Result).Entries.First().Open())
                 )) ;
