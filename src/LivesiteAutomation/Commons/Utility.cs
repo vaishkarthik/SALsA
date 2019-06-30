@@ -79,8 +79,7 @@ namespace LivesiteAutomation
         }
         private static string UrlToHml(string name, string sasToken, int size = 30)
         {
-            return String.Format("<a href=\"{0}\" style=\"font-size: {2}px;\" >{1}</a>", sasToken, name, size)
-                .Replace("\"", "\\\"");
+            return String.Format("<a href=\"{0}\" style=\"font-size: {2}px;\" >{1}</a>", sasToken, name, size);
         }
 
         private static void SendSASToICM(string name)
