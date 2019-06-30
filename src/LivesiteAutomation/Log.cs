@@ -135,7 +135,7 @@ namespace LivesiteAutomation
         private void InternalLog(string ss, LogLevel lvl)
         {
 
-            var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm: ss.fffffffZ", CultureInfo.InvariantCulture);
+            var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture);
             string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, Icm, currentTime, lvl, GetCallerMethod(), ss);
             Console.WriteLine(logLine);
             System.Diagnostics.Trace.WriteLine(logLine);

@@ -46,10 +46,8 @@ namespace LivesiteAutomation
             }
             try
             {
-                var body = String.Format(CultureInfo.InvariantCulture, "{{\"Description\":\"{0}\",\"CustomFields\":[],\"Id\":{1}}}", entry, this.ID);
-                var req = BuildRequestWithBody(body, "PATCH", "", Constants.ICMAddDiscussionURL);
-                                
-                HttpWebResponse response = TryGetResponse(req);
+                var body = new Incident.DescriptionPost() { Id = Convert.ToInt32(this.ID), Description = entry };
+                var response = TryGetResponse(Utility.ObjectToJson(body), "PATCH", "", Constants.ICMAddDiscussionURL);
                 Log.Instance.Verbose("Got response for IMC {0}", this.ID);
                 return true;
  
@@ -62,14 +60,15 @@ namespace LivesiteAutomation
             }
         }
 
-        private static HttpWebResponse TryGetResponse(HttpWebRequest req)
+        private WebResponse TryGetResponse(string body, string method, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
         {
             Exception ex = new Exception();
             for (int i = 0; i < Constants.ICMHttpRetryLimit; ++i)
             {
                 try
                 {
-                    return (HttpWebResponse)req.GetResponse();
+                    var req = BuildRequestWithBody(body, "PATCH", suffix, prefix);
+                    return req.GetResponse();
                 }
                 catch (Exception e)
                 {

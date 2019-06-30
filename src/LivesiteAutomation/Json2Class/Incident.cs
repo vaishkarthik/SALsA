@@ -45,6 +45,11 @@ namespace LivesiteAutomation
             public DateTime SubmitDate;
             public string Text;
         }
+        public class DescriptionPost
+        {
+            public string Description;
+            public int Id;
+        }
 
         public class IncidentAcknowledgementData
         {

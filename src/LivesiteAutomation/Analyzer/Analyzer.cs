@@ -60,6 +60,19 @@ namespace LivesiteAutomation
 
         }
 
+        public void Wait()
+        {
+            try
+            {
+                task.GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Error("Failed to wait for internal task");
+                Log.Instance.Exception(ex);
+            }
+        }
+
         private (ComputeType type, object dep) DetectVMType(ARMSubscription arm, RDFESubscription rdfe)
         {
             ARMDeployment[] deps = arm.deployments.Where(x =>
@@ -92,17 +105,13 @@ namespace LivesiteAutomation
             {
                 case Constants.AnalyzerARMDeploymentIaaSType:
                     return (ComputeType.IaaS, dep);
-                    break;
                 case Constants.AnalyzerARMDeploymentVMSSType:
                     return (ComputeType.VMSS, dep);
-                    break;
                 case Constants.AnalyzerARMDeploymentPaaSType:
                     // TODO
                     //return (ComputeType.PaaS, paasDeps.First());
-                    break;
                 default:
                     return (ComputeType.Unknown, null);
-                    break;
             }
             throw new NotSupportedException();
         }
