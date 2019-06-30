@@ -20,7 +20,7 @@ namespace LivesiteAutomation
             var analyzer =  new Analyzer(ref myIcm);
             myIcm.GetICMDiscussion();
             myIcm.AddICMDiscussion("Jedi : Hello from SALsA");
-            analyzer.task.Wait();
+            analyzer.Wait();
         }
     }
 }

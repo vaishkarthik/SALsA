@@ -11,6 +11,7 @@ using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Security.CredentialsManagement.Client;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -80,6 +81,7 @@ namespace LivesiteAutomation
         {
             try
             {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 this.azToken = new AzureServiceTokenProvider();
                 this.keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azToken.KeyVaultTokenCallback));
             }

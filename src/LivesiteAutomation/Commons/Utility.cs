@@ -135,10 +135,13 @@ namespace LivesiteAutomation
         }
         private static void SaveToFile(string name, Stream output)
         {
+            SaveToFile(name, StreamToBytes(output));
+        }
+        private static void SaveToFile(string name, byte[] output)
+        {
             using (var fileStream = File.Create(CreateICMFolderInLogDirAndReturnFullPath(name)))
             {
-                output.Seek(0, SeekOrigin.Begin);
-                output.CopyTo(fileStream);
+                fileStream.Write(output, 0, output.Length);
             }
         }
         public static byte[] StreamToBytes(Stream input)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Rest;
+﻿using LivesiteAutomation.Commons;
+using Microsoft.Rest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -8,6 +9,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Text;
@@ -23,7 +26,7 @@ namespace LivesiteAutomation
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
         public static Dictionary<int, ICM> IncidentMapping { get; private set; }
 
-        public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
+        public bool AddICMDiscussion(string entry, bool repeat = true, bool htmlfy = true)
         {
             if (htmlfy)
             { 
@@ -47,7 +50,10 @@ namespace LivesiteAutomation
             try
             {
                 var body = new Incident.DescriptionPost() { Id = Convert.ToInt32(this.Id), Description = entry };
-                var response = TryGetResponse(this.Id, Utility.ObjectToJson(body), "PATCH", "", Constants.ICMAddDiscussionURL);
+
+                var req = BuildHttpClient(this.Id, "", Constants.ICMAddDiscussionURL);
+                var response = req.PatchAsync("", new StringContent(Utility.ObjectToJson(body))).Result;
+
                 Log.Instance.Verbose("Got response for IMC {0}", this.Id);
                 return true;
  
@@ -58,26 +64,6 @@ namespace LivesiteAutomation
                 Log.Instance.Exception(ex);
                 return false;
             }
-        }
-
-        internal static WebResponse TryGetResponse(int id, string body, string method, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
-        {
-            Exception ex = new Exception();
-            for (int i = 0; i < Constants.ICMHttpRetryLimit; ++i)
-            {
-                try
-                {
-                    var req = BuildRequestWithBody(id, body, "PATCH", suffix, prefix);
-                    return req.GetResponse();
-                }
-                catch (Exception e)
-                {
-                    ex = e;
-                    Log.Instance.Error("Failed http request, retrying in {1}sec... Reason : {0}", e.Message, (int)Math.Pow(2, i));
-                    Thread.Sleep((int)Math.Pow(2, i) * 1000);
-                }
-            }
-            throw ex;
         }
 
         public ICM(string icmId)
@@ -98,8 +84,8 @@ namespace LivesiteAutomation
         {
             try
             {
-                var req = BuildGetRequest(this.Id);
-                HttpWebResponse response = (HttpWebResponse)req.GetResponse();
+                var req = BuildHttpClient(this.Id);
+                var response = req.GetAsync("").Result;
                 Log.Instance.Verbose("Got response for IMC {0}", this.Id);
 
                 CurrentICM = Utility.JsonToObject<Incident>(ReadResponseBody(response));
@@ -118,8 +104,8 @@ namespace LivesiteAutomation
             try
             {
                 var body = new Incident.Transfer(owningTeam);
-                var req = BuildRequestWithBody(this.Id, Utility.ObjectToJson(body), "POST", Constants.ICMTrnasferIncidentSuffix);
-                HttpWebResponse response = (HttpWebResponse)req.GetResponse();
+                var req = BuildHttpClient(this.Id, Constants.ICMTrnasferIncidentSuffix);
+                var response = req.PostAsync("", new StringContent(Utility.ObjectToJson(body))).Result;
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return true;
@@ -143,8 +129,8 @@ namespace LivesiteAutomation
         {
             try
             {
-                var req = BuildGetRequest(this.Id, Constants.ICMDescriptionEntriesSuffix);
-                var response = (HttpWebResponse)req.GetResponse();
+                var req = BuildHttpClient(this.Id, Constants.ICMDescriptionEntriesSuffix);
+                var response = req.GetAsync("").Result;
                 Dictionary<string, object> de = Utility.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
 
                 DescriptionEntries = ((JArray)de["value"]).Select(x => new Incident.DescriptionEntry
@@ -164,35 +150,28 @@ namespace LivesiteAutomation
             }
         }
 
-        private static HttpWebRequest BuildGetRequest(int id, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
+        private static Uri BuildUri(int id, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
         {
-            var fullurl = String.Format("{0}({1}){2}", prefix, id, suffix);
-            var request = (HttpWebRequest)WebRequest.Create(fullurl);
-            request.ClientCertificates.Add(Authentication.Instance.Cert);
-            request.Proxy = new WebProxy("127.0.0.1", 8080);
-            return request;
+            return new Uri(String.Format("{0}({1}){2}", prefix, id, suffix));
         }
 
-        private static HttpWebRequest BuildRequestWithBody(int id, string body, string method, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
+        internal static HttpClient BuildHttpClient(int id, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
         {
-            var request = BuildGetRequest(id, suffix, prefix);
-            request.Method = method;
-            var bArr = Encoding.Default.GetBytes(body);
-            request.ContentLength = bArr.Length;
-            request.ContentType = "application/json";
-            Stream dataStream = request.GetRequestStream();
-            dataStream.Write(bArr, 0, bArr.Length);
-            dataStream.Close();
-            return request;
+            var handler = new HttpClientHandler();
+            handler.ClientCertificates.Add(Authentication.Instance.Cert);
+            handler.PreAuthenticate = true;
+            handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+
+            HttpClient client = new HttpClient(handler);
+            client.BaseAddress = BuildUri(id, suffix, prefix);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            return client;
         }
 
-        private string ReadResponseBody(HttpWebResponse response)
+        private string ReadResponseBody(HttpResponseMessage response)
         {
-            using (var reader = new StreamReader(response.GetResponseStream()))
-            {
-                string result = reader.ReadToEnd();
-                return result;
-            }
+            return response.Content.ReadAsStringAsync().Result;
         }
     }
 }
