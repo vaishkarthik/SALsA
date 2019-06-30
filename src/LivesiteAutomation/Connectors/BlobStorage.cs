@@ -16,14 +16,14 @@ namespace LivesiteAutomation
         {
         }
 
-        private static CloudBlockBlob GetCloudBlob(string icm, string blobName)
+        private static CloudBlockBlob GetCloudBlob(int icm, string blobName)
         {
-            return new CloudBlockBlob(new Uri(Constants.BlobStorageConnection + "/" + icm + "/" + blobName),
+            return new CloudBlockBlob(new Uri(String.Format("{0}/{1}/{2}", Constants.BlobStorageConnection, icm, blobName)),
                                                             Authentication.Instance.StorageCredentials);
         }
 
         // TODO : Refactor to use Templates <T> instead
-        public static Task UploadText(string icm, string blobName, string content, string contentType = "text/plain")
+        public static Task UploadText(int icm, string blobName, string content, string contentType = "text/plain")
         {
             try
             {
@@ -38,11 +38,11 @@ namespace LivesiteAutomation
                 return null;
             }
         }
-        public static Task UploadStream(string icm, string blobName, Stream content, string contentType = "application/octet-stream")
+        public static Task UploadStream(int icm, string blobName, Stream content, string contentType = "application/octet-stream")
         {
             return UploadBytes(icm, blobName, Utility.StreamToBytes(content), contentType);
         }
-        public static Task UploadBytes(string icm, string blobName, byte[] content, string contentType = "application/octet-stream")
+        public static Task UploadBytes(int icm, string blobName, byte[] content, string contentType = "application/octet-stream")
         {
             try
             {
@@ -57,7 +57,7 @@ namespace LivesiteAutomation
                 return null;
             }
         }
-        public static Task UploadFile(string icm, string blobName, string path, string contentType = "application/octet-stream")
+        public static Task UploadFile(int icm, string blobName, string path, string contentType = "application/octet-stream")
         {
             try
             {
@@ -73,7 +73,7 @@ namespace LivesiteAutomation
             }
         }
 
-        public static string DownloadBlobAsText(string icm, string blobName)
+        public static string DownloadBlobAsText(int icm, string blobName)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace LivesiteAutomation
                 return null;
             }
         }
-        public static Task DownloadBlobToFile(string icm, string blobName, string path)
+        public static Task DownloadBlobToFile(int icm, string blobName, string path)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace LivesiteAutomation
                 return null;
             }
         }
-        public static Task DownloadBlobToStream(string icm, string blobName, Stream stream)
+        public static Task DownloadBlobToStream(int icm, string blobName, Stream stream)
         {
             try
             {
@@ -116,7 +116,7 @@ namespace LivesiteAutomation
             }
         }
 
-        public static string GetSASToken(string icm, string blobName, int ExpiryInHours = 7 * 24, Task blobTask = null)
+        public static string GetSASToken(int icm, string blobName, int ExpiryInHours = 7 * 24, Task blobTask = null)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace LivesiteAutomation
             }
         }
 
-        public static bool BlobExist(string icm, string blobName)
+        public static bool BlobExist(int icm, string blobName)
         {
             try
             {

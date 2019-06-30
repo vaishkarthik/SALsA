@@ -18,10 +18,10 @@ namespace LivesiteAutomation
 {
     public class ICM
     {
-        private readonly string ID;
+        private readonly int Id;
         public Incident CurrentICM { get; private set; }
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
-        public static Dictionary<string, ICM> IncidentMapping { get; private set; }
+        public static Dictionary<int, ICM> IncidentMapping { get; private set; }
 
         public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
         {
@@ -39,35 +39,35 @@ namespace LivesiteAutomation
                 {
                     if(de.SubmittedBy == Constants.ICMIdentityName && Utility.DecodeHtml(de.Text).CompareTo(Utility.DecodeHtml(entry)) == 0)
                     {
-                        Log.Instance.Verbose("Did not add entry to ICM since already sent", this.ID);
+                        Log.Instance.Verbose("Did not add entry to ICM since already sent", this.Id);
                         return false;
                     }
                 }
             }
             try
             {
-                var body = new Incident.DescriptionPost() { Id = Convert.ToInt32(this.ID), Description = entry };
-                var response = TryGetResponse(Utility.ObjectToJson(body), "PATCH", "", Constants.ICMAddDiscussionURL);
-                Log.Instance.Verbose("Got response for IMC {0}", this.ID);
+                var body = new Incident.DescriptionPost() { Id = Convert.ToInt32(this.Id), Description = entry };
+                var response = TryGetResponse(this.Id, Utility.ObjectToJson(body), "PATCH", "", Constants.ICMAddDiscussionURL);
+                Log.Instance.Verbose("Got response for IMC {0}", this.Id);
                 return true;
  
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to add discussion element to ICM {0}", this.ID);
+                Log.Instance.Error("Failed to add discussion element to ICM {0}", this.Id);
                 Log.Instance.Exception(ex);
                 return false;
             }
         }
 
-        private WebResponse TryGetResponse(string body, string method, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
+        internal static WebResponse TryGetResponse(int id, string body, string method, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
         {
             Exception ex = new Exception();
             for (int i = 0; i < Constants.ICMHttpRetryLimit; ++i)
             {
                 try
                 {
-                    var req = BuildRequestWithBody(body, "PATCH", suffix, prefix);
+                    var req = BuildRequestWithBody(id, body, "PATCH", suffix, prefix);
                     return req.GetResponse();
                 }
                 catch (Exception e)
@@ -82,25 +82,32 @@ namespace LivesiteAutomation
 
         public ICM(string icmId)
         {
-            this.ID = icmId;
-            Log.Instance.Icm = this.ID;
-            IncidentMapping = new Dictionary<string, ICM>() { { icmId, this } };
+            this.Id = Convert.ToInt32(icmId);
+            Log.Instance.Icm = this.Id;
+            IncidentMapping = new Dictionary<int, ICM>() { { this.Id, this } };
+        }
+
+        public ICM(int icmId)
+        {
+            this.Id = icmId;
+            Log.Instance.Icm = this.Id;
+            IncidentMapping = new Dictionary<int, ICM>() { { this.Id, this } };
         }
 
         public ICM GetICM()
         {
             try
             {
-                var req = BuildGetRequest();
+                var req = BuildGetRequest(this.Id);
                 HttpWebResponse response = (HttpWebResponse)req.GetResponse();
-                Log.Instance.Verbose("Got response for IMC {0}", this.ID);
+                Log.Instance.Verbose("Got response for IMC {0}", this.Id);
 
                 CurrentICM = Utility.JsonToObject<Incident>(ReadResponseBody(response));
                 Log.Instance.Verbose(CurrentICM);
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to get ICM {0}", this.ID);
+                Log.Instance.Error("Failed to get ICM {0}", this.Id);
                 Log.Instance.Exception(ex);
             }
             return this;
@@ -111,7 +118,7 @@ namespace LivesiteAutomation
             try
             {
                 var body = new Incident.Transfer(owningTeam);
-                var req = BuildRequestWithBody(Utility.ObjectToJson(body), "POST", Constants.ICMTrnasferIncidentSuffix);
+                var req = BuildRequestWithBody(this.Id, Utility.ObjectToJson(body), "POST", Constants.ICMTrnasferIncidentSuffix);
                 HttpWebResponse response = (HttpWebResponse)req.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -119,14 +126,14 @@ namespace LivesiteAutomation
                 }
                 else
                 {
-                    Log.Instance.Error("ICM <{0}> transfer action returned status code {1}", ID, response.StatusCode);
+                    Log.Instance.Error("ICM <{0}> transfer action returned status code {1}", Id, response.StatusCode);
                     Log.Instance.Error(ReadResponseBody(response));
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to transfer ICM {0}", ID);
+                Log.Instance.Error("Failed to transfer ICM {0}", Id);
                 Log.Instance.Exception(ex);
                 return false;
             }
@@ -136,7 +143,7 @@ namespace LivesiteAutomation
         {
             try
             {
-                var req = BuildGetRequest(Constants.ICMDescriptionEntriesSuffix);
+                var req = BuildGetRequest(this.Id, Constants.ICMDescriptionEntriesSuffix);
                 var response = (HttpWebResponse)req.GetResponse();
                 Dictionary<string, object> de = Utility.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
 
@@ -152,22 +159,23 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to get discussion entries for ICM {0}", ID);
+                Log.Instance.Error("Failed to get discussion entries for ICM {0}", Id);
                 Log.Instance.Exception(ex);
             }
         }
 
-        private HttpWebRequest BuildGetRequest(string suffix = "", string prefix = Constants.ICMGetIncidentURL)
+        private static HttpWebRequest BuildGetRequest(int id, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
         {
-            var fullurl = String.Format("{0}({1}){2}", prefix, ID, suffix);
-            var request = (HttpWebRequest)HttpWebRequest.Create(fullurl);
+            var fullurl = String.Format("{0}({1}){2}", prefix, id, suffix);
+            var request = (HttpWebRequest)WebRequest.Create(fullurl);
             request.ClientCertificates.Add(Authentication.Instance.Cert);
+            request.Proxy = new WebProxy("127.0.0.1", 8080);
             return request;
         }
 
-        private HttpWebRequest BuildRequestWithBody(string body, string method, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
+        private static HttpWebRequest BuildRequestWithBody(int id, string body, string method, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
         {
-            var request = BuildGetRequest(suffix, prefix);
+            var request = BuildGetRequest(id, suffix, prefix);
             request.Method = method;
             var bArr = Encoding.Default.GetBytes(body);
             request.ContentLength = bArr.Length;

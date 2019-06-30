@@ -118,7 +118,7 @@ namespace LivesiteAutomation
         }
         private static string CreateICMFolderInLogDirAndReturnFullPath(string name)
         {
-            var logDir = Path.Combine(Path.GetDirectoryName(Constants.LogDefaultPath), Log.Instance.Icm);
+            var logDir = Path.Combine(Path.GetDirectoryName(Constants.LogDefaultPath), Convert.ToString(Log.Instance.Icm));
             if (!Directory.Exists(logDir))
             {
                 Directory.CreateDirectory(logDir);

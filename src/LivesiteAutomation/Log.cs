@@ -15,7 +15,7 @@ namespace LivesiteAutomation
     public sealed class Log
     {
 
-        public string Icm { get; set; } = "N/A";
+        public int Icm { get; set; } = -1;
         private string UID;
         private StreamWriter sw = null;
         private Log()
