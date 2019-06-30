@@ -47,8 +47,19 @@ namespace LivesiteAutomation
         }
         public class DescriptionPost
         {
-            public string Description;
-            public int Id;
+            public class NewDescriptionEntryClass
+            { 
+                public string Text;
+                public string RenderType;
+            }
+
+            public NewDescriptionEntryClass NewDescriptionEntry;
+            public DescriptionPost(string entry, string renderType = "Html")
+            {
+                NewDescriptionEntry = new NewDescriptionEntryClass();
+                NewDescriptionEntry.Text = entry;
+                NewDescriptionEntry.RenderType = renderType;
+            }
         }
 
         public class IncidentAcknowledgementData

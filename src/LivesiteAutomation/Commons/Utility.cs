@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -91,6 +92,15 @@ namespace LivesiteAutomation
                 Log.Instance.Error("Failed to add to ICM discussion : {0} with sasToken {1}", name, sasToken);
             }
         }
+
+        internal static void CheckStatusCode(HttpResponseMessage response)
+        {
+            if(!response.IsSuccessStatusCode)
+            { 
+                throw new Exception(response.ToString());
+            }
+        }
+
         public static async Task SaveAndSendBlobTask(string name, Task<String> task)
         {
             var output = await task; 

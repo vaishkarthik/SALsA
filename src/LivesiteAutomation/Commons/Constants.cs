@@ -31,7 +31,6 @@ namespace LivesiteAutomation
         public const string ICMTrnasferIncidentSuffix = "/TransferIncident";
         public const string ICMDescriptionEntriesSuffix = "/DescriptionEntries?$inlinecount=allpages";
         public const string ICMAddDiscussionURL = "https://icm.ad.msft.net/api2/incidentapi/incidents";
-        public const int ICMHttpRetryLimit = 5;
 
         // Analyser.cs
         public const string AnalyzerSubscriptionIdField = "subscription";

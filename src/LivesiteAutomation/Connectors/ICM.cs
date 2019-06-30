@@ -26,7 +26,7 @@ namespace LivesiteAutomation
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
         public static Dictionary<int, ICM> IncidentMapping { get; private set; }
 
-        public bool AddICMDiscussion(string entry, bool repeat = true, bool htmlfy = true)
+        public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
         {
             if (htmlfy)
             { 
@@ -49,11 +49,12 @@ namespace LivesiteAutomation
             }
             try
             {
-                var body = new Incident.DescriptionPost() { Id = Convert.ToInt32(this.Id), Description = entry };
-
-                var req = BuildHttpClient(this.Id, "", Constants.ICMAddDiscussionURL);
-                var response = req.PatchAsync("", new StringContent(Utility.ObjectToJson(body))).Result;
-
+                var req = BuildHttpClient(this.Id, "", Constants.ICMGetIncidentURL);
+                var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(entry)));
+                body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = req.PatchAsync("", body).Result;
+                // TODO : Handle non 200 and display error
+                var reason = response.Content.ReadAsStringAsync().Result;
                 Log.Instance.Verbose("Got response for IMC {0}", this.Id);
                 return true;
  
@@ -86,6 +87,7 @@ namespace LivesiteAutomation
             {
                 var req = BuildHttpClient(this.Id);
                 var response = req.GetAsync("").Result;
+                Utility.CheckStatusCode(response);
                 Log.Instance.Verbose("Got response for IMC {0}", this.Id);
 
                 CurrentICM = Utility.JsonToObject<Incident>(ReadResponseBody(response));
@@ -103,10 +105,11 @@ namespace LivesiteAutomation
         {
             try
             {
-                var body = new Incident.Transfer(owningTeam);
+                var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(owningTeam)));
+                body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 var req = BuildHttpClient(this.Id, Constants.ICMTrnasferIncidentSuffix);
-                var response = req.PostAsync("", new StringContent(Utility.ObjectToJson(body))).Result;
-                if (response.StatusCode == HttpStatusCode.OK)
+                var response = req.PostAsync("", body).Result;
+                if (response.IsSuccessStatusCode)
                 {
                     return true;
                 }
@@ -165,7 +168,6 @@ namespace LivesiteAutomation
             HttpClient client = new HttpClient(handler);
             client.BaseAddress = BuildUri(id, suffix, prefix);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
             return client;
         }
 
