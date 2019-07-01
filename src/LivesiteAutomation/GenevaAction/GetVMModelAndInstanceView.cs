@@ -20,6 +20,15 @@ namespace LivesiteAutomation
             return Utility.Beautify(Utility.JsonToObject<dynamic>(String.Format("{{\"VM Model\":{0},\"VM InstanceView\":{1}}}", model, instanceview)));
         }
 
+        // TODO : make sovereign cloud available
+        public static async Task<string> GetVMModelAndInstanceView(ARMDeployment deployment, int id)
+        {
+            var model = await GetVMView(deployment, Constants.GetVMInfoOptionsVMSS[0], id);
+            var instanceview = await GetVMView(deployment, Constants.GetVMInfoOptionsVMSS[1], id);
+
+            return Utility.Beautify(Utility.JsonToObject<dynamic>(String.Format("{{\"VM Model\":{0},\"VM InstanceView\":{1}}}", model, instanceview)));
+        }
+
         public static Task<string> GetVMView(ARMDeployment deployment, string option)
         {
             var param = new GenevaOperations.GetVMModelAndInstanceView
@@ -32,6 +41,24 @@ namespace LivesiteAutomation
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
             var task = new GenevaAction(Constants.GetVMInfoExtensionName, Constants.GetVMInfoOperationName, actionParam).GetOperationResultOutputAsync();
+
+            return Task.Run(() => (
+                    task.Result
+                ));
+        }
+        public static Task<string> GetVMView(ARMDeployment deployment, string option, int id)
+        {
+            var param = new GenevaOperations.GetVMModelAndInstanceViewVMSS
+            {
+                smecrpregion = deployment.location,
+                smeresourcegroupnameparameter = deployment.resourceGroups,
+                smevirtualmachinescalesetnameparameter = deployment.name,
+                wellknownsubscriptionid = deployment.subscriptions,
+                smegetvmscalesetvmoptionparameter = option,
+                smevirtualmachinescalesetvminstanceidparameter = id
+            };
+            var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
+            var task = new GenevaAction(Constants.GetVMInfoExtensionName, Constants.GetVMSSInfoOperationName, actionParam).GetOperationResultOutputAsync();
 
             return Task.Run(() => (
                     task.Result

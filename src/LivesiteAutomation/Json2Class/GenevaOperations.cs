@@ -43,6 +43,38 @@ namespace LivesiteAutomation.Json2Class
             public string smeskiptostep { get; set; }
             public int smetimeoutinmins { get; set; }
         }
-        
+
+        public class GetIaaSVMBaseVMSS
+        {
+            public string smecrpregion { get; set; }
+            public string smeresourcegroupnameparameter { get; set; }
+            public string smevirtualmachinescalesetnameparameter { get; set; }
+            public string wellknownsubscriptionid { get; set; }
+            public int smevirtualmachinescalesetvminstanceidparameter { get; set; }
+        }
+        public class GetVMConsoleSerialLogsVMSS : GetIaaSVMBaseVMSS { }
+        public class GetVMConsoleScreenshotVMSS : GetIaaSVMBaseVMSS { }
+
+        public class InspectIaaSDiskForARMVMVMSS
+        {
+            public string smecrpregion { get; set; }
+            public string smeresourcegroupname { get; set; }
+            public string smevmssname { get; set; }
+            public string wellknownsubscriptionid { get; set; }
+            public string smelogextractmode { get; set; }
+            public string smeskiptostep { get; set; }
+            public int smetimeoutinmins { get; set; }
+            public int smevmssinstanceid { get; set; }
+        }
+
+        public class GetVMModelAndInstanceViewVMSS
+        {
+            public string smecrpregion { get; set; }
+            public string smeresourcegroupnameparameter { get; set; }
+            public string smevirtualmachinescalesetnameparameter { get; set; }
+            public string wellknownsubscriptionid { get; set; }
+            public string smegetvmscalesetvmoptionparameter { get; set; }
+            public int smevirtualmachinescalesetvminstanceidparameter { get; set; }
+        }
     }
 }

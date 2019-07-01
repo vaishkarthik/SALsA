@@ -31,5 +31,27 @@ namespace LivesiteAutomation
                 task.Result
                 ));
         }
+        // TODO : make sovereign cloud available
+        public static Task<Stream> InspectIaaSDiskForARMVM(ARMDeployment deployment, int id)
+        {
+            var param = new GenevaOperations.InspectIaaSDiskForARMVMVMSS
+            {
+                smecrpregion = deployment.location,
+                smeresourcegroupname = deployment.resourceGroups,
+                smevmssname = deployment.name,
+                wellknownsubscriptionid = deployment.subscriptions,
+                smelogextractmode = Constants.InspectIaaSDiskForARMVMMode,
+                smeskiptostep = Constants.InspectIaaSDiskForARMVMStep,
+                smetimeoutinmins = Constants.InspectIaaSDiskForARMVMTimeout,
+                smevmssinstanceid = id
+            };
+            var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
+            var task = new GenevaAction(Constants.InspectIaaSDiskForARMVMExtensionName, Constants.InspectIaaSDiskForARMVMSSOperationName, actionParam).GetOperationFileOutputAsync();
+
+            // VMConsoleSerialLog contain only one file, compressed in a zip.
+            return Task.Run(() => (
+                task.Result
+                ));
+        }
     }
 }

@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace LivesiteAutomation
             (SubscriptionId, ResourceGroupName, VMName, StartTime) = AnalyzeICM(icm);
             Log.Instance.Send("{0}", Utility.ObjectToJson(this, true));
 
+            // TODO analyse ARM and REDFE in parallel
             var arm  = AnalyzeARMSubscription(SubscriptionId);
             var rdfe = AnalyzeRDFESubscription(SubscriptionId);
 
@@ -53,8 +55,13 @@ namespace LivesiteAutomation
         }
         private async Task ExecuteAllActionsForVMSS(ARMDeployment dep)
         {
-
+            int instanceId = TryConvertInstanceNameToInstanceId(this.VMName);
+            await Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(dep, instanceId));
+            await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(dep, instanceId));
+            await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(dep, instanceId));
+            await Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(dep, instanceId));
         }
+
         private async Task ExecuteAllActionsForPaaS(RDFEDeployment dep)
         {
 
@@ -78,6 +85,7 @@ namespace LivesiteAutomation
             ARMDeployment[] deps = arm.deployments.Where(x =>
                     x.name.Contains(this.VMName) || this.VMName.Contains(x.name)
                 ).ToArray();
+            string VMName = TryConvertInstanceNameToVMName(this.VMName);
             if (deps.Length > 1)
             {
                 deps = deps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
@@ -114,6 +122,30 @@ namespace LivesiteAutomation
                     return (ComputeType.Unknown, null);
             }
             throw new NotSupportedException();
+        }
+
+        private string TryConvertInstanceNameToVMName(string VMName)
+        {
+            try
+            {
+                return Regex.Match(this.VMName, @"_?([a-z][a-z0-9\-]+)_[0-9]+", RegexOptions.IgnoreCase).Groups[1].Value;
+            }
+            catch
+            {
+                return VMName;
+            }
+        }
+
+        private int TryConvertInstanceNameToInstanceId(string vMName)
+        {
+            try
+            {
+                return Convert.ToInt32(Regex.Match(this.VMName, @"_?[a-z][a-z0-9\-]+_([0-9])+", RegexOptions.IgnoreCase).Groups[1].Value);
+            }
+            catch
+            {
+                return 0;
+            }
         }
     }
 }

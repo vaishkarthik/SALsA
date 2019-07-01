@@ -59,19 +59,24 @@ namespace LivesiteAutomation
         // GetVMConsoleSerial.cs
         public const string GetVMConsoleSerialLogsExtensionName = "CRP";
         public const string GetVMConsoleSerialLogsOperationName = "GetVMConsoleSerialLogs";
+        public const string GetVMSSConsoleSerialLogsOperationName = "GetVMScaleSetVMConsoleSerialLogs";
 
         // GetVMConsoleScreenshot.cs
         public const string GetVMConsoleScreenshotExtensionName = "CRP";
         public const string GetVMConsoleScreenshotOperationName = "GetVMConsoleScreenshot";
+        public const string GetVMSSConsoleScreenshotOperationName = "GetVMScaleSetVMConsoleScreenshot";
 
         // GetVMModelAndInstanceView.cs
         public const string GetVMInfoExtensionName = "CRP";
         public const string GetVMInfoOperationName = "GetVM";
+        public const string GetVMSSInfoOperationName = "GetVMScaleSetVM";
         public readonly static string[] GetVMInfoOptions = { "VM model", "VM InstanceView" };
+        public readonly static string[] GetVMInfoOptionsVMSS = { "Model", "InstanceView" };
 
         // InspectIaaSDiskForARMVM.cs
         public const string InspectIaaSDiskForARMVMExtensionName = "AzLinux";
         public const string InspectIaaSDiskForARMVMOperationName = "InspectIaaSDiskForARMVMEx";
+        public const string InspectIaaSDiskForARMVMSSOperationName = "InspectIaaSDiskForARMVmssVMEx";
         public const string InspectIaaSDiskForARMVMMode = "Diagnostic";
         public const string InspectIaaSDiskForARMVMStep = "0";
         public const int InspectIaaSDiskForARMVMTimeout = 0;

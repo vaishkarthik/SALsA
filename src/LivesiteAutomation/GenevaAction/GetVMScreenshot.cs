@@ -29,5 +29,25 @@ namespace LivesiteAutomation
                     Image.FromStream(Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First().Open())
                 )) ;
         }
+        // TODO : make sovereign cloud available
+        public static Task<Image> GetVMConsoleScreenshot(ARMDeployment deployment, int id)
+        {
+            var param = new GenevaOperations.GetVMConsoleScreenshotVMSS
+            {
+                smecrpregion = deployment.location,
+                smeresourcegroupnameparameter = deployment.resourceGroups,
+                smevirtualmachinescalesetnameparameter = deployment.name,
+                wellknownsubscriptionid = deployment.subscriptions,
+                smevirtualmachinescalesetvminstanceidparameter = id
+
+            };
+            var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
+            var task = new GenevaAction(Constants.GetVMConsoleScreenshotExtensionName, Constants.GetVMSSConsoleScreenshotOperationName, actionParam).GetOperationFileOutputAsync();
+
+            // VMConsoleSerialLog contain only one file, compressed in a zip.
+            return Task.Run(() => (
+                    Image.FromStream(Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First().Open())
+                ));
+        }
     }
 }

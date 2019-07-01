@@ -18,7 +18,7 @@ namespace LivesiteAutomation.Json2Class
         // Pseudo unique class attribute so we can search it later
         public override int GetHashCode()
         {
-            return (subscriptions + resourceGroups + location).GetHashCode();
+            return (subscriptions + resourceGroups + location + type).GetHashCode();
         }
     }
     class ARMSubscriptionRaw
