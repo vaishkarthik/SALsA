@@ -16,10 +16,10 @@ namespace LivesiteAutomation
             _ = Authentication.Instance;
             _ = Authentication.Instance.StorageCredentials;
 
-            var myIcm = new ICM("130631034");
+            var myIcm = new ICM("130756140");
             myIcm.GetICM();
             var analyzer =  new Analyzer(ref myIcm);
-            myIcm.AddICMDiscussion("Random Guid : " + Guid.NewGuid());
+            //myIcm.AddICMDiscussion("SALSAid: " + Log.Instance.UID);
             analyzer.Wait();
         }
     }

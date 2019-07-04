@@ -1,11 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace LivesiteAutomation.Json2Class
 {
+
+    class RDFERoleInstance
+    {
+        public string RoleInstanceName { get; set; }
+        public string RoleState { get; set; }
+        public string RoleStateDetails { get; set; }
+        public string InstanceStatus { get; set; }
+        public string InstanceErrorCode { get; set; }
+        public string HostName { get; set; }
+        public IPAddress IpAddress { get; set; }
+        public string PowerState { get; set; }
+        public bool IsAlerted { get; set; }
+        public string BillingContext { get; set; }
+        public int UpdateDomain { get; set; }
+        public string LastRoleStartResult { get; set; }
+        public DateTime LastRoleStartUtcTime { get; set; }
+        public DateTime LastRoleAbortUtcTime { get; set; }
+        public int CountOfRoleAborts { get; set; }
+        public int CountOfRoleAbortsInTimeWindow { get; set; }
+        public int CountOfStartRoleFailures { get; set; }
+        public int CountOfSuccessfulStartRoles { get; set; }
+        public int LastStartRoleFailureErrorCode { get; set; }
+        public DateTime LastStartRoleFailureUtcTime { get; set; }
+        public DateTime LastSuccessfulStartRoleUtcTime { get; set; }
+        public int LogicalFaultDomain { get; set; }
+        public int PhysicalFaultDomain { get; set; }
+        public Guid VMID { get; set; }
+        public Guid ID { get; set; }
+        public string Size { get; set; }
+        public int NumProcessors { get; set; }
+        public int MemoryInMBs { get; set; }
+        public string OS { get; set; }
+        public string VirtualMachineWorkflowStep { get; set; }
+        public string LastVMStartResult { get; set; }
+        public int LastVMStartFailureErrorCode { get; set; }
+        public string LastVMStartFailureFabricOperation { get; set; }
+        public DateTime LastVMStartFailureTime { get; set; }
+    }
+
     class RDFEDeployment
     {
         public DateTime LastRefreshTime { get; set; }
@@ -41,7 +81,8 @@ namespace LivesiteAutomation.Json2Class
         public string CurrentGuestAgentFamily { get; set; }
         public string PinnedGuestAgentFamily { get; set; }
         public string PinnedGuestAgentRelease { get; set; }
-    }
+        public List<RDFERoleInstance> RoleInstances {get; set;}
+}
 
     class RDFESubscription
     {

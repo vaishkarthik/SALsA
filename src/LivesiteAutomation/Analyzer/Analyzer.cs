@@ -82,30 +82,30 @@ namespace LivesiteAutomation
 
         private (ComputeType type, object dep) DetectVMType(ARMSubscription arm, RDFESubscription rdfe)
         {
-            ARMDeployment[] deps = arm.deployments.Where(x =>
+            ARMDeployment[] ardDeps = arm.deployments.Where(x =>
                     x.name.Contains(this.VMName) || this.VMName.Contains(x.name)
                 ).ToArray();
             string VMName = TryConvertInstanceNameToVMName(this.VMName);
-            if (deps.Length > 1)
+            if (ardDeps.Length > 1)
             {
-                deps = deps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
+                ardDeps = ardDeps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
             }
             ARMDeployment dep = new ARMDeployment();
-            if(deps.Length > 0)
+            if(ardDeps.Length > 0)
             {
-                dep = deps.First();
+                dep = ardDeps.First();
             }
             else
             {
-                deps = deps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
-                if (deps.Length > 0)
+                ardDeps = ardDeps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
+                if (ardDeps.Length > 0)
                 {
-                    dep = deps.First();
+                    dep = ardDeps.First();
                 }
                 else
                 {
                     // Probably paaS
-                    dep.type = Constants.AnalyzerARMDeploymentPaaSType;
+                    ((ARMDeployment)dep).type = Constants.AnalyzerARMDeploymentPaaSType;
                 }
             }
 
@@ -116,12 +116,47 @@ namespace LivesiteAutomation
                 case Constants.AnalyzerARMDeploymentVMSSType:
                     return (ComputeType.VMSS, dep);
                 case Constants.AnalyzerARMDeploymentPaaSType:
-                    // TODO
-                    //return (ComputeType.PaaS, paasDeps.First());
+                    return (ComputeType.PaaS, AnalyseRDFEPaaSDeployment(rdfe));
                 default:
                     return (ComputeType.Unknown, null);
             }
             throw new NotSupportedException();
+        }
+
+        private RDFEDeployment AnalyseRDFEPaaSDeployment(RDFESubscription rdfe)
+        {
+            return null;
+            /*
+            RDFEDeployment[] rdfeDeps = rdfe.deployments.Where(x =>
+                    x.HostedServiceName.Contains(this.ResourceGroupName) || this.ResourceGroupName.Contains(x.HostedServiceName)
+                ).ToArray();
+
+
+
+            string VMName = TryConvertInstanceNameToVMName(this.VMName);
+            if (ardDeps.Length > 1)
+            {
+                ardDeps = ardDeps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
+            }
+            object dep = new ARMDeployment();
+            if (ardDeps.Length > 0)
+            {
+                dep = ardDeps.First();
+            }
+            else
+            {
+                ardDeps = ardDeps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
+                if (ardDeps.Length > 0)
+                {
+                    dep = ardDeps.First();
+                }
+                else
+                {
+                    // Probably paaS
+                    ((ARMDeployment)dep).type = Constants.AnalyzerARMDeploymentPaaSType;
+                }
+            }
+            */
         }
 
         private string TryConvertInstanceNameToVMName(string VMName)

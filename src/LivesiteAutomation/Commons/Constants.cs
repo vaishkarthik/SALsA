@@ -27,10 +27,10 @@ namespace LivesiteAutomation
 
         // ICM.cs
         public const string ICMIdentityName = "CN=azurevmguestagentsandextensions-manual.geneva.keyvault.com";
-        public const string ICMGetIncidentURL = "https://icm.ad.msft.net/api/cert/incidents";
+        public const string ICMBaseUri = "https://icm.ad.msft.net/";
+        public const string ICMRelativeBaseAPIUri = "api/cert/incidents";
         public const string ICMTrnasferIncidentSuffix = "/TransferIncident";
         public const string ICMDescriptionEntriesSuffix = "/DescriptionEntries?$inlinecount=allpages";
-        public const string ICMAddDiscussionURL = "https://icm.ad.msft.net/api2/incidentapi/incidents";
 
         // Analyser.cs
         public const string AnalyzerSubscriptionIdField = "subscription";
@@ -54,7 +54,7 @@ namespace LivesiteAutomation
         // GetRDFESubscription.cs
         public const string GetRDFESubscriptionExtensionName = "AzureRT";
         public const string GetRDFESubscriptionOperationName = "GetSubscriptionWithDetails";
-        public const string GetRDFESubscriptionDetailLevel = "Subscription, HostedService, DeploymentBasic";
+        public const string GetRDFESubscriptionDetailLevel = "Full";
 
         // GetVMConsoleSerial.cs
         public const string GetVMConsoleSerialLogsExtensionName = "CRP";

@@ -25,6 +25,7 @@ namespace LivesiteAutomation
         public Incident CurrentICM { get; private set; }
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
         public static Dictionary<int, ICM> IncidentMapping { get; private set; }
+        private HttpClient client = null;
 
         public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
         {
@@ -49,10 +50,9 @@ namespace LivesiteAutomation
             }
             try
             {
-                var req = BuildHttpClient(this.Id, "", Constants.ICMGetIncidentURL);
                 var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(entry)));
                 body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = req.PatchAsync("", body).Result;
+                var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
                 // TODO : Handle non 200 and display error
                 var reason = response.Content.ReadAsStringAsync().Result;
                 Log.Instance.Verbose("Got response for IMC {0}", this.Id);
@@ -85,8 +85,7 @@ namespace LivesiteAutomation
         {
             try
             {
-                var req = BuildHttpClient(this.Id);
-                var response = req.GetAsync("").Result;
+                var response = Client.GetAsync(BuildUri(this.Id)).Result;
                 Utility.CheckStatusCode(response);
                 Log.Instance.Verbose("Got response for IMC {0}", this.Id);
 
@@ -107,8 +106,7 @@ namespace LivesiteAutomation
             {
                 var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(owningTeam)));
                 body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var req = BuildHttpClient(this.Id, Constants.ICMTrnasferIncidentSuffix);
-                var response = req.PostAsync("", body).Result;
+                var response = Client.PostAsync(BuildUri(this.Id, Constants.ICMTrnasferIncidentSuffix), body).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     return true;
@@ -132,8 +130,7 @@ namespace LivesiteAutomation
         {
             try
             {
-                var req = BuildHttpClient(this.Id, Constants.ICMDescriptionEntriesSuffix);
-                var response = req.GetAsync("").Result;
+                var response = Client.GetAsync(BuildUri(this.Id, Constants.ICMDescriptionEntriesSuffix)).Result;
                 Dictionary<string, object> de = Utility.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
 
                 DescriptionEntries = ((JArray)de["value"]).Select(x => new Incident.DescriptionEntry
@@ -153,22 +150,27 @@ namespace LivesiteAutomation
             }
         }
 
-        private static Uri BuildUri(int id, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
+        private static Uri BuildUri(int id, string suffix = "")
         {
-            return new Uri(String.Format("{0}({1}){2}", prefix, id, suffix));
+            return new Uri(String.Format("{0}({1}){2}", Constants.ICMRelativeBaseAPIUri, id, suffix), UriKind.Relative);
         }
 
-        internal static HttpClient BuildHttpClient(int id, string suffix = "", string prefix = Constants.ICMGetIncidentURL)
+        internal HttpClient Client
         {
-            var handler = new HttpClientHandler();
-            handler.ClientCertificates.Add(Authentication.Instance.Cert);
-            handler.PreAuthenticate = true;
-            handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+            get { 
+                if (client == null)
+                {
+                    var handler = new HttpClientHandler();
+                    handler.ClientCertificates.Add(Authentication.Instance.Cert);
+                    handler.PreAuthenticate = true;
+                    handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
 
-            HttpClient client = new HttpClient(handler);
-            client.BaseAddress = BuildUri(id, suffix, prefix);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            return client;
+                    client = new HttpClient(handler);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.BaseAddress = new Uri(Constants.ICMBaseUri);
+                }
+                return client;
+            }
         }
 
         private string ReadResponseBody(HttpResponseMessage response)

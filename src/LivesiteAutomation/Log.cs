@@ -16,7 +16,7 @@ namespace LivesiteAutomation
     {
 
         public int Icm { get; set; } = -1;
-        private string UID;
+        public string UID;
         private StreamWriter sw = null;
         private Log()
         {

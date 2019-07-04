@@ -161,5 +161,14 @@ namespace LivesiteAutomation
                 return ms.ToArray();
             }
         }
+
+        // https://stackoverflow.com/questions/248903/if-object-is-generic-list
+        public static bool IsList(object value)
+        {
+            var type = value.GetType();
+            var targetType = typeof(IList<>);
+            return type.GetInterfaces().Any(i => i.IsGenericType
+                                              && i.GetGenericTypeDefinition() == targetType);
+        }
     }
 }

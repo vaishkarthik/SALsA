@@ -1,13 +1,17 @@
 ﻿using LivesiteAutomation.Json2Class;
+using Microsoft.IdentityModel.Protocols.WSFederation.Metadata;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace LivesiteAutomation
 {
@@ -33,48 +37,92 @@ namespace LivesiteAutomation
         private RDFESubscription AnalyzeRDFESubscriptionResult(string xml)
         {
             XmlDocument doc = new XmlDocument();
-            xml = xml.Replace("=== <", "<").Replace("> ===", ">").Trim();
-            doc.LoadXml(xml);
-            var json = JsonConvert.SerializeXmlNode(doc);
-            var obj = Utility.JsonToObject<dynamic>(json.Replace("\"#text\"", "text"));
-            var deployments = obj.Subscription.HostedService;
-            var rdfeSubscription = new RDFESubscription();
-            foreach (var element in deployments)
+            xml = xml.Replace("=== <", "<").Replace("> ===", ">").Replace("&", "&amp;").Trim();
+            xml = xml.Replace("xmlns:xsd", "xmlns_xsd").Replace("xmlns:xsi", "xmlns_xsi");
+
+            var serializer = new XmlSerializer(typeof(Json2Class.RDFESubscriptionWrapper.Subscription)); using (var stream = new StringReader(xml))
+            using (var reader = XmlReader.Create(stream))
             {
-                List<string> tmp = null;
-                try
+                var result = (Json2Class.RDFESubscriptionWrapper.Subscription)serializer.Deserialize(reader);
+                
+                var multiDeployments = result.HostedService;
+                var rdfeSubscription = new RDFESubscription();
+                foreach (var element in multiDeployments)
                 {
-                    tmp = Utility.JsonToObject<List<string>>(Utility.ObjectToJson(element.Deployment.text));
+                    var deployments = BuildDeployment(element);
+                    if (deployments != null)
+                    {
+                        rdfeSubscription.deployments = rdfeSubscription.deployments.Concat(deployments).ToList();
+                    }
                 }
-                catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+                return rdfeSubscription;
+            }
+
+        }
+        
+        private List<RDFEDeployment> BuildDeployment(Json2Class.RDFESubscriptionWrapper.SubscriptionHostedService element)
+        {
+            try
+            {
+                List<RDFEDeployment> deployments = new List<RDFEDeployment>();
+                // TODO : add element.Deployment.ServiceConfiguration.osFamily
+                string deploymentInfo = String.Join(Environment.NewLine, element.Text);
+                deploymentInfo += Environment.NewLine + String.Join(Environment.NewLine, element.Deployment.Text);
+                foreach (var r in element.Deployment.Role)
                 {
-                    Log.Instance.Warning("No deployment found for : {0}", element.ToString());
+                    string roleInfo = String.Join(Environment.NewLine, r.Text);
+                    roleInfo += Environment.NewLine + element.LastCreateDeploymentInProductionSlotTracking;
+                    roleInfo += Environment.NewLine + String.Join(Environment.NewLine, element.ExtendedProperties);
+                    foreach (var i in r.RoleInstance)
+                    {
+                        var instanceInfo = String.Join(Environment.NewLine, i.Text);
+                        instanceInfo += Environment.NewLine + String.Join(Environment.NewLine, i.VM);
+                        instanceInfo += Environment.NewLine + String.Join(Environment.NewLine, element.ExtendedProperties);
+                        instanceInfo += Environment.NewLine + String.Join(Environment.NewLine, deploymentInfo);
+                        instanceInfo += Environment.NewLine + String.Join(Environment.NewLine, roleInfo);
+
+                        var tmp = instanceInfo.Split(Environment.NewLine.ToArray()).Select(x => x.Trim()).ToArray();
+
+                        var dep = PrepClassFromFakeXML(tmp);
+                        //var role = PrepClassFromFakeJson(tmpRole);
+                        string newJson = String.Format("{{{0}}}", String.Join(",", dep));
+                        var rdfeDeployment = Utility.JsonToObject<RDFEDeployment>(newJson);
+                        deployments.Add(rdfeDeployment);
+                    }
+                }
+                return deployments;
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Warning("No deployment found for : {0}", element.Text[0]);
+                Log.Instance.Exception(ex);
+                return null;
+            }
+        }
+        
+        private string[] PrepClassFromFakeXML(string[] tmp)
+        {
+            var dep = String.Join("\n", tmp).Trim().Replace("\r\n", "\n").Split('\n').Select(e => e.Trim()).ToArray();
+            // Sometimes, we have multiple elements in same line, so we look itup with a regex and divide them.
+            var dep2d = dep.Select(e => Regex.Split(e, @"(,\s)(?=\w+:)")).ToArray();
+            dep = dep2d.SelectMany(x => x).ToArray();
+            // Remvoe everytrhing that is not *:*
+            dep = dep.Where(f => Regex.Match(f, @".*:.*").Success).ToArray();
+
+            for (int i = 0; i < dep.Length; ++i)
+            {
+                if (!dep[i].Contains(":"))
+                {
                     continue;
                 }
-                    var dep = String.Join("", tmp).Trim().Replace("\r\n", "\n").Split('\n').Select(e => e.Trim()).ToArray();
-                // Sometimes, we have multiple elements in same line, so we look itup with a regex and divide them.
-                var dep2d = dep.Select(e => Regex.Split(e, @"(,\s)(?=\w+:)")).ToArray();
-                dep = dep2d.SelectMany(x => x).ToArray();
-                // Remvoe everytrhing that is not *:*
-                dep = dep.Where(f => Regex.Match(f, @".*:.*").Success).ToArray();
-
-                for (int i = 0; i < dep.Length; ++i)
+                var split = dep[i].Split(new[] { ':' }, 2);
+                if (split.Length == 1)
                 {
-                    if(!dep[i].Contains(":"))
-                    {
-                        continue;
-                    }
-                    var split = dep[i].Split(new[] { ':' }, 2);
-                    if (split.Length == 1)
-                    {
-                        split.Append("");
-                    }
-                    dep[i] = String.Format("\"{0}\":\"{1}\"", split[0].Trim(), split[1].Trim());
+                    split.Append("");
                 }
-                string newJson = String.Format("{{{0}}}", String.Join(",", dep));
-                rdfeSubscription.deployments.Add(Utility.JsonToObject<RDFEDeployment>(newJson));
+                dep[i] = String.Format("\"{0}\":\"{1}\"", split[0].Trim(), split[1].Trim());
             }
-            return rdfeSubscription;
+            return dep;
         }
     }
 }
