@@ -68,27 +68,28 @@ namespace LivesiteAutomation
                 // TODO : add element.Deployment.ServiceConfiguration.osFamily
                 string deploymentInfo = String.Join(Environment.NewLine, element.Text);
                 deploymentInfo += Environment.NewLine + String.Join(Environment.NewLine, element.Deployment.Text);
+                deploymentInfo += Environment.NewLine + element.LastCreateDeploymentInProductionSlotTracking;
+                deploymentInfo += Environment.NewLine + String.Join(Environment.NewLine, element.ExtendedProperties);
+                var deploymentInfoTmp = deploymentInfo.Split(Environment.NewLine.ToArray()).Select(x => x.Trim()).ToArray();
+                var deploymentInfoClass = PrepClassFromFakeXML(deploymentInfoTmp);
+                string deploymentJson = String.Format("{{{0}}}", String.Join(",", deploymentInfoClass));
+                var rdfeDeployment = Utility.JsonToObject<RDFEDeployment>(deploymentJson);
+                rdfeDeployment.RoleInstances = new List<RDFERoleInstance>();
                 foreach (var r in element.Deployment.Role)
                 {
                     string roleInfo = String.Join(Environment.NewLine, r.Text);
-                    roleInfo += Environment.NewLine + element.LastCreateDeploymentInProductionSlotTracking;
-                    roleInfo += Environment.NewLine + String.Join(Environment.NewLine, element.ExtendedProperties);
                     foreach (var i in r.RoleInstance)
                     {
                         var instanceInfo = String.Join(Environment.NewLine, i.Text);
                         instanceInfo += Environment.NewLine + String.Join(Environment.NewLine, i.VM);
-                        instanceInfo += Environment.NewLine + String.Join(Environment.NewLine, element.ExtendedProperties);
-                        instanceInfo += Environment.NewLine + String.Join(Environment.NewLine, deploymentInfo);
                         instanceInfo += Environment.NewLine + String.Join(Environment.NewLine, roleInfo);
-
                         var tmp = instanceInfo.Split(Environment.NewLine.ToArray()).Select(x => x.Trim()).ToArray();
-
                         var dep = PrepClassFromFakeXML(tmp);
-                        //var role = PrepClassFromFakeJson(tmpRole);
-                        string newJson = String.Format("{{{0}}}", String.Join(",", dep));
-                        var rdfeDeployment = Utility.JsonToObject<RDFEDeployment>(newJson);
-                        deployments.Add(rdfeDeployment);
+                        string instance = String.Format("{{{0}}}", String.Join(",", dep));
+                        var roleInstance = Utility.JsonToObject<RDFERoleInstance>(instance);
+                        rdfeDeployment.RoleInstances.Add(roleInstance);
                     }
+                    deployments.Add(rdfeDeployment);
                 }
                 return deployments;
             }

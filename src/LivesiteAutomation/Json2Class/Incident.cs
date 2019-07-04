@@ -20,7 +20,7 @@ namespace LivesiteAutomation
             {
                 public class Description
                 {
-                    public string Text = "AzureRT Automatically transfering this incident to the writeful; owners.";
+                    public string Text = "AzureRT Automatically transfering this incident to the rightful owners.";
                     public string RenderType = "Plaintext";
                     public string ChangeBy = "azGaExt";
                 }
