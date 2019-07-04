@@ -63,7 +63,7 @@ namespace LivesiteAutomation
 
         public void Send(string ss, params object[] arg)
         {
-            string toSend = String.Format(CultureInfo.InvariantCulture, ss, arg);
+            string toSend = arg.Length > 0 ?  String.Format(CultureInfo.InvariantCulture, ss, arg) : ss;
             InternalLog(toSend, LogLevel.Online);
             SendOnline(toSend);
         }

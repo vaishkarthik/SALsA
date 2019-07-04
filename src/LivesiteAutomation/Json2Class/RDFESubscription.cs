@@ -124,4 +124,14 @@ namespace LivesiteAutomation.Json2Class
     {
         public List<RDFEDeployment> deployments { get; set; } = new List<RDFEDeployment>();
     }
+
+    public class ShortRDFERoleInstance
+    {
+        public string InstanceName;
+        public string DeploymentId;
+        public string DeploymentName;
+        public string Fabric;
+        public Guid ContainerID;
+        public Guid NodeId;
+    }
 }

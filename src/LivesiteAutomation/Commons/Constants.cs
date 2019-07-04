@@ -46,6 +46,7 @@ namespace LivesiteAutomation
         public const string AnalyzerVMScreenshotOutputFilename = "VMScreenshot.png";
         public const string AnalyzerVMModelAndViewOutputFilename = "ModelAndView.json";
         public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zip";
+        public const string AnalyzerNodeDiagnosticsFilename = "Logs.zip";
 
         // GetARMSubscription.cs
         public const string GetARMSubscriptionExtensionName = "Azure Resource Manager";
@@ -80,6 +81,16 @@ namespace LivesiteAutomation
         public const string InspectIaaSDiskForARMVMMode = "Diagnostic";
         public const string InspectIaaSDiskForARMVMStep = "0";
         public const int InspectIaaSDiskForARMVMTimeout = 0;
+
+        // GetNodeDiagnostics.cs
+        public const string GetNodeDiagnosticsExtensionName = "SupportabilityFabric";
+        public const string GetNodeDiagnosticsOperatorName = "GetNodeDiagnosticsFileByVMNameAndDeploymentId";
+        public const string GetNodeDiagnosticsParam = "GuestAgentVMLogs";
+
+        // GetClassicVMConsoleScreenshot.cs
+        public const string GetClassicVMClassicScreenshotExtensionName = "SupportabilityFabric";
+        public const string GetClassicVMClassicScreenshotOperatorName = "GetVMScreenshot";
+        public const string GetClassicVMClassicScreenshotSize = "XLarge";
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */

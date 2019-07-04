@@ -96,7 +96,7 @@ namespace LivesiteAutomation
             catch (Exception ex)
             {
                 Log.Instance.Warning("No deployment found for : {0}", element.Text[0]);
-                Log.Instance.Exception(ex);
+                Log.Instance.Warning(ex);
                 return null;
             }
         }

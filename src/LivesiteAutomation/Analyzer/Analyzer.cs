@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -56,6 +57,8 @@ namespace LivesiteAutomation
         private async Task ExecuteAllActionsForVMSS(ARMDeployment dep)
         {
             int instanceId = TryConvertInstanceNameToInstanceId(this.VMName);
+            // TODO instead of using 0, take 5 random and use them
+            instanceId = instanceId == -1 ? 0 : instanceId;
             await Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(dep, instanceId));
             await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(dep, instanceId));
             await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(dep, instanceId));
@@ -64,7 +67,23 @@ namespace LivesiteAutomation
 
         private async Task ExecuteAllActionsForPaaS(RDFEDeployment dep)
         {
-
+            var instance = dep.RoleInstances.Where(x => x.RoleInstanceName == VMName).FirstOrDefault();
+            if (instance?.RoleInstanceName == null)
+            {
+                instance = dep.RoleInstances.Where(x => x.RoleName == TryConvertInstanceNameToVMName(this.VMName)).FirstOrDefault();
+            }
+            var vmInfo = new ShortRDFERoleInstance
+            {
+                Fabric = dep.FabricGeoId,
+                DeploymentId = dep.Name,
+                DeploymentName = dep.Id,
+                ContainerID = instance.ID,
+                NodeId = instance.VMID,
+                InstanceName = instance.RoleInstanceName
+            };
+            Log.Instance.Send(Utility.ObjectToJson(vmInfo, true));
+            await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(vmInfo));
+            await Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnostics(vmInfo));
         }
 
         public void Wait()
@@ -97,16 +116,8 @@ namespace LivesiteAutomation
             }
             else
             {
-                ardDeps = ardDeps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
-                if (ardDeps.Length > 0)
-                {
-                    dep = ardDeps.First();
-                }
-                else
-                {
-                    // Probably paaS
-                    ((ARMDeployment)dep).type = Constants.AnalyzerARMDeploymentPaaSType;
-                }
+                // Probably paaS
+                dep.type = Constants.AnalyzerARMDeploymentPaaSType;
             }
 
             switch (dep.type)
@@ -125,38 +136,39 @@ namespace LivesiteAutomation
 
         private RDFEDeployment AnalyseRDFEPaaSDeployment(RDFESubscription rdfe)
         {
-            return null;
-            /*
-            RDFEDeployment[] rdfeDeps = rdfe.deployments.Where(x =>
-                    x.HostedServiceName.Contains(this.ResourceGroupName) || this.ResourceGroupName.Contains(x.HostedServiceName)
-                ).ToArray();
 
-
-
-            string VMName = TryConvertInstanceNameToVMName(this.VMName);
-            if (ardDeps.Length > 1)
+            string VMName = TryConvertInstanceNameToVMNamePaaS(this.VMName);
+            List<RDFEDeployment> rdfeDeps = new List<RDFEDeployment>();
+            foreach (var deployment in rdfe.deployments)
             {
-                ardDeps = ardDeps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
+                foreach(var instance in deployment.RoleInstances)
+                {
+                    if (instance.RoleName.Contains(VMName) || VMName.Contains(instance.RoleName))
+                    {
+                        rdfeDeps.Add(deployment);
+                        break;
+                    }
+                }
             }
-            object dep = new ARMDeployment();
-            if (ardDeps.Length > 0)
+            if (rdfeDeps.Count > 1)
             {
-                dep = ardDeps.First();
+                rdfeDeps = rdfeDeps.Where(x => x.HostedServiceName == this.ResourceGroupName).ToList();
+            }
+            if (rdfeDeps.Count == 1)
+            {
+                return rdfeDeps.First();
+            }
+            else if (rdfeDeps.Count > 1)
+            {
+                // Best effort guess
+                return rdfeDeps.Where(x => x.HostedServiceName == this.ResourceGroupName
+                && x.RoleInstances.Where(y => y.RoleName == VMName).ToList().Count >= 1).ToList().First();
             }
             else
             {
-                ardDeps = ardDeps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
-                if (ardDeps.Length > 0)
-                {
-                    dep = ardDeps.First();
-                }
-                else
-                {
-                    // Probably paaS
-                    ((ARMDeployment)dep).type = Constants.AnalyzerARMDeploymentPaaSType;
-                }
+                return null;
             }
-            */
+
         }
 
         private string TryConvertInstanceNameToVMName(string VMName)
@@ -179,8 +191,13 @@ namespace LivesiteAutomation
             }
             catch
             {
-                return 0;
+                return -1;
             }
+        }
+
+        private string TryConvertInstanceNameToVMNamePaaS(string VMName)
+        {
+            return VMName.Split("_IN_".ToCharArray())[0];
         }
     }
 }

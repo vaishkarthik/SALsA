@@ -76,5 +76,21 @@ namespace LivesiteAutomation.Json2Class
             public string smegetvmscalesetvmoptionparameter { get; set; }
             public int smevirtualmachinescalesetvminstanceidparameter { get; set; }
         }
+
+        public class GetNodeDiagnostics
+        {
+            public string smevmnameparam { get; set; }
+            public string smedeploymentidordeploymentparam { get; set; }
+            public string smenodediagnosticstagparam { get; set; }
+            public string smefabrichostparam { get; set; }
+        }
+
+        public class GetClassicVMScreenshot
+        {
+            public string smefabrichostparam { get; set; }
+            public string smetenantnameparam { get; set; }
+            public string smevmnameparam { get; set; }
+            public string smescreenshotsizeparam { get; set; }
+        }
     }
 }

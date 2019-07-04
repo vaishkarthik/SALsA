@@ -150,6 +150,8 @@
     <Compile Include="Connectors\GenevaAction.cs" />
     <Compile Include="Connectors\ICM.cs" />
     <Compile Include="Commons\Constants.cs" />
+    <Compile Include="GenevaAction\GetClassicVMConsoleScreenshot.cs" />
+    <Compile Include="GenevaAction\GetNodeDiagnostics.cs" />
     <Compile Include="GenevaAction\GetRDFESubscription.cs" />
     <Compile Include="GenevaAction\GetVMModelAndInstanceView.cs" />
     <Compile Include="GenevaAction\GetVMScreenshot.cs" />

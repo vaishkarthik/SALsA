@@ -100,6 +100,14 @@ namespace LivesiteAutomation
             }
         }
 
+        public static async Task SaveAndSendBlobTask(string name, Task<ZipArchiveEntry> task)
+        {
+            var output = (await task).Open();
+            await BlobStorage.UploadStream(Log.Instance.Icm, name, output);
+            SendSASToICM(name);
+            Utility.SaveToFile(name, output);
+        }
+
         public static async Task SaveAndSendBlobTask(string name, Task<String> task)
         {
             var output = await task; 
