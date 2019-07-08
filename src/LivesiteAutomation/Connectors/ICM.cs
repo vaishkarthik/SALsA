@@ -31,7 +31,15 @@ namespace LivesiteAutomation
         {
             if (htmlfy)
             { 
-                entry = Utility.EncodeHtml(entry);
+                try
+                {
+                    entry = Utility.EncodeHtml(entry);
+                }
+                catch(Exception ex)
+                {
+                    Log.Instance.Warning("Failed to html encode {0}, will use raw input", entry);
+                    Log.Instance.Exception(ex);
+                }
             }
             if (repeat == false)
             {
@@ -53,8 +61,8 @@ namespace LivesiteAutomation
                 var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(entry)));
                 body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
-                // TODO : Handle non 200 and display error
                 var reason = response.Content.ReadAsStringAsync().Result;
+                response.EnsureSuccessStatusCode();
                 Log.Instance.Verbose("Got response for IMC {0}", this.Id);
                 return true;
  
@@ -86,7 +94,7 @@ namespace LivesiteAutomation
             try
             {
                 var response = Client.GetAsync(BuildUri(this.Id)).Result;
-                Utility.CheckStatusCode(response);
+                response.EnsureSuccessStatusCode();
                 Log.Instance.Verbose("Got response for IMC {0}", this.Id);
 
                 CurrentICM = Utility.JsonToObject<Incident>(ReadResponseBody(response));
@@ -100,29 +108,19 @@ namespace LivesiteAutomation
             return this;
         }
 
-        public bool TransferICM(string owningTeam)
+        public void TransferICM(string owningTeam)
         {
             try
             {
                 var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(owningTeam)));
                 body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 var response = Client.PostAsync(BuildUri(this.Id, Constants.ICMTrnasferIncidentSuffix), body).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    return true;
-                }
-                else
-                {
-                    Log.Instance.Error("ICM <{0}> transfer action returned status code {1}", Id, response.StatusCode);
-                    Log.Instance.Error(ReadResponseBody(response));
-                    return false;
-                }
+                response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
                 Log.Instance.Error("Failed to transfer ICM {0}", Id);
                 Log.Instance.Exception(ex);
-                return false;
             }
         }
 
@@ -131,6 +129,7 @@ namespace LivesiteAutomation
             try
             {
                 var response = Client.GetAsync(BuildUri(this.Id, Constants.ICMDescriptionEntriesSuffix)).Result;
+                response.EnsureSuccessStatusCode();
                 Dictionary<string, object> de = Utility.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
 
                 DescriptionEntries = ((JArray)de["value"]).Select(x => new Incident.DescriptionEntry

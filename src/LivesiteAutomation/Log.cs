@@ -129,7 +129,16 @@ namespace LivesiteAutomation
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void Exception(Exception ex)
         {
-            InternalLog(String.Format(CultureInfo.InvariantCulture, "EXCEPTION :\n{0}", ex.ToString()), LogLevel.Error);
+            StringBuilder sb = new StringBuilder();
+            if (ex is AggregateException)
+            {
+                for (int j = 0; j < ((AggregateException)(ex)).InnerExceptions.Count; j++)
+                {
+                    sb.Append(String.Format("{0}---------------InnerExceptions:{1}---------------{0}", Environment.NewLine, j));
+                    sb.Append(String.Format("{0}", ((AggregateException)(ex)).InnerExceptions[j]));
+                }
+            }
+            InternalLog(String.Format(CultureInfo.InvariantCulture, "EXCEPTION :\n{0}", ex.ToString(), sb), LogLevel.Error);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

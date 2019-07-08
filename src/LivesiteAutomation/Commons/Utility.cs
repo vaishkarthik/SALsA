@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -8,6 +9,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,6 +18,71 @@ namespace LivesiteAutomation
 {
     public static class Utility
     {
+        public class TaskManager
+        {
+
+            private List<Task> tasks = null;
+
+            private static TaskManager instance = null;
+            public static TaskManager Instance
+            {
+                get
+                {
+                    if (instance == null)
+                    {
+                        Log.Instance.Information("Creating task bag..");
+                        instance = new TaskManager();
+                    }
+                    return Instance;
+                }
+            }
+
+            private TaskManager()
+            {
+                tasks = new List<Task>();
+            }
+
+            public void AddTask(Task t)
+            {
+                tasks.Add(t);
+            }
+
+            public void WaitAllTasks()
+            {
+                try
+                {
+                    Task.WaitAll(tasks.ToArray());
+                }
+                catch
+                {
+                    for(int i = tasks.Count - 1; i >= 0; --i)
+                    {
+                        try
+                        { 
+                            if(!tasks[i].IsCompleted)
+                            {
+                                tasks[i].GetAwaiter().GetResult();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Instance.Error("Error waiting for task.");
+                            Log.Instance.Exception(ex);
+                        }
+                        finally
+                        {
+                            tasks.RemoveAt(i);
+                        }
+                    }
+                }
+                finally
+                {
+                    // Should be empty, but just making sure...
+                    tasks = new List<Task>();
+                }
+            }
+        }
+
         public static T JsonToObject<T>(string json)
         {
             var settings = new JsonSerializerSettings
@@ -92,14 +159,6 @@ namespace LivesiteAutomation
             }
         }
 
-        internal static void CheckStatusCode(HttpResponseMessage response)
-        {
-            if(!response.IsSuccessStatusCode)
-            { 
-                throw new Exception(response.ToString());
-            }
-        }
-
         public static async Task SaveAndSendBlobTask(string name, Task<ZipArchiveEntry> task)
         {
             var output = (await task).Open();
@@ -168,15 +227,6 @@ namespace LivesiteAutomation
                 input.CopyTo(ms);
                 return ms.ToArray();
             }
-        }
-
-        // https://stackoverflow.com/questions/248903/if-object-is-generic-list
-        public static bool IsList(object value)
-        {
-            var type = value.GetType();
-            var targetType = typeof(IList<>);
-            return type.GetInterfaces().Any(i => i.IsGenericType
-                                              && i.GetGenericTypeDefinition() == targetType);
         }
     }
 }
