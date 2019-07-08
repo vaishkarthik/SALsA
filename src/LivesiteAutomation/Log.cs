@@ -15,23 +15,26 @@ namespace LivesiteAutomation
 
     public sealed class Log
     {
-        public string UID;
+        public string UID { get; private set; }
         private StreamWriter sw = null;
         private Log()
         {
             UID = Utility.ShortRandom;
+            Constants.LogFileName = String.Format("{0}-{1}{2}", Constants.LogFileNamePrefix, UID, Constants.LogFileNameExtension);
+            Constants.LogDefaultPath = System.IO.Path.Combine(Constants.LogFolderPath, Constants.LogFileName);
             if (!File.Exists(Constants.LogDefaultPath))
             {
                 try
                 {
-                    new System.IO.FileInfo(Constants.LogDefaultPath).Directory.Create();
+                    new System.IO.FileInfo(Constants.LogFolderPath).Directory.Create();
                     sw = File.AppendText(Constants.LogDefaultPath);
                 }
                 catch
                 {
                     // TODO : log this later
-                    Constants.LogDefaultPath = Path.Combine(System.IO.Path.GetTempPath(), Constants.LogFileName);
-                    new System.IO.FileInfo(Constants.LogDefaultPath).Directory.Create();
+                    Constants.LogFolderPath = System.IO.Path.GetTempPath();
+                    Constants.LogDefaultPath = Path.Combine(Constants.LogFolderPath, Constants.LogFileName);
+                    new System.IO.FileInfo(Constants.LogFolderPath).Directory.Create();
                     sw = File.AppendText(Constants.LogDefaultPath);
                 }
             }
@@ -181,6 +184,13 @@ namespace LivesiteAutomation
         private void SendOnline(string ss, bool force = false)
         {
             ICM.Instance?.AddICMDiscussion(ss, force);
+        }
+
+        internal void FlushAndClose()
+        {
+            sw.Flush();
+            sw.Close();
+            sw = null;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace LivesiteAutomation
                         Log.Instance.Information("Creating task bag..");
                         instance = new TaskManager();
                     }
-                    return Instance;
+                    return instance;
                 }
             }
 
@@ -43,7 +43,7 @@ namespace LivesiteAutomation
                 Tasks = new List<Task>();
             }
 
-            public void AddTask(Task t)
+            public void AddOneTask(Task t)
             {
                 if(t != null)
                 { 
@@ -59,7 +59,7 @@ namespace LivesiteAutomation
             {
                 foreach (var t in tasks)
                 {
-                    AddTask(t);
+                    AddOneTask(t);
                 }
             }
 
@@ -256,8 +256,26 @@ namespace LivesiteAutomation
 
         public static void UploadLog()
         {
-            var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
-            BlobStorage.UploadFile(ICM.Instance.Id, String.Format("{0}_{1}-[{2}].log", currentTime, ICM.Instance.Id, Log.Instance.UID), Constants.LogDefaultPath, "text/plain");
+            try
+            { 
+                int icm = 0;
+                if (ICM.Instance != null)
+                {
+                    icm = ICM.Instance.Id;
+                }
+                var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
+                var blobName = String.Format("{0}-{1}_{2}_{3}{4}", Constants.LogFileNamePrefix, Log.Instance.UID,
+                    currentTime, icm, Constants.LogFileNameExtension);
+                Log.Instance.FlushAndClose();
+                BlobStorage.UploadFile(icm, blobName, Constants.LogDefaultPath, "text/plain").GetAwaiter().GetResult();
+                var sas = BlobStorage.GetSASToken(icm, blobName);
+                Log.Instance.Information("Log for this automatic run are available here : {0}", sas);
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Warning("Failed to upload log for this run");
+                Log.Instance.Exception(ex);
+            }
         }
     }
 }

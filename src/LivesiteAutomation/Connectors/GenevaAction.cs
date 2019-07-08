@@ -78,7 +78,7 @@ namespace LivesiteAutomation
                             Log.Instance.Information("Operation has completed execution for {0}: {1}. Operation Result is:{2}{3}", extensionName, operationName, System.Environment.NewLine, operationResult.ResultMessage);
                             // We upload all results of all operations
                             Utility.TaskManager.Instance.AddTask(
-                                BlobStorage.UploadText(ICM.Instance.Id, String.Format("/action/{1}-{0}_{2}.txt", extensionName, operationName, Utility.ShortRandom),
+                                BlobStorage.UploadText(ICM.Instance.Id, String.Format("action/{1}-{0}_{2}.txt", extensionName, operationName, Log.Instance.UID),
                                 operationResult.ResultMessage));
                             return;
                         }

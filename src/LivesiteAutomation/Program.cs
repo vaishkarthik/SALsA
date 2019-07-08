@@ -11,26 +11,34 @@ namespace LivesiteAutomation
     {
         static void Main(string[] args)
         {
-            // Test if input arguments were supplied:
-            bool test = int.TryParse(args[0], out int num);
-            if (args.Length >= 0 && test == false)
-            {
-                System.Console.WriteLine("Please enter a valid numeric argument for the ICM.");
-                System.Console.WriteLine("Usage: SALsA <num>");
-                System.Environment.Exit(-1);
-            }
-
-            // Initialise singletons;
             _ = Log.Instance;
-            _ = Authentication.Instance;
-            _ = Authentication.Instance.StorageCredentials;
+            try {
+                int num = -1;
+                // Test if input arguments were supplied:
+                if (args.Length <= 0 || !int.TryParse(args[0], out num))
+                {
+                    throw new ArgumentException("Please enter a valid numeric argument for the ICM. Usage : SALsA.exe <icmId>");
+                }
 
-            ICM.CreateInstance(num);
-            // We do not need to keep the analyzer in memory, for now.
-            _ =  new Analyzer();
+                // Initialise singletons;
+                _ = Authentication.Instance;
+                _ = Authentication.Instance.StorageCredentials;
 
-            Utility.TaskManager.Instance.WaitAllTasks();
-            Utility.UploadLog();
+                _ = ICM.CreateInstance(num);
+                // We do not need to keep the analyzer in memory, for now.
+                _ =  new Analyzer();
+
+                Utility.TaskManager.Instance.WaitAllTasks();
+            }
+            catch (Exception ex)
+            {
+                Log.Instance.Critical("Main failed !");
+                Log.Instance.Exception(ex);
+            }
+            finally
+            {
+                Utility.UploadLog();
+            }
         }
     }
 }

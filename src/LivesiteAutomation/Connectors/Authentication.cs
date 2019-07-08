@@ -79,6 +79,7 @@ namespace LivesiteAutomation
 
         private Authentication()
         {
+            // TODO : make this awaitable or async
             try
             {
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
