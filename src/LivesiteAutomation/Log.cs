@@ -108,22 +108,27 @@ namespace LivesiteAutomation
 
         public void Verbose(string ss, params object[] arg)
         {
+            Console.ForegroundColor = ConsoleColor.Gray;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Verbose);
         }
         public void Information(string ss, params object[] arg)
         {
+            Console.ForegroundColor = ConsoleColor.White;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Information);
         }
         public void Warning(string ss, params object[] arg)
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Warning);
         }
         public void Error(string ss, params object[] arg)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Error);
         }
         public void Critical(string ss, params object[] arg)
         {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Critical);
         }
 
@@ -139,6 +144,7 @@ namespace LivesiteAutomation
                     sb.Append(String.Format("{0}", ((AggregateException)(ex)).InnerExceptions[j]));
                 }
             }
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
             InternalLog(String.Format(CultureInfo.InvariantCulture, "EXCEPTION :\n{0}", ex.ToString(), sb), LogLevel.Error);
         }
 
@@ -149,6 +155,7 @@ namespace LivesiteAutomation
             var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture);
             string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, ICM.Instance?.Id, currentTime, lvl, GetCallerMethod(), ss);
             Console.WriteLine(logLine);
+            Console.ResetColor();
             System.Diagnostics.Trace.WriteLine(logLine);
             WriteToLog(logLine);
         }
@@ -191,6 +198,11 @@ namespace LivesiteAutomation
             sw.Flush();
             sw.Close();
             sw = null;
+        }
+        public void Reload()
+        {
+            FlushAndClose();
+            instance = new Log();
         }
     }
 }

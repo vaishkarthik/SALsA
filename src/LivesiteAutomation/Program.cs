@@ -39,6 +39,7 @@ namespace LivesiteAutomation
             finally
             {
                 Utility.UploadLog();
+                Log.Instance.Reload();
             }
         }
     }
