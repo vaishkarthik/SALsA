@@ -195,8 +195,8 @@ namespace LivesiteAutomation
 
         internal void FlushAndClose()
         {
-            sw.Flush();
-            sw.Close();
+            sw?.Flush();
+            sw?.Close();
             sw = null;
         }
         public void Reload()

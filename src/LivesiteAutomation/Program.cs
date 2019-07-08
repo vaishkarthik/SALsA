@@ -7,26 +7,33 @@ using System.Threading.Tasks;
 
 namespace LivesiteAutomation
 {
-    class Program
+    public class Program
     {
+        // For when compiling as an exe
         static void Main(string[] args)
         {
+            // Test if input arguments were supplied:
+            if (args.Length >= 1 && int.TryParse(args[0], out int num))
+            {
+                Run(num);
+            }
+            else
+            {
+                throw new ArgumentException("Please enter a valid numeric argument for the ICM. Usage : SALsA.exe <icmId>");
+            }
+        }
+        public static void Run(int icm)
+        {
             _ = Log.Instance;
-            try {
-                int num = -1;
-                // Test if input arguments were supplied:
-                if (args.Length <= 0 || !int.TryParse(args[0], out num))
-                {
-                    throw new ArgumentException("Please enter a valid numeric argument for the ICM. Usage : SALsA.exe <icmId>");
-                }
-
+            try
+            {
                 // Initialise singletons;
                 _ = Authentication.Instance;
                 _ = Authentication.Instance.StorageCredentials;
 
-                _ = ICM.CreateInstance(num);
+                _ = ICM.CreateInstance(icm);
                 // We do not need to keep the analyzer in memory, for now.
-                _ =  new Analyzer();
+                _ = new Analyzer();
 
                 Utility.TaskManager.Instance.WaitAllTasks();
             }
