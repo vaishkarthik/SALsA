@@ -12,9 +12,9 @@ namespace LivesiteAutomation
     public partial class GenevaActions
     {
         // TODO : make sovereign cloud available
-        public static Task<ZipArchiveEntry> GetNodeDiagnostics(ShortRDFERoleInstance instance)
+        public static Task<ZipArchiveEntry> GetNodeDiagnostics(int icm, ShortRDFERoleInstance instance)
         {
-            Log.Instance.Information("Calling GenevaAction GetNodeDiagnostics with params {0}", instance);
+            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetNodeDiagnostics with params {0}", instance);
             var param = new GenevaOperations.GetNodeDiagnostics
             {
                 smefabrichostparam = instance.Fabric,
@@ -23,7 +23,7 @@ namespace LivesiteAutomation
                 smevmnameparam = instance.InstanceName
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
-            var task = new GenevaAction(Constants.GetNodeDiagnosticsExtensionName, Constants.GetNodeDiagnosticsOperatorName, actionParam).GetOperationFileOutputAsync();
+            var task = new GenevaAction(icm, Constants.GetNodeDiagnosticsExtensionName, Constants.GetNodeDiagnosticsOperatorName, actionParam).GetOperationFileOutputAsync(icm);
 
             // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (

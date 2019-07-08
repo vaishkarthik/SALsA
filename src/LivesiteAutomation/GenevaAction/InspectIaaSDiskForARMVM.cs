@@ -11,9 +11,9 @@ namespace LivesiteAutomation
     public partial class GenevaActions
     {
         // TODO : make sovereign cloud available
-        public static Task<Stream> InspectIaaSDiskForARMVM(ARMDeployment deployment)
+        public static Task<Stream> InspectIaaSDiskForARMVM(int icm, ARMDeployment deployment)
         {
-            Log.Instance.Information("Calling InspectIaaSDiskForARMVM with params {0}", deployment);
+            SALsA.GetInstance(icm)?.Log.Information("Calling InspectIaaSDiskForARMVM with params {0}", deployment);
             var param = new GenevaOperations.InspectIaaSDiskForARMVM
             {
                 smecrpregion = deployment.location,
@@ -25,7 +25,7 @@ namespace LivesiteAutomation
                 smetimeoutinmins = Constants.InspectIaaSDiskForARMVMTimeout
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
-            var task = new GenevaAction(Constants.InspectIaaSDiskForARMVMExtensionName, Constants.InspectIaaSDiskForARMVMOperationName, actionParam).GetOperationFileOutputAsync();
+            var task = new GenevaAction(icm, Constants.InspectIaaSDiskForARMVMExtensionName, Constants.InspectIaaSDiskForARMVMOperationName, actionParam).GetOperationFileOutputAsync(icm);
 
             // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
@@ -33,9 +33,9 @@ namespace LivesiteAutomation
                 ));
         }
         // TODO : make sovereign cloud available
-        public static Task<Stream> InspectIaaSDiskForARMVM(ARMDeployment deployment, int id)
+        public static Task<Stream> InspectIaaSDiskForARMVM(int icm, ARMDeployment deployment, int id)
         {
-            Log.Instance.Information("Calling InspectIaaSDiskForARMVM of id:{0} with params {1}", id, deployment);
+            SALsA.GetInstance(icm)?.Log.Information("Calling InspectIaaSDiskForARMVM of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.InspectIaaSDiskForARMVMVMSS
             {
                 smecrpregion = deployment.location,
@@ -48,7 +48,7 @@ namespace LivesiteAutomation
                 smevmssinstanceid = id
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
-            var task = new GenevaAction(Constants.InspectIaaSDiskForARMVMExtensionName, Constants.InspectIaaSDiskForARMVMSSOperationName, actionParam).GetOperationFileOutputAsync();
+            var task = new GenevaAction(icm, Constants.InspectIaaSDiskForARMVMExtensionName, Constants.InspectIaaSDiskForARMVMSSOperationName, actionParam).GetOperationFileOutputAsync(icm);
 
             // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (

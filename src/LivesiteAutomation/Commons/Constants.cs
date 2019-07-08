@@ -14,10 +14,6 @@ namespace LivesiteAutomation
         // Log.cs
         public const string LogFileNamePrefix = "LivesiteAutomation";
         public const string LogFileNameExtension = ".log";
-        public static string LogFileName = LogFileNamePrefix + LogFileNameExtension;
-        public static string LogFolderPath = System.IO.Path.Combine(System.IO.Path.GetPathRoot(Environment.SystemDirectory), "Log");
-        public static string LogDefaultPath = System.IO.Path.Combine(LogFolderPath, LogFileName);
-
 
         // Authentication.cs
         public const string AuthenticationCertSecretURI = "https://azvmagent-automation.vault.azure.net/secrets/azurevmguestagentsandextensions-manual/935a9dc4ac9e437d935c0bf26ccfa160";

@@ -24,29 +24,24 @@ namespace LivesiteAutomation
         }
         public static void Run(int icm)
         {
-            _ = Log.Instance;
             try
             {
-                // Initialise singletons;
-                _ = Authentication.Instance;
-                _ = Authentication.Instance.StorageCredentials;
-
-                _ = ICM.CreateInstance(icm);
+                SALsA.AddInstance(icm);
                 // We do not need to keep the analyzer in memory, for now.
-                _ = new Analyzer();
+                _ = new Analyzer(icm);
 
-                Utility.TaskManager.Instance.WaitAllTasks();
+                SALsA.GetInstance(icm)?.TaskManager.WaitAllTasks();
             }
             catch (Exception ex)
             {
-                Log.Instance.Critical("Main failed !");
-                Log.Instance.Exception(ex);
+                SALsA.GetInstance(icm)?.Log.Critical("Main failed !");
+                SALsA.GetInstance(icm)?.Log.Exception(ex);
                 throw ex;
             }
             finally
             {
-                Utility.UploadLog();
-                Log.Instance.Reload();
+                Utility.UploadLog(icm);
+                SALsA.RemoveInstance(icm);
             }
         }
     }

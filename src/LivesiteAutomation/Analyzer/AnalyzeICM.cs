@@ -11,14 +11,14 @@ namespace LivesiteAutomation
     {
         private (Guid subscriptionId, string resourceGroupName, string VMName, DateTime startTime) AnalyzeICM()
         {
-            var currentICM = ICM.Instance;
+            var currentICM = SALsA.GetInstance(Id).ICM;
             var subscriptionId = GetSubscriptionId(currentICM); ;
             var resourceGroupName = GetCustomField(currentICM, Constants.AnalyzerResourceGroupField);
             var VMName = GetCustomField(currentICM, Constants.AnalyzerVMNameField);
             DateTime startTime;
             if (!DateTime.TryParse(GetCustomField(currentICM, Constants.AnalyzerStartTimeField), out startTime))
             {
-                Log.Instance.Warning("Failed to parse DateTime");
+                SALsA.GetInstance(Id)?.Log.Warning("Failed to parse DateTime");
             }
             return (subscriptionId, resourceGroupName, VMName, startTime);
         }
@@ -33,19 +33,19 @@ namespace LivesiteAutomation
                 // Look in the ICM field for the subscriptionId
                 if (!CheckIfSubscriptionIdIsValid(subscriptionId))
                 {
-                    Log.Instance.Verbose("Failed to get SubscriptionId from CustomField");
+                    SALsA.GetInstance(Id)?.Log.Verbose("Failed to get SubscriptionId from CustomField");
                     subscriptionId = icm.CurrentICM.SubscriptionId;
                     // Look in the ICM description for the subscriptionId
                     if (!CheckIfSubscriptionIdIsValid(subscriptionId))
                     {
-                        Log.Instance.Verbose("Failed to get SubscriptionId from SubscriptionId ICM Field");
+                        SALsA.GetInstance(Id)?.Log.Verbose("Failed to get SubscriptionId from SubscriptionId ICM Field");
                         var regex = new Regex("[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}", RegexOptions.IgnoreCase);
                         Match m = regex.Match(icm.CurrentICM.Summary);
                         subscriptionId = m.Value;
                         // If we coudnt find it, fail it.
                         if (!CheckIfSubscriptionIdIsValid(subscriptionId))
                         {
-                            Log.Instance.Error("Failed to find any SubscriptionId in the ICM");
+                            SALsA.GetInstance(Id)?.Log.Error("Failed to find any SubscriptionId in the ICM");
                             throw new Exception("Failed to find valid SubscriptionId");
                         }
                     }
@@ -54,8 +54,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to find a valid subscription id for ICM : {0}", icm.CurrentICM.Id);
-                Log.Instance.Exception(ex);
+                SALsA.GetInstance(Id)?.Log.Error("Failed to find a valid subscription id for ICM : {0}", icm.CurrentICM.Id);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
                 throw ex;
             }
         }
@@ -75,8 +75,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to find a valid value for <{0}> in ICM : {1}", lookup, icm.CurrentICM.Id);
-                Log.Instance.Exception(ex);
+                SALsA.GetInstance(Id)?.Log.Error("Failed to find a valid value for <{0}> in ICM : {1}", lookup, icm.CurrentICM.Id);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
             return null;
 
@@ -84,7 +84,7 @@ namespace LivesiteAutomation
 
         private bool CheckIfSubscriptionIdIsValid(string s)
         {
-            Log.Instance.Verbose("Parsing strign for valid SubscriptionID : {0}", s);
+            SALsA.GetInstance(Id)?.Log.Verbose("Parsing strign for valid SubscriptionID : {0}", s);
             try
             {
 

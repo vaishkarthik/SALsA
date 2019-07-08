@@ -17,44 +17,39 @@ namespace LivesiteAutomation
     {
         public string UID { get; private set; }
         private StreamWriter sw = null;
-        private Log()
+        private int Id;
+        public string LogFileName { get; private set; }
+        public string LogDefaultPath { get; private set; }
+        public string LogFolderPath { get; private set; }
+        public Log(int Id = 0)
         {
+            this.Id = Id;
             UID = Utility.ShortRandom;
-            Constants.LogFileName = String.Format("{0}-{1}{2}", Constants.LogFileNamePrefix, UID, Constants.LogFileNameExtension);
-            Constants.LogDefaultPath = System.IO.Path.Combine(Constants.LogFolderPath, Constants.LogFileName);
-            if (!File.Exists(Constants.LogDefaultPath))
+            LogFolderPath = System.IO.Path.Combine(System.IO.Path.GetPathRoot(Environment.SystemDirectory), "Log");
+            LogFileName = String.Format("{0}-{1}{2}", Constants.LogFileNamePrefix, UID, Constants.LogFileNameExtension);
+            LogDefaultPath = System.IO.Path.Combine(LogFolderPath, LogFileName);
+            if (!File.Exists(LogDefaultPath))
             {
                 try
                 {
-                    new System.IO.FileInfo(Constants.LogFolderPath).Directory.Create();
-                    sw = File.AppendText(Constants.LogDefaultPath);
+                    new System.IO.FileInfo(LogFolderPath).Directory.Create();
+                    sw = File.AppendText(LogDefaultPath);
                 }
                 catch
                 {
                     // TODO : log this later
-                    Constants.LogFolderPath = System.IO.Path.GetTempPath();
-                    Constants.LogDefaultPath = Path.Combine(Constants.LogFolderPath, Constants.LogFileName);
-                    new System.IO.FileInfo(Constants.LogFolderPath).Directory.Create();
-                    sw = File.AppendText(Constants.LogDefaultPath);
+                    LogFolderPath = System.IO.Path.GetTempPath();
+                    LogDefaultPath = Path.Combine(LogFolderPath, LogFileName);
+                    new System.IO.FileInfo(LogFolderPath).Directory.Create();
+                    sw = File.AppendText(LogDefaultPath);
                 }
             }
             else
             {
-                sw = File.AppendText(Constants.LogDefaultPath);
+                sw = File.AppendText(LogDefaultPath);
             }
         }
-        private static Log instance = null;
-        public static Log Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Log();
-                }
-                return instance;
-            }
-        }
+
         // https://msdn.microsoft.com/en-us/magazine/ff714589.aspx
         private enum LogLevel { Online = 0x0020, Verbose = 0x0010, Information = 0x0008, Warning = 0x0004, Error = 0x002, Critical = 0x001};
 
@@ -153,7 +148,7 @@ namespace LivesiteAutomation
         {
 
             var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture);
-            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, ICM.Instance?.Id, currentTime, lvl, GetCallerMethod(), ss);
+            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, Id, currentTime, lvl, GetCallerMethod(), ss);
             Console.WriteLine(logLine);
             Console.ResetColor();
             System.Diagnostics.Trace.WriteLine(logLine);
@@ -162,7 +157,11 @@ namespace LivesiteAutomation
 
         private void WriteToLog(string ss)
         {
-            sw?.WriteLine(ss);
+            try
+            {
+                sw?.WriteLine(ss);
+            }
+            catch { };
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -190,7 +189,7 @@ namespace LivesiteAutomation
 
         private void SendOnline(string ss, bool force = false)
         {
-            ICM.Instance?.AddICMDiscussion(ss, force);
+            SALsA.GetInstance(Id)?.ICM.AddICMDiscussion(ss, force);
         }
 
         internal void FlushAndClose()
@@ -198,11 +197,6 @@ namespace LivesiteAutomation
             sw?.Flush();
             sw?.Close();
             sw = null;
-        }
-        public void Reload()
-        {
-            FlushAndClose();
-            instance = new Log();
         }
     }
 }

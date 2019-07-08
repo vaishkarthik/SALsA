@@ -21,15 +21,15 @@ namespace LivesiteAutomation
         {
             try
             {
-                var rdfe = GenevaActions.GetRDFESubscription(subscriptionId).Result;
+                var rdfe = GenevaActions.GetRDFESubscription(Id, subscriptionId).Result;
                 var rdfeSubscription = AnalyzeRDFESubscriptionResult(rdfe);
 
                 return rdfeSubscription;
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Unable to get or analyse the RDFE subscription {0} for ICM {1}", this.SubscriptionId, ICM.Instance.Id);
-                Log.Instance.Exception(ex);
+                SALsA.GetInstance(Id)?.Log.Error("Unable to get or analyse the RDFE subscription {0}", this.SubscriptionId);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
                 return null;
             }
         }
@@ -57,7 +57,6 @@ namespace LivesiteAutomation
                 }
                 return rdfeSubscription;
             }
-
         }
         
         private List<RDFEDeployment> BuildDeployment(Json2Class.RDFESubscriptionWrapper.SubscriptionHostedService element)
@@ -95,8 +94,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Warning("No deployment found for : {0}", element.Text[0]);
-                Log.Instance.Warning(ex);
+                SALsA.GetInstance(Id)?.Log.Warning("No deployment found for : {0}", element.Text[0]);
+                SALsA.GetInstance(Id)?.Log.Warning(ex);
                 return null;
             }
         }

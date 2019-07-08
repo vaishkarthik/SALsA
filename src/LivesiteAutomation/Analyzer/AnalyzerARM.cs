@@ -13,15 +13,15 @@ namespace LivesiteAutomation
         {
             try
             { 
-                var arm = GenevaActions.GetARMSubscription(subscriptionId).Result;
+                var arm = GenevaActions.GetARMSubscription(Id, subscriptionId).Result;
                 var armSubscription = AnalyzeARMSubscriptionResult(arm);
                 
                 return armSubscription;
             }
             catch(Exception ex)
             {
-                Log.Instance.Error("Unable to get or analyse the ARM subscription {0} for ICM {1}", this.SubscriptionId, ICM.Instance.Id);
-                Log.Instance.Exception(ex);
+                SALsA.GetInstance(Id)?.Log.Error("Unable to get or analyse the ARM subscription {0}", this.SubscriptionId);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
                 return null;
             }
         } 

@@ -28,17 +28,17 @@ namespace LivesiteAutomation
 
         public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
         {
-            Log.Instance.Verbose("Adding to ICM String {0}", entry);
+            SALsA.GetInstance(Id)?.Log.Verbose("Adding to ICM String {0}", entry);
             if (htmlfy)
-            { 
+            {
                 try
                 {
                     entry = Utility.EncodeHtml(entry);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Log.Instance.Warning("Failed to html encode {0}, will use raw input", entry);
-                    Log.Instance.Exception(ex);
+                    SALsA.GetInstance(Id)?.Log.Warning("Failed to html encode {0}, will use raw input", entry);
+                    SALsA.GetInstance(Id)?.Log.Exception(ex);
                 }
             }
             if (repeat == false)
@@ -49,9 +49,9 @@ namespace LivesiteAutomation
                 }
                 foreach (var de in DescriptionEntries)
                 {
-                    if(de.SubmittedBy == Constants.ICMIdentityName && Utility.DecodeHtml(de.Text).CompareTo(Utility.DecodeHtml(entry)) == 0)
+                    if (de.SubmittedBy == Constants.ICMIdentityName && Utility.DecodeHtml(de.Text).CompareTo(Utility.DecodeHtml(entry)) == 0)
                     {
-                        Log.Instance.Verbose("Did not add entry to ICM since already sent", this.Id);
+                        SALsA.GetInstance(Id)?.Log.Verbose("Did not add entry to ICM since already sent", this.Id);
                         return false;
                     }
                 }
@@ -63,41 +63,19 @@ namespace LivesiteAutomation
                 var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
                 var reason = response.Content.ReadAsStringAsync().Result;
                 response.EnsureSuccessStatusCode();
-                Log.Instance.Verbose("Got response for IMC {0}", this.Id);
+                SALsA.GetInstance(Id)?.Log.Verbose("Got response for IMC {0}", this.Id);
                 return true;
- 
+
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to add discussion element to ICM {0}", this.Id);
-                Log.Instance.Exception(ex);
+                SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}", this.Id);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
                 return false;
             }
         }
 
-        private static ICM instance = null;
-        public static ICM Instance
-        {
-            get
-            {
-                // MUST NOT LOG ANYTHING HERE
-                // Or log class might go in a recursive error.
-                // The joys of interdependant singletons...
-                return instance;
-            }
-        }
-
-        public static ICM CreateInstance(int icm)
-        {
-            instance = new ICM(icm);
-            return instance;
-        }
-        public static ICM CreateInstance(string icm)
-        {
-            return CreateInstance(Convert.ToInt32(icm));
-        }
-
-        private ICM(int icmId)
+        public ICM(int icmId)
         {
             this.Id = icmId;
             PopulateICMInfo();
@@ -109,15 +87,15 @@ namespace LivesiteAutomation
             {
                 var response = Client.GetAsync(BuildUri(this.Id)).Result;
                 response.EnsureSuccessStatusCode();
-                Log.Instance.Verbose("Got response for IMC {0}", this.Id);
+                SALsA.GetInstance(Id)?.Log.Verbose("Got response for IMC {0}", this.Id);
 
                 CurrentICM = Utility.JsonToObject<Incident>(ReadResponseBody(response));
-                Log.Instance.Verbose(CurrentICM);
+                SALsA.GetInstance(Id)?.Log.Verbose(CurrentICM);
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to get ICM {0}", this.Id);
-                Log.Instance.Exception(ex);
+                SALsA.GetInstance(Id)?.Log.Error("Failed to get ICM {0}", this.Id);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
         }
 
@@ -132,8 +110,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to transfer ICM {0}", Id);
-                Log.Instance.Exception(ex);
+                SALsA.GetInstance(Id)?.Log.Error("Failed to transfer ICM {0}", Id);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
         }
 
@@ -157,8 +135,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Failed to get discussion entries for ICM {0}", Id);
-                Log.Instance.Exception(ex);
+                SALsA.GetInstance(Id)?.Log.Error("Failed to get discussion entries for ICM {0}", Id);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
         }
 
@@ -169,7 +147,8 @@ namespace LivesiteAutomation
 
         internal HttpClient Client
         {
-            get { 
+            get
+            {
                 if (client == null)
                 {
                     var handler = new HttpClientHandler();

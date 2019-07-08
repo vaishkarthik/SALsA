@@ -19,10 +19,12 @@ namespace LivesiteAutomation
         public string ResourceGroupName { get; private set; }
         public string VMName { get; private set; }
         public DateTime StartTime { get; private set; }
-        public Analyzer()
+        private int Id;
+        public Analyzer(int Id)
         {
+            this.Id = Id;
             (SubscriptionId, ResourceGroupName, VMName, StartTime) = AnalyzeICM();
-            Log.Instance.Send("{0}", Utility.ObjectToJson(this, true));
+            SALsA.GetInstance(Id)?.Log.Send("{0}", Utility.ObjectToJson(this, true));
 
             // TODO analyse ARM and REDFE in parallel
             var arm  = AnalyzeARMSubscription(SubscriptionId);
@@ -47,11 +49,11 @@ namespace LivesiteAutomation
 
         private void ExecuteAllActionsForIaaS(ARMDeployment dep)
         {
-            Utility.TaskManager.Instance.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(dep)),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(dep)),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(dep)),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(dep))
+            SALsA.GetInstance(Id).TaskManager.AddTask(
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(Id, dep), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep), Id)
             );
 
         }
@@ -61,11 +63,11 @@ namespace LivesiteAutomation
             // TODO instead of using 0, take 5 random and use them
             instanceId = instanceId == -1 ? 0 : instanceId;
 
-            Utility.TaskManager.Instance.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(dep, instanceId)),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(dep, instanceId)),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(dep, instanceId)),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(dep, instanceId))
+            SALsA.GetInstance(Id).TaskManager.AddTask(
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep, instanceId), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep, instanceId), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(Id, dep, instanceId), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep, instanceId), Id)
             );
         }
 
@@ -85,11 +87,11 @@ namespace LivesiteAutomation
                 NodeId = instance.VMID,
                 InstanceName = instance.RoleInstanceName
             };
-            Log.Instance.Send(Utility.ObjectToJson(vmInfo, true));
+            SALsA.GetInstance(Id)?.Log.Send(Utility.ObjectToJson(vmInfo, true));
 
-            Utility.TaskManager.Instance.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(vmInfo)),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnostics(vmInfo))
+            SALsA.GetInstance(Id).TaskManager.AddTask(
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnostics(Id, vmInfo), Id)
             );
         }
 

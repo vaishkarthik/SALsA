@@ -10,16 +10,16 @@ namespace LivesiteAutomation
     public partial class GenevaActions
     {
         // TODO : make sovereign cloud available
-        public static Task<String> GetRDFESubscription(Guid guid)
+        public static Task<String> GetRDFESubscription(int icm, Guid guid)
         {
-            Log.Instance.Information("Calling GenevaAction GetRDFESubscription with guid:{0}", guid);
+            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetRDFESubscription with guid:{0}", guid);
             var param = new GenevaOperations.GetRDFESubscriptionResources
             {
                 wellknownsubscriptionid = guid.ToString(),
                 detaillevel = Constants.GetRDFESubscriptionDetailLevel
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
-            return new GenevaAction(Constants.GetRDFESubscriptionExtensionName, Constants.GetRDFESubscriptionOperationName, actionParam).GetOperationResultOutputAsync();
+            return new GenevaAction(icm, Constants.GetRDFESubscriptionExtensionName, Constants.GetRDFESubscriptionOperationName, actionParam).GetOperationResultOutputAsync(icm);
         }
     }
 }

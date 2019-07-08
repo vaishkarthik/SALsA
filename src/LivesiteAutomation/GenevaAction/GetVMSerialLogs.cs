@@ -11,9 +11,9 @@ namespace LivesiteAutomation
     public partial class GenevaActions
     {
         // TODO : make sovereign cloud available
-        public static Task<String> GetVMConsoleSerialLogs(ARMDeployment deployment)
+        public static Task<String> GetVMConsoleSerialLogs(int icm, ARMDeployment deployment)
         {
-            Log.Instance.Information("Calling GetVMConsoleSerialLogs with params {0}", deployment);
+            SALsA.GetInstance(icm)?.Log.Information("Calling GetVMConsoleSerialLogs with params {0}", deployment);
             var param = new GenevaOperations.GetVMConsoleSerialLogs
             {
                 smecrpregion = deployment.location,
@@ -22,7 +22,7 @@ namespace LivesiteAutomation
                 wellknownsubscriptionid = deployment.subscriptions
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
-            var task = new GenevaAction(Constants.GetVMConsoleSerialLogsExtensionName, Constants.GetVMConsoleSerialLogsOperationName, actionParam).GetOperationFileOutputAsync();
+            var task = new GenevaAction(icm, Constants.GetVMConsoleSerialLogsExtensionName, Constants.GetVMConsoleSerialLogsOperationName, actionParam).GetOperationFileOutputAsync(icm);
 
             // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
@@ -30,9 +30,9 @@ namespace LivesiteAutomation
                 ));
         }
         // TODO : make sovereign cloud available
-        public static Task<String> GetVMConsoleSerialLogs(ARMDeployment deployment, int id)
+        public static Task<String> GetVMConsoleSerialLogs(int icm, ARMDeployment deployment, int id)
         {
-            Log.Instance.Information("Calling GetVMConsoleSerialLogs of id:{0} with params {1}", id, deployment);
+            SALsA.GetInstance(icm)?.Log.Information("Calling GetVMConsoleSerialLogs of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.GetVMConsoleSerialLogsVMSS
             {
                 smecrpregion = deployment.location,
@@ -42,7 +42,7 @@ namespace LivesiteAutomation
                 smevirtualmachinescalesetvminstanceidparameter = id
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
-            var task = new GenevaAction(Constants.GetVMConsoleSerialLogsExtensionName, Constants.GetVMSSConsoleSerialLogsOperationName, actionParam).GetOperationFileOutputAsync();
+            var task = new GenevaAction(icm, Constants.GetVMConsoleSerialLogsExtensionName, Constants.GetVMSSConsoleSerialLogsOperationName, actionParam).GetOperationFileOutputAsync(icm);
 
             // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (

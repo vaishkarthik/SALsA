@@ -33,7 +33,7 @@ namespace LivesiteAutomation
             {
                 if (cert == null)
                 {
-                    Log.Instance.Information("First time calling Cert, creating cert...");
+                    SALsA.GlobalLog?.Information("First time calling Cert, creating cert...");
                     cert = PopulateCertificate();
                 }
                 return cert;
@@ -45,7 +45,7 @@ namespace LivesiteAutomation
             {
                 if (storageCredentials == null)
                 {
-                    Log.Instance.Information("First time calling StorageCredentials, creating StorageCredentials...");
+                    SALsA.GlobalLog?.Information("First time calling StorageCredentials, creating StorageCredentials...");
                     storageCredentials = PopulateStorageCredentials();
                 }
                 return storageCredentials;
@@ -58,7 +58,7 @@ namespace LivesiteAutomation
             {
                 if (servicePrincipal == null)
                 {
-                    Log.Instance.Information("First time calling servicePrincipal, creating servicePrincipal...");
+                    SALsA.GlobalLog?.Information("First time calling servicePrincipal, creating servicePrincipal...");
                     servicePrincipal = PopulateServicePrincipal();
                 }
                 return servicePrincipal;
@@ -88,8 +88,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Critical("Failed to get token from AzureServiceTokenProvider", Constants.AuthenticationCertSecretURI);
-                Log.Instance.Exception(ex);
+                SALsA.GlobalLog?.Critical("Failed to get token from AzureServiceTokenProvider", Constants.AuthenticationCertSecretURI);
+                SALsA.GlobalLog?.Exception(ex);
                 throw ex;
             }
         }
@@ -106,14 +106,14 @@ namespace LivesiteAutomation
                     X509KeyStorageFlags.DefaultKeySet |
                     X509KeyStorageFlags.MachineKeySet |
                     X509KeyStorageFlags.PersistKeySet /*| X509KeyStorageFlags.Exportable*/);
-                Log.Instance.Verbose("Successfully got certificate : {0}", cert.SubjectName.Name);
+                SALsA.GlobalLog?.Verbose("Successfully got certificate : {0}", cert.SubjectName.Name);
 
                 return cert;
             }
             catch (Exception ex)
             {
-                Log.Instance.Critical("Error getting Cerificate from {0} keyvault", Constants.AuthenticationCertSecretURI);
-                Log.Instance.Exception(ex);
+                SALsA.GlobalLog?.Critical("Error getting Cerificate from {0} keyvault", Constants.AuthenticationCertSecretURI);
+                SALsA.GlobalLog?.Exception(ex);
                 throw ex;
             }
         }
@@ -135,8 +135,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Error getting Storage Credentials");
-                Log.Instance.Exception(ex);
+                SALsA.GlobalLog?.Error("Error getting Storage Credentials");
+                SALsA.GlobalLog?.Exception(ex);
                 return null;
             }
         }
