@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8F1A0325-B90E-4FEC-B79A-C7EC8DF063B1}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>LivesiteAutomation</RootNamespace>
     <AssemblyName>LivesiteAutomation</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
