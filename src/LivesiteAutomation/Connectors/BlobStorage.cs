@@ -132,6 +132,7 @@ namespace LivesiteAutomation
                     SharedAccessExpiryTime = DateTime.UtcNow.AddHours(ExpiryInHours),
                     Permissions = SharedAccessBlobPermissions.Read
                 });
+                Log.Instance.Information("Generated a valid SAS key for {0} : {1}{2}", blobName, blob.StorageUri.PrimaryUri.AbsoluteUri, sas);
                 return String.Format("{0}{1}", blob.StorageUri.PrimaryUri.AbsoluteUri, sas);
             }
             catch (Exception ex)

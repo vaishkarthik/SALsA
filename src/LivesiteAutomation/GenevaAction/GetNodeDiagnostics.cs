@@ -14,6 +14,7 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<ZipArchiveEntry> GetNodeDiagnostics(ShortRDFERoleInstance instance)
         {
+            Log.Instance.Information("Calling GenevaAction GetNodeDiagnostics with params {0}", instance);
             var param = new GenevaOperations.GetNodeDiagnostics
             {
                 smefabrichostparam = instance.Fabric,

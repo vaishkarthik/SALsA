@@ -13,6 +13,7 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<String> GetVMConsoleSerialLogs(ARMDeployment deployment)
         {
+            Log.Instance.Information("Calling GetVMConsoleSerialLogs with params {0}", deployment);
             var param = new GenevaOperations.GetVMConsoleSerialLogs
             {
                 smecrpregion = deployment.location,
@@ -31,6 +32,7 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<String> GetVMConsoleSerialLogs(ARMDeployment deployment, int id)
         {
+            Log.Instance.Information("Calling GetVMConsoleSerialLogs of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.GetVMConsoleSerialLogsVMSS
             {
                 smecrpregion = deployment.location,

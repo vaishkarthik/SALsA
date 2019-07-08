@@ -50,6 +50,7 @@ namespace LivesiteAutomation
 
             public void WaitAllTasks()
             {
+                Log.Instance.Information("Waiting for all {0} tasks...", tasks.Count);
                 try
                 {
                     Task.WaitAll(tasks.ToArray());

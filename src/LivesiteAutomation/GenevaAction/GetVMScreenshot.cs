@@ -14,6 +14,7 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Image> GetVMConsoleScreenshot(ARMDeployment deployment)
         {
+            Log.Instance.Information("Calling GenevaAction with params {0}", deployment);
             var param = new GenevaOperations.GetVMConsoleScreenshot
             {
                 smecrpregion = deployment.location,
@@ -32,6 +33,7 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Image> GetVMConsoleScreenshot(ARMDeployment deployment, int id)
         {
+            Log.Instance.Information("Calling GenevaAction of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.GetVMConsoleScreenshotVMSS
             {
                 smecrpregion = deployment.location,

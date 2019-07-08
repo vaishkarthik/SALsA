@@ -28,6 +28,7 @@ namespace LivesiteAutomation
 
         public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
         {
+            Log.Instance.Verbose("Adding to ICM String {0}", entry);
             if (htmlfy)
             { 
                 try
@@ -99,9 +100,10 @@ namespace LivesiteAutomation
         private ICM(int icmId)
         {
             this.Id = icmId;
+            PopulateICMInfo();
         }
 
-        public ICM GetICM()
+        private void PopulateICMInfo()
         {
             try
             {
@@ -117,7 +119,6 @@ namespace LivesiteAutomation
                 Log.Instance.Error("Failed to get ICM {0}", this.Id);
                 Log.Instance.Exception(ex);
             }
-            return this;
         }
 
         public void TransferICM(string owningTeam)
@@ -136,7 +137,7 @@ namespace LivesiteAutomation
             }
         }
 
-        public void GetICMDiscussion()
+        private void GetICMDiscussion()
         {
             try
             {

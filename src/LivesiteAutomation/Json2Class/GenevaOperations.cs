@@ -11,11 +11,13 @@ namespace LivesiteAutomation.Json2Class
         public class GetARMSubscriptionResources
         {
             public string wellknownsubscriptionid { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
         public class GetRDFESubscriptionResources
         {
             public string wellknownsubscriptionid { get; set; }
             public string detaillevel { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
 
         // Base class to inherit from
@@ -25,6 +27,7 @@ namespace LivesiteAutomation.Json2Class
             public string wellknownsubscriptionid { get; set; }
             public string smeresourcegroupnameparameter { get; set; }
             public string smevmnameparameter { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
         public class GetVMConsoleSerialLogs : GetIaaSVMBase { }
         public class GetVMConsoleScreenshot : GetIaaSVMBase { }
@@ -32,6 +35,7 @@ namespace LivesiteAutomation.Json2Class
         public class GetVMModelAndInstanceView : GetIaaSVMBase
         {
             public string smegetvmoptionparameter { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
         public class InspectIaaSDiskForARMVM
         {
@@ -42,6 +46,7 @@ namespace LivesiteAutomation.Json2Class
             public string smelogextractmode { get; set; }
             public string smeskiptostep { get; set; }
             public int smetimeoutinmins { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
 
         public class GetIaaSVMBaseVMSS
@@ -51,6 +56,7 @@ namespace LivesiteAutomation.Json2Class
             public string smevirtualmachinescalesetnameparameter { get; set; }
             public string wellknownsubscriptionid { get; set; }
             public int smevirtualmachinescalesetvminstanceidparameter { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
         public class GetVMConsoleSerialLogsVMSS : GetIaaSVMBaseVMSS { }
         public class GetVMConsoleScreenshotVMSS : GetIaaSVMBaseVMSS { }
@@ -65,6 +71,7 @@ namespace LivesiteAutomation.Json2Class
             public string smeskiptostep { get; set; }
             public int smetimeoutinmins { get; set; }
             public int smevmssinstanceid { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
 
         public class GetVMModelAndInstanceViewVMSS
@@ -75,6 +82,7 @@ namespace LivesiteAutomation.Json2Class
             public string wellknownsubscriptionid { get; set; }
             public string smegetvmscalesetvmoptionparameter { get; set; }
             public int smevirtualmachinescalesetvminstanceidparameter { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
 
         public class GetNodeDiagnostics
@@ -83,6 +91,7 @@ namespace LivesiteAutomation.Json2Class
             public string smedeploymentidordeploymentparam { get; set; }
             public string smenodediagnosticstagparam { get; set; }
             public string smefabrichostparam { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
 
         public class GetClassicVMScreenshot
@@ -91,6 +100,7 @@ namespace LivesiteAutomation.Json2Class
             public string smetenantnameparam { get; set; }
             public string smevmnameparam { get; set; }
             public string smescreenshotsizeparam { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this); }
         }
     }
 }

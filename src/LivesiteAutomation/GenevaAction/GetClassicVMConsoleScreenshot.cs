@@ -13,6 +13,7 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Image> GetClassicVMConsoleScreenshot(ShortRDFERoleInstance instance)
         {
+            Log.Instance.Information("Calling GenevaAction GetARMSubscription with params {0}", instance);
             var param = new GenevaOperations.GetClassicVMScreenshot {
                 smefabrichostparam = instance.Fabric,
                 smescreenshotsizeparam = Constants.GetClassicVMClassicScreenshotSize,

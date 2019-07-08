@@ -12,6 +12,7 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<String> GetRDFESubscription(Guid guid)
         {
+            Log.Instance.Information("Calling GenevaAction GetRDFESubscription with guid:{0}", guid);
             var param = new GenevaOperations.GetRDFESubscriptionResources
             {
                 wellknownsubscriptionid = guid.ToString(),

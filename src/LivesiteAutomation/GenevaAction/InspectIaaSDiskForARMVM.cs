@@ -13,6 +13,7 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Stream> InspectIaaSDiskForARMVM(ARMDeployment deployment)
         {
+            Log.Instance.Information("Calling InspectIaaSDiskForARMVM with params {0}", deployment);
             var param = new GenevaOperations.InspectIaaSDiskForARMVM
             {
                 smecrpregion = deployment.location,
@@ -34,6 +35,7 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Stream> InspectIaaSDiskForARMVM(ARMDeployment deployment, int id)
         {
+            Log.Instance.Information("Calling InspectIaaSDiskForARMVM of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.InspectIaaSDiskForARMVMVMSS
             {
                 smecrpregion = deployment.location,

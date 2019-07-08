@@ -20,6 +20,7 @@ namespace LivesiteAutomation.Json2Class
         {
             return (subscriptions + resourceGroups + location + type).GetHashCode();
         }
+        public override string ToString() { return Utility.ObjectToJson(this); }
     }
     class ARMSubscriptionRaw
     {

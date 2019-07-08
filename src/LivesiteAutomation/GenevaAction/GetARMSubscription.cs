@@ -12,6 +12,8 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<String> GetARMSubscription(Guid guid)
         {
+            Log.Instance.Information("Calling GenevaAction GetARMSubscription with param Guid:{0}", guid);
+
             var param = new GenevaOperations.GetARMSubscriptionResources { wellknownsubscriptionid = guid.ToString() };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
             return new GenevaAction(Constants.GetARMSubscriptionExtensionName, Constants.GetARMSubscriptionOperationName, actionParam).GetOperationResultOutputAsync();
