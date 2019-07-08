@@ -27,7 +27,6 @@ namespace LivesiteAutomation
             _ = Authentication.Instance.StorageCredentials;
 
             ICM.CreateInstance(num);
-            ICM.Instance.GetICM();
             var analyzer =  new Analyzer();
             //myIcm.AddICMDiscussion("SALSAid: " + Log.Instance.UID);
             analyzer.Wait();
