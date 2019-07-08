@@ -34,6 +34,7 @@ namespace LivesiteAutomation
             {
                 Log.Instance.Critical("Main failed !");
                 Log.Instance.Exception(ex);
+                throw ex;
             }
             finally
             {
