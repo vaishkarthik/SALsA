@@ -26,12 +26,12 @@ namespace LivesiteAutomation
             _ = Authentication.Instance;
             _ = Authentication.Instance.StorageCredentials;
 
-            var myIcm = new ICM(num);
-            myIcm.GetICM();
-            var analyzer =  new Analyzer(ref myIcm);
+            ICM.CreateInstance(num);
+            ICM.Instance.GetICM();
+            var analyzer =  new Analyzer();
             //myIcm.AddICMDiscussion("SALSAid: " + Log.Instance.UID);
             analyzer.Wait();
-            Log.Instance.UploadLog();
+            Utility.UploadLog();
         }
     }
 }

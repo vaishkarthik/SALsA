@@ -15,8 +15,6 @@ namespace LivesiteAutomation
 
     public sealed class Log
     {
-
-        public int Icm { get; set; } = -1;
         public string UID;
         private StreamWriter sw = null;
         private Log()
@@ -146,7 +144,7 @@ namespace LivesiteAutomation
         {
 
             var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture);
-            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, Icm, currentTime, lvl, GetCallerMethod(), ss);
+            string logLine = String.Format(CultureInfo.InvariantCulture, "{0} [ICM:{1}] {2} |> {3} <{4}>: {5}", UID, ICM.Instance?.Id, currentTime, lvl, GetCallerMethod(), ss);
             Console.WriteLine(logLine);
             System.Diagnostics.Trace.WriteLine(logLine);
             WriteToLog(logLine);
@@ -182,14 +180,7 @@ namespace LivesiteAutomation
 
         private void SendOnline(string ss, bool force = false)
         {
-            ICM.IncidentMapping[Icm].AddICMDiscussion(ss, force);
+            ICM.Instance?.AddICMDiscussion(ss, force);
         }
-
-        public void UploadLog()
-        {
-            var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
-            BlobStorage.UploadFile(this.Icm, String.Format("{0}_{1}-[{2}].log", currentTime, this.Icm, this.UID), Constants.LogDefaultPath, "text/plain");
-        }
-
     }
 }

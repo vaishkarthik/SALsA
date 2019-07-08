@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -151,9 +152,9 @@ namespace LivesiteAutomation
 
         private static void SendSASToICM(string name)
         {
-            var sasToken = BlobStorage.GetSASToken(Log.Instance.Icm, name);
+            var sasToken = BlobStorage.GetSASToken(ICM.Instance.Id, name);
             // Since we build our own HTML, we directly call the AddICMDiscussion instead of callign Log.Instance.Online
-            if (!ICM.IncidentMapping[Log.Instance.Icm].AddICMDiscussion(Utility.UrlToHml(name, sasToken), false, false))
+            if (ICM.Instance.AddICMDiscussion(Utility.UrlToHml(name, sasToken), false, false))
             {
                 Log.Instance.Error("Failed to add to ICM discussion : {0} with sasToken {1}", name, sasToken);
             }
@@ -162,7 +163,7 @@ namespace LivesiteAutomation
         public static async Task SaveAndSendBlobTask(string name, Task<ZipArchiveEntry> task)
         {
             var output = (await task).Open();
-            await BlobStorage.UploadStream(Log.Instance.Icm, name, output);
+            await BlobStorage.UploadStream(ICM.Instance.Id, name, output);
             SendSASToICM(name);
             Utility.SaveToFile(name, output);
         }
@@ -170,7 +171,7 @@ namespace LivesiteAutomation
         public static async Task SaveAndSendBlobTask(string name, Task<String> task)
         {
             var output = await task; 
-            await BlobStorage.UploadText(Log.Instance.Icm, name, output);
+            await BlobStorage.UploadText(ICM.Instance.Id, name, output);
             SendSASToICM(name);
             Utility.SaveToFile(name, output);
         }
@@ -180,7 +181,7 @@ namespace LivesiteAutomation
             using (MemoryStream ms = new MemoryStream())
             {
                 output.Save(ms, ImageFormat.Png);
-                await BlobStorage.UploadBytes(Log.Instance.Icm, name, ms.ToArray(), "image/png");
+                await BlobStorage.UploadBytes(ICM.Instance.Id, name, ms.ToArray(), "image/png");
             }
             SendSASToICM(name);
             Utility.SaveToFile(name, output);
@@ -188,13 +189,13 @@ namespace LivesiteAutomation
         public static async Task SaveAndSendBlobTask(string name, Task<Stream> task)
         {
             var output = await task;
-            await BlobStorage.UploadStream(Log.Instance.Icm, name, output);
+            await BlobStorage.UploadStream(ICM.Instance.Id, name, output);
             SendSASToICM(name);
             Utility.SaveToFile(name, output);
         }
         private static string CreateICMFolderInLogDirAndReturnFullPath(string name)
         {
-            var logDir = Path.Combine(Path.GetDirectoryName(Constants.LogDefaultPath), Convert.ToString(Log.Instance.Icm));
+            var logDir = Path.Combine(Path.GetDirectoryName(Constants.LogDefaultPath), Convert.ToString(ICM.Instance.Id));
             if (!Directory.Exists(logDir))
             {
                 Directory.CreateDirectory(logDir);
@@ -227,6 +228,12 @@ namespace LivesiteAutomation
                 input.CopyTo(ms);
                 return ms.ToArray();
             }
+        }
+
+        public static void UploadLog()
+        {
+            var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
+            BlobStorage.UploadFile(ICM.Instance.Id, String.Format("{0}_{1}-[{2}].log", currentTime, ICM.Instance.Id, Log.Instance.UID), Constants.LogDefaultPath, "text/plain");
         }
     }
 }

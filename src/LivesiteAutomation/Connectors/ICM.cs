@@ -21,10 +21,9 @@ namespace LivesiteAutomation
 {
     public class ICM
     {
-        private readonly int Id;
+        public int Id { get; private set; }
         public Incident CurrentICM { get; private set; }
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
-        public static Dictionary<int, ICM> IncidentMapping { get; private set; }
         private HttpClient client = null;
 
         public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
@@ -75,18 +74,31 @@ namespace LivesiteAutomation
             }
         }
 
-        public ICM(string icmId)
+        private static ICM instance = null;
+        public static ICM Instance
         {
-            this.Id = Convert.ToInt32(icmId);
-            Log.Instance.Icm = this.Id;
-            IncidentMapping = new Dictionary<int, ICM>() { { this.Id, this } };
+            get
+            {
+                // MUST NOT LOG ANYTHING HERE
+                // Or log class might go in a recursive error.
+                // The joys of interdependant singletons...
+                return instance;
+            }
         }
 
-        public ICM(int icmId)
+        public static ICM CreateInstance(int icm)
+        {
+            instance = new ICM(icm);
+            return instance;
+        }
+        public static ICM CreateInstance(string icm)
+        {
+            return CreateInstance(Convert.ToInt32(icm));
+        }
+
+        private ICM(int icmId)
         {
             this.Id = icmId;
-            Log.Instance.Icm = this.Id;
-            IncidentMapping = new Dictionary<int, ICM>() { { this.Id, this } };
         }
 
         public ICM GetICM()

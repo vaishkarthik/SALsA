@@ -9,8 +9,9 @@ namespace LivesiteAutomation
 {
     public partial class Analyzer
     {
-        private (Guid subscriptionId, string resourceGroupName, string VMName, DateTime startTime) AnalyzeICM(ICM currentICM)
+        private (Guid subscriptionId, string resourceGroupName, string VMName, DateTime startTime) AnalyzeICM()
         {
+            var currentICM = ICM.Instance;
             var subscriptionId = GetSubscriptionId(currentICM); ;
             var resourceGroupName = GetCustomField(currentICM, Constants.AnalyzerResourceGroupField);
             var VMName = GetCustomField(currentICM, Constants.AnalyzerVMNameField);

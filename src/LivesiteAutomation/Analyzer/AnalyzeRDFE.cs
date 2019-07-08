@@ -28,7 +28,7 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                Log.Instance.Error("Unable to get or analyse the RDFE subscription {0} for ICM {1}", this.SubscriptionId, Log.Instance.Icm);
+                Log.Instance.Error("Unable to get or analyse the RDFE subscription {0} for ICM {1}", this.SubscriptionId, ICM.Instance.Id);
                 Log.Instance.Exception(ex);
                 return null;
             }

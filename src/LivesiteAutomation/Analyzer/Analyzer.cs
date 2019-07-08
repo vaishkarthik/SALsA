@@ -20,9 +20,9 @@ namespace LivesiteAutomation
         public string VMName { get; private set; }
         public DateTime StartTime { get; private set; }
         public Task task { get; private set; }
-        public Analyzer(ref ICM icm)
+        public Analyzer()
         {
-            (SubscriptionId, ResourceGroupName, VMName, StartTime) = AnalyzeICM(icm);
+            (SubscriptionId, ResourceGroupName, VMName, StartTime) = AnalyzeICM();
             Log.Instance.Send("{0}", Utility.ObjectToJson(this, true));
 
             // TODO analyse ARM and REDFE in parallel
