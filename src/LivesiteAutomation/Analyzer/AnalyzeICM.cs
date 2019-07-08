@@ -16,7 +16,10 @@ namespace LivesiteAutomation
             var resourceGroupName = GetCustomField(currentICM, Constants.AnalyzerResourceGroupField);
             var VMName = GetCustomField(currentICM, Constants.AnalyzerVMNameField);
             DateTime startTime;
-            _ = DateTime.TryParse(GetCustomField(currentICM, Constants.AnalyzerStartTimeField), out startTime);
+            if (!DateTime.TryParse(GetCustomField(currentICM, Constants.AnalyzerStartTimeField), out startTime))
+            {
+                Log.Instance.Warning("Failed to parse DateTime");
+            }
             return (subscriptionId, resourceGroupName, VMName, startTime);
         }
 
@@ -81,8 +84,10 @@ namespace LivesiteAutomation
 
         private bool CheckIfSubscriptionIdIsValid(string s)
         {
+            Log.Instance.Verbose("Parsing strign for valid SubscriptionID : {0}", s);
             try
             {
+
                 Guid tmp = new Guid();
                 return Guid.TryParse(Utility.DecodeHtml(s), out tmp);
             }

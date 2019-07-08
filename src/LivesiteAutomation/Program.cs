@@ -11,9 +11,8 @@ namespace LivesiteAutomation
     {
         static void Main(string[] args)
         {
-            int num;
             // Test if input arguments were supplied:
-            bool test = int.TryParse(args[0], out num);
+            bool test = int.TryParse(args[0], out int num);
             if (args.Length >= 0 && test == false)
             {
                 System.Console.WriteLine("Please enter a valid numeric argument for the ICM.");
@@ -27,9 +26,10 @@ namespace LivesiteAutomation
             _ = Authentication.Instance.StorageCredentials;
 
             ICM.CreateInstance(num);
-            var analyzer =  new Analyzer();
-            //myIcm.AddICMDiscussion("SALSAid: " + Log.Instance.UID);
-            analyzer.Wait();
+            // We do not need to keep the analyzer in memory, for now.
+            _ =  new Analyzer();
+
+            Utility.TaskManager.Instance.WaitAllTasks();
             Utility.UploadLog();
         }
     }

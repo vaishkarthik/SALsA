@@ -22,7 +22,7 @@ namespace LivesiteAutomation
         public class TaskManager
         {
 
-            private List<Task> tasks = null;
+            private List<Task> Tasks = null;
 
             private static TaskManager instance = null;
             public static TaskManager Instance
@@ -40,30 +40,45 @@ namespace LivesiteAutomation
 
             private TaskManager()
             {
-                tasks = new List<Task>();
+                Tasks = new List<Task>();
             }
 
             public void AddTask(Task t)
             {
-                tasks.Add(t);
+                if(t != null)
+                { 
+                    Tasks.Add(t);
+                }
+                else
+                {
+                    Log.Instance.Warning("AddTask received a null task");
+                }
+            }
+
+            public void AddTask(params Task[] tasks)
+            {
+                foreach (var t in tasks)
+                {
+                    AddTask(t);
+                }
             }
 
             public void WaitAllTasks()
             {
-                Log.Instance.Information("Waiting for all {0} tasks...", tasks.Count);
+                Log.Instance.Information("Waiting for all {0} tasks...", Tasks.Count);
                 try
                 {
-                    Task.WaitAll(tasks.ToArray());
+                    Task.WaitAll(Tasks.ToArray());
                 }
                 catch
                 {
-                    for(int i = tasks.Count - 1; i >= 0; --i)
+                    for(int i = Tasks.Count - 1; i >= 0; --i)
                     {
                         try
                         { 
-                            if(!tasks[i].IsCompleted)
+                            if(!Tasks[i].IsCompleted)
                             {
-                                tasks[i].GetAwaiter().GetResult();
+                                Tasks[i].GetAwaiter().GetResult();
                             }
                         }
                         catch (Exception ex)
@@ -73,15 +88,23 @@ namespace LivesiteAutomation
                         }
                         finally
                         {
-                            tasks.RemoveAt(i);
+                            Tasks.RemoveAt(i);
                         }
                     }
                 }
                 finally
                 {
                     // Should be empty, but just making sure...
-                    tasks = new List<Task>();
+                    Tasks = new List<Task>();
                 }
+            }
+        }
+        
+        public static string ShortRandom
+        {
+            get
+            {
+                return Guid.NewGuid().ToString("n").Substring(0, 8);
             }
         }
 

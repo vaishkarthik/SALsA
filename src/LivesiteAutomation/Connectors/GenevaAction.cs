@@ -54,7 +54,7 @@ namespace LivesiteAutomation
                         Id = operationDetails.Id,
                         Parameters = actionParam
                     };
-                    Log.Instance.Verbose("operationRequest populated. Endpoint : ", operationRequest.Endpoint);
+                    Log.Instance.Verbose("operationRequest populated. Extension : ", operationRequest.Extension);
                 }
                 catch (Exception ex)
                 {
@@ -63,7 +63,7 @@ namespace LivesiteAutomation
                 }
             }
 
-            public async Task RunOperationManualPollAsync()
+            private async Task RunOperationManualPollAsync()
             {
                 try
                 {
@@ -76,6 +76,10 @@ namespace LivesiteAutomation
                             // Operation reached a final state, get the result.
                             operationResult = await client.Operations.GetOperationResultsAsync(operationRunning.Id);
                             Log.Instance.Information("Operation has completed execution for {0}: {1}. Operation Result is:{2}{3}", extensionName, operationName, System.Environment.NewLine, operationResult.ResultMessage);
+                            // We upload all results of all operations
+                            Utility.TaskManager.Instance.AddTask(
+                                BlobStorage.UploadText(ICM.Instance.Id, String.Format("/action/{1}-{0}_{2}.txt", extensionName, operationName, Utility.ShortRandom),
+                                operationResult.ResultMessage));
                             return;
                         }
                         // Warning: Setting too short a delay could result in requests being throttled

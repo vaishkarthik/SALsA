@@ -19,7 +19,7 @@ namespace LivesiteAutomation
         private StreamWriter sw = null;
         private Log()
         {
-            UID = Guid.NewGuid().ToString("n").Substring(0, 8);
+            UID = Utility.ShortRandom;
             if (!File.Exists(Constants.LogDefaultPath))
             {
                 try

@@ -19,7 +19,6 @@ namespace LivesiteAutomation
         public string ResourceGroupName { get; private set; }
         public string VMName { get; private set; }
         public DateTime StartTime { get; private set; }
-        public Task task { get; private set; }
         public Analyzer()
         {
             (SubscriptionId, ResourceGroupName, VMName, StartTime) = AnalyzeICM();
@@ -33,39 +32,44 @@ namespace LivesiteAutomation
             switch (type)
             {
                 case ComputeType.IaaS:
-                    task = ExecuteAllActionsForIaaS((ARMDeployment)dep);
+                    ExecuteAllActionsForIaaS((ARMDeployment)dep);
                     break;
                 case ComputeType.VMSS:
-                    task = ExecuteAllActionsForVMSS((ARMDeployment)dep);
+                    ExecuteAllActionsForVMSS((ARMDeployment)dep);
                     break;
                 case ComputeType.PaaS:
-                    task = ExecuteAllActionsForPaaS((RDFEDeployment)dep);
+                     ExecuteAllActionsForPaaS((RDFEDeployment)dep);
                     break;
                 default:
                     break;
             }
         }
 
-        private async Task ExecuteAllActionsForIaaS(ARMDeployment dep)
+        private void ExecuteAllActionsForIaaS(ARMDeployment dep)
         {
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(dep));
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(dep));
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(dep));
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(dep));
+            Utility.TaskManager.Instance.AddTask(
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(dep)),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(dep)),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(dep)),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(dep))
+            );
 
         }
-        private async Task ExecuteAllActionsForVMSS(ARMDeployment dep)
+        private void ExecuteAllActionsForVMSS(ARMDeployment dep)
         {
             int instanceId = TryConvertInstanceNameToInstanceId(this.VMName);
             // TODO instead of using 0, take 5 random and use them
             instanceId = instanceId == -1 ? 0 : instanceId;
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(dep, instanceId));
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(dep, instanceId));
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(dep, instanceId));
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(dep, instanceId));
+
+            Utility.TaskManager.Instance.AddTask(
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(dep, instanceId)),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(dep, instanceId)),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(dep, instanceId)),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(dep, instanceId))
+            );
         }
 
-        private async Task ExecuteAllActionsForPaaS(RDFEDeployment dep)
+        private void ExecuteAllActionsForPaaS(RDFEDeployment dep)
         {
             var instance = dep.RoleInstances.Where(x => x.RoleInstanceName == VMName).FirstOrDefault();
             if (instance?.RoleInstanceName == null)
@@ -82,21 +86,11 @@ namespace LivesiteAutomation
                 InstanceName = instance.RoleInstanceName
             };
             Log.Instance.Send(Utility.ObjectToJson(vmInfo, true));
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(vmInfo));
-            await Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnostics(vmInfo));
-        }
 
-        public void Wait()
-        {
-            try
-            {
-                task.GetAwaiter().GetResult();
-            }
-            catch (Exception ex)
-            {
-                Log.Instance.Error("Failed to wait for internal task");
-                Log.Instance.Exception(ex);
-            }
+            Utility.TaskManager.Instance.AddTask(
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(vmInfo)),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnostics(vmInfo))
+            );
         }
 
         private (ComputeType type, object dep) DetectVMType(ARMSubscription arm, RDFESubscription rdfe)
