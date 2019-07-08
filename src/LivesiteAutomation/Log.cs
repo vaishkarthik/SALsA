@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Azure.KeyVault.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -173,6 +174,12 @@ namespace LivesiteAutomation
         private void SendOnline(string ss, bool force = false)
         {
             ICM.IncidentMapping[Icm].AddICMDiscussion(ss, force);
+        }
+
+        public void UploadLog()
+        {
+            var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
+            BlobStorage.UploadFile(this.Icm, String.Format("{0}_{1}-[{2}].log", currentTime, this.Icm, this.UID), Constants.LogDefaultPath, "text/plain");
         }
 
     }
