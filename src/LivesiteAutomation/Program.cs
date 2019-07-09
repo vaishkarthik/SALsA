@@ -36,7 +36,7 @@ namespace LivesiteAutomation
             {
                 SALsA.GetInstance(icm)?.Log.Critical("Main failed !");
                 SALsA.GetInstance(icm)?.Log.Exception(ex);
-                throw ex;
+                //throw ex;
             }
             finally
             {
