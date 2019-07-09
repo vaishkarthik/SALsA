@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -19,18 +20,28 @@ namespace SALsA_REST.Controllers
         // GET: api/ICMStatus/5
         public HttpResponseMessage Get(int id)
         {
-            string text;
+            string content;
             try
             {
-                var fileName = LivesiteAutomation.SALsA.GetInstance(id)?.Log?.LogFullPath;
-                text = System.IO.File.ReadAllText(fileName);
+                var filePath= LivesiteAutomation.SALsA.GetInstance(id)?.Log?.LogFullPath;
+                using (FileStream fileStream = new FileStream(
+                        filePath,
+                        FileMode.Open,
+                        FileAccess.Read,
+                        FileShare.ReadWrite))
+                {
+                    using (StreamReader streamReader = new StreamReader(fileStream))
+                    {
+                        content = streamReader.ReadToEnd();
+                    }
+                }
             }
             catch (Exception ex)
             {
-                text = ex.ToString();
+                content = ex.ToString();
             }
             var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(text, System.Text.Encoding.UTF8, "text/plain");
+            response.Content = new StringContent(content, System.Text.Encoding.UTF8, "text/plain");
             return response;
         }
         /*
