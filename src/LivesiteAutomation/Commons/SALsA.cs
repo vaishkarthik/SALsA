@@ -1,5 +1,6 @@
 ﻿using LivesiteAutomation.Json2Class.RDFESubscriptionWrapper;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using static LivesiteAutomation.Utility;
 
@@ -25,17 +26,26 @@ namespace LivesiteAutomation
 
         public static void AddInstance(int icm)
         {
-            SALsA.instances.Add(icm, new SALsA.SALsAInstance(icm));
+            SALsA.instances[icm] = new SALsA.SALsAInstance(icm);
         }
         public static void RemoveInstance(int icm)
         {
-            SALsA.instances.Remove(icm);
+            try
+            {
+                SALsA.instances.Remove(icm);
+            }
+            catch { /* Best effor. It is okay to fail. */ };
         }
         public static SALsAInstance GetInstance(int icm)
         {
             SALsA.instances.TryGetValue(icm, out SALsAInstance value);
             return value;
         }
+        public static List<int> ListInstances()
+        {
+            return new List<int>(instances.Keys);
+        }
+
 
         static SALsA()
         {

@@ -19,7 +19,7 @@ namespace LivesiteAutomation
         private StreamWriter sw = null;
         private int Id;
         public string LogFileName { get; private set; }
-        public string LogDefaultPath { get; private set; }
+        public string LogFullPath { get; private set; }
         public string LogFolderPath { get; private set; }
         public Log(int Id = 0)
         {
@@ -27,26 +27,26 @@ namespace LivesiteAutomation
             UID = Utility.ShortRandom;
             LogFolderPath = System.IO.Path.Combine(System.IO.Path.GetPathRoot(Environment.SystemDirectory), "Log");
             LogFileName = String.Format("{0}-{1}{2}", Constants.LogFileNamePrefix, UID, Constants.LogFileNameExtension);
-            LogDefaultPath = System.IO.Path.Combine(LogFolderPath, LogFileName);
-            if (!File.Exists(LogDefaultPath))
+            LogFullPath = System.IO.Path.Combine(LogFolderPath, LogFileName);
+            if (!File.Exists(LogFullPath))
             {
                 try
                 {
                     new System.IO.FileInfo(LogFolderPath).Directory.Create();
-                    sw = File.AppendText(LogDefaultPath);
+                    sw = File.AppendText(LogFullPath);
                 }
                 catch
                 {
                     // TODO : log this later
                     LogFolderPath = System.IO.Path.GetTempPath();
-                    LogDefaultPath = Path.Combine(LogFolderPath, LogFileName);
+                    LogFullPath = Path.Combine(LogFolderPath, LogFileName);
                     new System.IO.FileInfo(LogFolderPath).Directory.Create();
-                    sw = File.AppendText(LogDefaultPath);
+                    sw = File.AppendText(LogFullPath);
                 }
             }
             else
             {
-                sw = File.AppendText(LogDefaultPath);
+                sw = File.AppendText(LogFullPath);
             }
         }
 

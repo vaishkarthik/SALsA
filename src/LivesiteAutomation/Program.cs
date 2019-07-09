@@ -41,7 +41,10 @@ namespace LivesiteAutomation
             finally
             {
                 Utility.UploadLog(icm);
-                SALsA.RemoveInstance(icm);
+
+                // How do you feel about memory leak ?
+                // We keep all instances so they can be accessed online if need be...
+                // SALsA.RemoveInstance(icm);
             }
         }
     }

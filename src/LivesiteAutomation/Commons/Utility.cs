@@ -207,7 +207,7 @@ namespace LivesiteAutomation
         }
         private static string CreateICMFolderInLogDirAndReturnFullPath(string name, int Id)
         {
-            var logDir = Path.Combine(Path.GetDirectoryName(SALsA.GetInstance(Id)?.Log.LogDefaultPath), Convert.ToString(Id));
+            var logDir = Path.Combine(Path.GetDirectoryName(SALsA.GetInstance(Id)?.Log.LogFullPath), Convert.ToString(Id));
             if (!Directory.Exists(logDir))
             {
                 Directory.CreateDirectory(logDir);
@@ -250,7 +250,7 @@ namespace LivesiteAutomation
                 var blobName = String.Format("{0}-{1}_{2}_{3}{4}", Constants.LogFileNamePrefix, SALsA.GetInstance(Id)?.Log.UID,
                     currentTime, Id, Constants.LogFileNameExtension);
                 SALsA.GetInstance(Id)?.Log.FlushAndClose();
-                BlobStorage.UploadFile(Id, blobName, SALsA.GetInstance(Id)?.Log.LogDefaultPath, "text/plain").GetAwaiter().GetResult();
+                BlobStorage.UploadFile(Id, blobName, SALsA.GetInstance(Id)?.Log.LogFullPath, "text/plain").GetAwaiter().GetResult();
                 var sas = BlobStorage.GetSASToken(Id, blobName);
                 SALsA.GetInstance(Id)?.Log.Information("Log for this automatic run are available here : {0}", sas);
             }

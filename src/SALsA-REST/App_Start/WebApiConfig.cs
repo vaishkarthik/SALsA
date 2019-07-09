@@ -15,6 +15,12 @@ namespace SALsA_REST
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
+                name: "Status",
+                routeTemplate: "api/icm/status/{id}",
+                defaults: new { controller = "ICMStatus", action = "Get", id = RouteParameter.Optional }
+            );
+
+            config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
