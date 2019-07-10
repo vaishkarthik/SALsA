@@ -133,6 +133,6 @@ namespace LivesiteAutomation.Json2Class
         public string Fabric;
         public Guid ContainerID;
         public Guid NodeId;
-        public override string ToString(){return Utility.ObjectToJson(this);}
+        public override string ToString(){return Utility.ObjectToJson(this, true);}
     }
 }
