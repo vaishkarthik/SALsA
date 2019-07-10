@@ -194,6 +194,7 @@ namespace LivesiteAutomation
 
         internal void FlushAndClose()
         {
+            this.Verbose("FlushAndClose called. Finished processing ICM");
             sw?.Flush();
             sw?.Close();
             sw = null;
