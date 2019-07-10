@@ -36,10 +36,10 @@ namespace LivesiteAutomation
             SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetVMModelAndInstanceView of option:{0} with params {1}", option, deployment);
             var param = new GenevaOperations.GetVMModelAndInstanceView
             {
-                smecrpregion = deployment.location,
-                smeresourcegroupnameparameter = deployment.resourceGroups,
-                smevmnameparameter = deployment.name,
-                wellknownsubscriptionid = deployment.subscriptions,
+                smecrpregion = deployment.Location,
+                smeresourcegroupnameparameter = deployment.ResourceGroups,
+                smevmnameparameter = deployment.Name,
+                wellknownsubscriptionid = deployment.Subscriptions,
                 smegetvmoptionparameter = option
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
@@ -54,10 +54,10 @@ namespace LivesiteAutomation
             SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetVMModelAndInstanceView of id:{0}, option:{1} with params {2}", id, option, deployment);
             var param = new GenevaOperations.GetVMModelAndInstanceViewVMSS
             {
-                smecrpregion = deployment.location,
-                smeresourcegroupnameparameter = deployment.resourceGroups,
-                smevirtualmachinescalesetnameparameter = deployment.name,
-                wellknownsubscriptionid = deployment.subscriptions,
+                smecrpregion = deployment.Location,
+                smeresourcegroupnameparameter = deployment.ResourceGroups,
+                smevirtualmachinescalesetnameparameter = deployment.Name,
+                wellknownsubscriptionid = deployment.Subscriptions,
                 smegetvmscalesetvmoptionparameter = option,
                 smevirtualmachinescalesetvminstanceidparameter = id
             };

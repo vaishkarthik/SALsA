@@ -17,10 +17,10 @@ namespace LivesiteAutomation
             SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction with params {0}", deployment);
             var param = new GenevaOperations.GetVMConsoleScreenshot
             {
-                smecrpregion = deployment.location,
-                smeresourcegroupnameparameter = deployment.resourceGroups,
-                smevmnameparameter = deployment.name,
-                wellknownsubscriptionid = deployment.subscriptions
+                smecrpregion = deployment.Location,
+                smeresourcegroupnameparameter = deployment.ResourceGroups,
+                smevmnameparameter = deployment.Name,
+                wellknownsubscriptionid = deployment.Subscriptions
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
             var task = new GenevaAction(icm, Constants.GetVMConsoleScreenshotExtensionName, Constants.GetVMConsoleScreenshotOperationName, actionParam).GetOperationFileOutputAsync(icm);
@@ -36,10 +36,10 @@ namespace LivesiteAutomation
             SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.GetVMConsoleScreenshotVMSS
             {
-                smecrpregion = deployment.location,
-                smeresourcegroupnameparameter = deployment.resourceGroups,
-                smevirtualmachinescalesetnameparameter = deployment.name,
-                wellknownsubscriptionid = deployment.subscriptions,
+                smecrpregion = deployment.Location,
+                smeresourcegroupnameparameter = deployment.ResourceGroups,
+                smevirtualmachinescalesetnameparameter = deployment.Name,
+                wellknownsubscriptionid = deployment.Subscriptions,
                 smevirtualmachinescalesetvminstanceidparameter = id
 
             };

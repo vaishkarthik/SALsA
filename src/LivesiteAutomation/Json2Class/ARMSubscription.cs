@@ -8,17 +8,17 @@ namespace LivesiteAutomation.Json2Class
 {
     public class ARMDeployment
     {
-        public string subscriptions { get; set; }
-        public string resourceGroups { get; set; }
-        public string location { get; set; }
-        public string type { get; set; }
-        public string name { get; set; }
-        public List<string> extensions { get; set; } = new List<string>();
+        public string Subscriptions { get; set; }
+        public string ResourceGroups { get; set; }
+        public string Location { get; set; }
+        public string Type { get; set; }
+        public string Name { get; set; }
+        public List<string> Extensions { get; set; } = new List<string>();
 
         // Pseudo unique class attribute so we can search it later
         public override int GetHashCode()
         {
-            return (subscriptions + resourceGroups + location + type).GetHashCode();
+            return (Subscriptions + ResourceGroups + Location + Type).GetHashCode();
         }
         public override string ToString() { return Utility.ObjectToJson(this); }
     }

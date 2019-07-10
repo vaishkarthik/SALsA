@@ -31,6 +31,7 @@ namespace LivesiteAutomation
             var rdfe = AnalyzeRDFESubscription(SubscriptionId);
 
             (var type, var dep) = DetectVMType(arm, rdfe);
+            
             switch (type)
             {
                 case ComputeType.IaaS:
@@ -49,6 +50,7 @@ namespace LivesiteAutomation
 
         private void ExecuteAllActionsForIaaS(ARMDeployment dep)
         {
+            SALsA.GetInstance(Id).Log.Send(dep);
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep), Id),
@@ -63,6 +65,7 @@ namespace LivesiteAutomation
             // TODO instead of using 0, take 5 random and use them
             instanceId = instanceId == -1 ? 0 : instanceId;
 
+            SALsA.GetInstance(Id).Log.Send(dep);
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep, instanceId), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep, instanceId), Id),
@@ -87,7 +90,7 @@ namespace LivesiteAutomation
                 NodeId = instance.VMID,
                 InstanceName = instance.RoleInstanceName
             };
-            SALsA.GetInstance(Id)?.Log.Send(Utility.ObjectToJson(vmInfo, true));
+            SALsA.GetInstance(Id)?.Log.Send(vmInfo);
 
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
@@ -98,12 +101,12 @@ namespace LivesiteAutomation
         private (ComputeType type, object dep) DetectVMType(ARMSubscription arm, RDFESubscription rdfe)
         {
             ARMDeployment[] ardDeps = arm.deployments.Where(x =>
-                    x.name.Contains(this.VMName) || this.VMName.Contains(x.name)
+                    x.Name.Contains(this.VMName) || this.VMName.Contains(x.Name)
                 ).ToArray();
             string VMName = TryConvertInstanceNameToVMName(this.VMName);
             if (ardDeps.Length > 1)
             {
-                ardDeps = ardDeps.Where(x => x.resourceGroups == this.ResourceGroupName).ToArray();
+                ardDeps = ardDeps.Where(x => x.ResourceGroups == this.ResourceGroupName).ToArray();
             }
             ARMDeployment dep = new ARMDeployment();
             if(ardDeps.Length > 0)
@@ -113,10 +116,10 @@ namespace LivesiteAutomation
             else
             {
                 // Probably paaS
-                dep.type = Constants.AnalyzerARMDeploymentPaaSType;
+                dep.Type = Constants.AnalyzerARMDeploymentPaaSType;
             }
 
-            switch (dep.type)
+            switch (dep.Type)
             {
                 case Constants.AnalyzerARMDeploymentIaaSType:
                     return (ComputeType.IaaS, dep);

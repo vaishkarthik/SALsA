@@ -16,10 +16,10 @@ namespace LivesiteAutomation
             SALsA.GetInstance(icm)?.Log.Information("Calling GetVMConsoleSerialLogs with params {0}", deployment);
             var param = new GenevaOperations.GetVMConsoleSerialLogs
             {
-                smecrpregion = deployment.location,
-                smeresourcegroupnameparameter = deployment.resourceGroups,
-                smevmnameparameter = deployment.name,
-                wellknownsubscriptionid = deployment.subscriptions
+                smecrpregion = deployment.Location,
+                smeresourcegroupnameparameter = deployment.ResourceGroups,
+                smevmnameparameter = deployment.Name,
+                wellknownsubscriptionid = deployment.Subscriptions
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
             var task = new GenevaAction(icm, Constants.GetVMConsoleSerialLogsExtensionName, Constants.GetVMConsoleSerialLogsOperationName, actionParam).GetOperationFileOutputAsync(icm);
@@ -35,10 +35,10 @@ namespace LivesiteAutomation
             SALsA.GetInstance(icm)?.Log.Information("Calling GetVMConsoleSerialLogs of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.GetVMConsoleSerialLogsVMSS
             {
-                smecrpregion = deployment.location,
-                smeresourcegroupnameparameter = deployment.resourceGroups,
-                smevirtualmachinescalesetnameparameter = deployment.name,
-                wellknownsubscriptionid = deployment.subscriptions,
+                smecrpregion = deployment.Location,
+                smeresourcegroupnameparameter = deployment.ResourceGroups,
+                smevirtualmachinescalesetnameparameter = deployment.Name,
+                wellknownsubscriptionid = deployment.Subscriptions,
                 smevirtualmachinescalesetvminstanceidparameter = id
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
