@@ -157,9 +157,9 @@ namespace LivesiteAutomation
         {
             return new ZipArchive(result, ZipArchiveMode.Read);
         }
-        private static string UrlToHml(string name, string sasToken, int size = 30)
+        public static string UrlToHml(string name, string url, int size = 30)
         {
-            return String.Format("<a href=\"{0}\" style=\"font-size: {2}px;\" >{1}</a>", sasToken, name, size);
+            return String.Format("<a href=\"{0}\" style=\"font-size: {2}px;\" >{1}</a>", url, name, size);
         }
 
         private static void SendSASToICM(string name, int Id)
