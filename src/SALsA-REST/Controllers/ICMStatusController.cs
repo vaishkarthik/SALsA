@@ -19,7 +19,7 @@ namespace SALsA_REST.Controllers
         public HttpResponseMessage Get()
         {
             // TODO remvoe this from the API and have it in the MVC part
-            string template = "<!DOCTYPE html><html><body><link rel=icon href=/favicon.ico><h2>SALsA Status</h2><table style=\"width:50%\" align=\"center\" >  <tr style=\"padding-left:30px;\" align=\"left\">    <th>ICM</th>    <th>Status</th>   </tr>  __INSERT__</table></body></html>";
+            string template = "<!DOCTYPE html><html><body><link rel=icon href=/favicon.ico><h2 align=\"center\">SALsA Status</h2><table style=\"width:50%\" align=\"center\" >  <tr style=\"padding-left:30px;\" align=\"left\">    <th>ICM</th>    <th>Status</th>   </tr>  __INSERT__</table></body></html>";
             var icms = LivesiteAutomation.SALsA.ListInstances();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < icms.Count; i++)
