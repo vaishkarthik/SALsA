@@ -44,6 +44,8 @@ namespace LivesiteAutomation.Json2Class
             public dynamic tags { get; set; }
             public string type { get; set; }
             public string kind { get; set; }
+
+            public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
         public List<Value> value { get; set; }
     }

@@ -75,7 +75,7 @@ namespace LivesiteAutomation
                         {
                             // Operation reached a final state, get the result.
                             operationResult = await client.Operations.GetOperationResultsAsync(operationRunning.Id);
-                            SALsA.GetInstance(icm)?.Log.Information("Operation has completed execution for {0}: {1}. Operation Result is:{2}{3}", extensionName, operationName, System.Environment.NewLine, operationResult.ResultMessage);
+                            SALsA.GetInstance(icm)?.Log.Verbose("Operation has completed execution for {0}: {1}. Operation Result is:{2}{3}", extensionName, operationName, System.Environment.NewLine, operationResult.ResultMessage);
                             // We upload all results of all operations
                             SALsA.GetInstance(icm)?.TaskManager.AddTask(
                                 BlobStorage.UploadText(icm, String.Format("action/{1}-{0}_{2}.txt", extensionName, operationName, SALsA.GetInstance(icm)?.Log.UID),

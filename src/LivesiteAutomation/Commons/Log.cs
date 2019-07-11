@@ -103,7 +103,7 @@ namespace LivesiteAutomation
 
         public void Verbose(string ss, params object[] arg)
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Verbose);
         }
         public void Information(string ss, params object[] arg)

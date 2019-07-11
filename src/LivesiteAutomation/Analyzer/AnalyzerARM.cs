@@ -32,27 +32,35 @@ namespace LivesiteAutomation
             var armAnalysed = new Dictionary<int, ARMDeployment>();
             foreach (var deployment in armSubscription.value)
             {
-                //"id": "/subscriptions/{sub}/resourceGroups/{rg}/providers/{provider}/{type}/{name}",
-                var id = deployment.id.Split('/');
-                if (!Constants.AnalyszerARMDeploymentTypes.Contains(deployment.type.Split('/')[1]))
+                try
                 {
+                    //"id": "/subscriptions/{sub}/resourceGroups/{rg}/providers/{provider}/{type}/{name}",
+                    var id = deployment.id.Split('/');
+                    if (!Constants.AnalyszerARMDeploymentTypes.Contains(deployment.type.Split('/')[1]))
+                    {
+                        continue;
+                    }
+                    var dep = new ARMDeployment
+                    {
+                        Subscriptions = SubscriptionId.ToString(),
+                        ResourceGroups = id[4],
+                        Location = Constants.CRPRegions.Where(x => String.Equals(x, deployment.location, StringComparison.OrdinalIgnoreCase)).FirstOrDefault(),
+                        Name = deployment.name.Contains("/") ? deployment.name.Split('/')[1] : deployment.name,
+                        Type = deployment.type.Split('/')[1]
+                    };
+                    if (!armAnalysed.ContainsKey(dep.GetHashCode()))
+                    {
+                        armAnalysed[dep.GetHashCode()] = dep;
+                    }
+                    if (deployment.type.Split('/').Last() == Constants.AnalyzerARMDeploymentExtensionType)
+                    {
+                        armAnalysed[dep.GetHashCode()].Extensions.Add(id.Last()); ;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SALsA.GetInstance(Id)?.Log.Warning("Unable to get or analyse the ARM deployment {0}", deployment);
                     continue;
-                }
-                var dep = new ARMDeployment
-                {
-                    Subscriptions = SubscriptionId.ToString(),
-                    ResourceGroups = id[4],
-                    Location = Constants.CRPRegions.Where(x => String.Equals(x, deployment.location, StringComparison.OrdinalIgnoreCase)).FirstOrDefault(),
-                    Name = deployment.name.Contains("/") ? deployment.name.Split('/')[1] : deployment.name,
-                    Type = deployment.type.Split('/')[1]
-                };
-                if (!armAnalysed.ContainsKey(dep.GetHashCode()))
-                {
-                    armAnalysed[dep.GetHashCode()] = dep;
-                }
-                if (deployment.type.Split('/').Last() == Constants.AnalyzerARMDeploymentExtensionType)
-                {
-                    armAnalysed[dep.GetHashCode()].Extensions.Add(id.Last()); ;
                 }
             }
             var deployments = new ARMSubscription() { deployments = armAnalysed.Values.Cast<ARMDeployment>().ToList() };

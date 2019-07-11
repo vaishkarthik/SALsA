@@ -51,6 +51,7 @@ namespace LivesiteAutomation
         // GetARMSubscription.cs
         public const string GetARMSubscriptionExtensionName = "Azure Resource Manager";
         public const string GetARMSubscriptionOperationName = "GetSubscriptionResources";
+        public const string GetARMSubscriptionOperationNameWithToken = "GetResourceGroups";
 
         // GetRDFESubscription.cs
         public const string GetRDFESubscriptionExtensionName = "AzureRT";

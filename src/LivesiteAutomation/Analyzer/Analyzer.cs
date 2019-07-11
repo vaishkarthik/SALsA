@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -31,6 +32,12 @@ namespace LivesiteAutomation
             var rdfe = AnalyzeRDFESubscription(SubscriptionId);
 
             (var type, var dep) = DetectVMType(arm, rdfe);
+
+            if (dep == null)
+            {
+                SALsA.GetInstance(Id).Log.Send("Could not find VM: {0} in RG: {1}. This VM might have been already deleted or moved", this.VMName, this.ResourceGroupName);
+                throw new Exception("VM not found");
+            }
             
             switch (type)
             {
@@ -174,7 +181,15 @@ namespace LivesiteAutomation
         {
             try
             {
-                return Regex.Match(this.VMName, @"_?([a-z][a-z0-9\-]+)_[0-9]+", RegexOptions.IgnoreCase).Groups[1].Value;
+                var nameOnly = Regex.Match(VMName, @"_?([a-z][a-z0-9\-]+)_[0-9]+", RegexOptions.IgnoreCase).Groups[1].Value;
+                if (string.IsNullOrEmpty(nameOnly))
+                {
+                    return VMName;
+                }
+                else
+                {
+                    return nameOnly;
+                }
             }
             catch
             {
@@ -182,11 +197,11 @@ namespace LivesiteAutomation
             }
         }
 
-        private int TryConvertInstanceNameToInstanceId(string vMName)
+        private int TryConvertInstanceNameToInstanceId(string VMName)
         {
             try
             {
-                return Convert.ToInt32(Regex.Match(this.VMName, @"_?[a-z][a-z0-9\-]+_([0-9])+", RegexOptions.IgnoreCase).Groups[1].Value);
+                return Convert.ToInt32(Regex.Match(VMName, @"_?[a-z][a-z0-9\-]+_([0-9])+", RegexOptions.IgnoreCase).Groups[1].Value);
             }
             catch
             {

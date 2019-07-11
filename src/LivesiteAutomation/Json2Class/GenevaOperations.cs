@@ -11,6 +11,7 @@ namespace LivesiteAutomation.Json2Class
         public class GetARMSubscriptionResources
         {
             public string wellknownsubscriptionid { get; set; }
+            public string skiptoken { get; set; } = null;
             public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
         public class GetRDFESubscriptionResources
