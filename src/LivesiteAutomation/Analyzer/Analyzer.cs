@@ -28,7 +28,7 @@ namespace LivesiteAutomation
             SALsA.GetInstance(Id)?.Log.Send("{0}", Utility.ObjectToJson(this, true));
 
             // TODO analyse ARM and REDFE in parallel
-            var arm  = AnalyzeARMSubscription(SubscriptionId);
+            var arm  = AnalyzeARMSubscription(SubscriptionId, this.ResourceGroupName);
             var rdfe = AnalyzeRDFESubscription(SubscriptionId);
 
             (var type, var dep) = DetectVMType(arm, rdfe);
@@ -107,18 +107,29 @@ namespace LivesiteAutomation
 
         private (ComputeType type, object dep) DetectVMType(ARMSubscription arm, RDFESubscription rdfe)
         {
-            ARMDeployment[] ardDeps = arm.deployments.Where(x =>
+            ARMDeployment[] armDeps = arm.deployments.Where(x =>
                     x.Name.Contains(this.VMName) || this.VMName.Contains(x.Name)
                 ).ToArray();
             string VMName = TryConvertInstanceNameToVMName(this.VMName);
-            if (ardDeps.Length > 1)
+            if (armDeps.Length > 1)
             {
-                ardDeps = ardDeps.Where(x => x.ResourceGroups == this.ResourceGroupName).ToArray();
+                var smallArmDeps = arm.deployments.Where(x =>
+                    x.Name == VMName || x.Name == this.VMName
+                ).ToArray();
+                if (smallArmDeps != null)
+                {
+                    armDeps = smallArmDeps;
+                }
+            }
+            if(armDeps.Length > 1)
+            {
+                SALsA.GetInstance(Id).Log.Error("Found more than one VM named {0} in RessourceGroup {1}, will take the first one.{2}{3}",
+                    VMName, ResourceGroupName, Environment.NewLine, armDeps);
             }
             ARMDeployment dep = new ARMDeployment();
-            if(ardDeps.Length > 0)
+            if(armDeps.Length > 0)
             {
-                dep = ardDeps.First();
+                dep = armDeps.First();
             }
             else
             {

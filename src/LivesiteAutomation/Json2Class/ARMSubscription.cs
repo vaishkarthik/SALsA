@@ -15,11 +15,6 @@ namespace LivesiteAutomation.Json2Class
         public string Name { get; set; }
         public List<string> Extensions { get; set; } = new List<string>();
 
-        // Pseudo unique class attribute so we can search it later
-        public override int GetHashCode()
-        {
-            return (Subscriptions + ResourceGroups + Location + Type).GetHashCode();
-        }
         public override string ToString() { return Utility.ObjectToJson(this, true); }
     }
     class ARMSubscriptionRaw

@@ -146,7 +146,7 @@
     <Compile Include="Analyzer\AnalyzerARM.cs" />
     <Compile Include="Analyzer\AnalyzeRDFE.cs" />
     <Compile Include="Commons\HttpClientExtensions.cs" />
-    <Compile Include="GenevaAction\GetARMSubscription.cs" />
+    <Compile Include="GenevaAction\GetARMSubscriptionRG.cs" />
     <Compile Include="Connectors\Authentication.cs" />
     <Compile Include="Connectors\BlobStorage.cs" />
     <Compile Include="Commons\Utility.cs" />

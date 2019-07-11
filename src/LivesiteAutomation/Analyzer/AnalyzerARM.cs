@@ -9,11 +9,11 @@ namespace LivesiteAutomation
 {
     public partial class Analyzer
     {
-        ARMSubscription AnalyzeARMSubscription(Guid subscriptionId)
+        ARMSubscription AnalyzeARMSubscription(Guid subscriptionId, string ressourceGroupName)
         {
             try
             { 
-                var arm = GenevaActions.GetARMSubscription(Id, subscriptionId).Result;
+                var arm = GenevaActions.GetARMSubscriptionRG(Id, subscriptionId, ressourceGroupName).Result;
                 var armSubscription = AnalyzeARMSubscriptionResult(arm);
                 
                 return armSubscription;
@@ -29,7 +29,7 @@ namespace LivesiteAutomation
         private ARMSubscription AnalyzeARMSubscriptionResult(string json)
         {
             var armSubscription = Utility.JsonToObject<ARMSubscriptionRaw>(json);
-            var armAnalysed = new Dictionary<int, ARMDeployment>();
+            var armAnalysed = new Dictionary<string, ARMDeployment>();
             foreach (var deployment in armSubscription.value)
             {
                 try
@@ -48,16 +48,16 @@ namespace LivesiteAutomation
                         Name = deployment.name.Contains("/") ? deployment.name.Split('/')[1] : deployment.name,
                         Type = deployment.type.Split('/')[1]
                     };
-                    if (!armAnalysed.ContainsKey(dep.GetHashCode()))
+                    if (!armAnalysed.ContainsKey(dep.Name))
                     {
-                        armAnalysed[dep.GetHashCode()] = dep;
+                        armAnalysed[dep.Name] = dep;
                     }
                     if (deployment.type.Split('/').Last() == Constants.AnalyzerARMDeploymentExtensionType)
                     {
-                        armAnalysed[dep.GetHashCode()].Extensions.Add(id.Last()); ;
+                        armAnalysed[dep.Name].Extensions.Add(id.Last()); ;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     SALsA.GetInstance(Id)?.Log.Warning("Unable to get or analyse the ARM deployment {0}", deployment);
                     continue;

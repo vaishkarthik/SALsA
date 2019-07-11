@@ -48,10 +48,9 @@ namespace LivesiteAutomation
         public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zip";
         public const string AnalyzerNodeDiagnosticsFilename = "Logs.zip";
 
-        // GetARMSubscription.cs
-        public const string GetARMSubscriptionExtensionName = "Azure Resource Manager";
-        public const string GetARMSubscriptionOperationName = "GetSubscriptionResources";
-        public const string GetARMSubscriptionOperationNameWithToken = "GetResourceGroups";
+        // GetARMSubscriptionRG.cs
+        public const string GetARMSubscriptionRGExtensionName = "Azure Resource Manager";
+        public const string GetARMSubscriptionRGOperationName = "GetResourceGroupResources";
 
         // GetRDFESubscription.cs
         public const string GetRDFESubscriptionExtensionName = "AzureRT";
