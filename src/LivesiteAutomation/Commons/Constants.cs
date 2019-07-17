@@ -33,7 +33,7 @@ namespace LivesiteAutomation
         public const string ICMDescriptionEntriesSuffix = "/DescriptionEntries?$inlinecount=allpages";
 
         // Analyser.cs
-        public const string AnalyzerSubscriptionIdField = "subscription";
+        public const string AnalyzerSubscriptionIdField = "SubscriptionId";
         public const string AnalyzerStartTimeField = "time";
         public const string AnalyzerVMNameField = "vmname";
         public const string AnalyzerResourceGroupField = "ResourceGroup";

@@ -67,7 +67,7 @@ namespace LivesiteAutomation
                 foreach (var fields in icm.CurrentICM.CustomFieldGroups)
                 {
                     var sid = fields.CustomFields.Find(x => x.Name == lookup);
-                    if (sid != null)
+                    if (sid != null && sid.Value != "")
                     {
                         return sid.Value;
                     }
