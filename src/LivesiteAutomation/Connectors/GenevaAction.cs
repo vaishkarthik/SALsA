@@ -106,7 +106,7 @@ namespace LivesiteAutomation
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Operation <{0}: {1}> output to file failed");
+                    Console.WriteLine("Operation <{0}: {1}> output to file failed", extensionName, operationName);
                     SALsA.GetInstance(icm)?.Log.Exception(ex);
                     return null;
                 }

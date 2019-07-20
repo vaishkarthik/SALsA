@@ -168,7 +168,7 @@ namespace LivesiteAutomation
             // Since we build our own HTML, we directly call the AddICMDiscussion instead of callign SALsA.GetInstance(icm)?.Log.Online
             if (!SALsA.GetInstance(Id).ICM.AddICMDiscussion(Utility.UrlToHml(name, sasToken), false, false))
             {
-                SALsA.GetInstance(Id)?.Log.Error("Failed to add to ICM discussion : {0} with sasToken {1}", name, sasToken);
+                SALsA.GetInstance(Id)?.Log.Information("Did not add ICM discussion : {0} with sasToken {1}. Probably already exists", name, sasToken);
             }
         }
 
