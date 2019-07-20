@@ -213,6 +213,7 @@ namespace LivesiteAutomation.Json2Class.RDFESubscriptionWrapper
     public partial class SubscriptionHostedService
     {
 
+        private string lastCreateDeploymentInStagingSlotTrackingField;
         private string lastCreateDeploymentInProductionSlotTrackingField;
 
         private string[] extendedPropertiesField;
@@ -222,6 +223,19 @@ namespace LivesiteAutomation.Json2Class.RDFESubscriptionWrapper
         private SubscriptionHostedServiceDeployment deploymentField;
 
         private string[] textField;
+
+        /// <remarks/>
+        public string LastCreateDeploymentInStagingSlotTracking
+        {
+            get
+            {
+                return this.lastCreateDeploymentInStagingSlotTrackingField;
+            }
+            set
+            {
+                this.lastCreateDeploymentInStagingSlotTrackingField = value;
+            }
+        }
 
         /// <remarks/>
         public string LastCreateDeploymentInProductionSlotTracking
@@ -265,6 +279,7 @@ namespace LivesiteAutomation.Json2Class.RDFESubscriptionWrapper
         }
 
         /// <remarks/>
+
         public SubscriptionHostedServiceDeployment Deployment
         {
             get
@@ -301,7 +316,7 @@ namespace LivesiteAutomation.Json2Class.RDFESubscriptionWrapper
 
         private ServiceConfiguration serviceConfigurationField;
 
-        private string lastChangingOperationTrackingField;
+        private SubscriptionHostedServiceDeploymentLastChangingOperationTracking lastChangingOperationTrackingField;
 
         private string persistentVMDowntimeInfoField;
 
@@ -324,7 +339,7 @@ namespace LivesiteAutomation.Json2Class.RDFESubscriptionWrapper
         }
 
         /// <remarks/>
-        public string LastChangingOperationTracking
+        public SubscriptionHostedServiceDeploymentLastChangingOperationTracking LastChangingOperationTracking
         {
             get
             {
@@ -388,6 +403,8 @@ namespace LivesiteAutomation.Json2Class.RDFESubscriptionWrapper
 
         private ServiceConfigurationRole[] roleField;
 
+        private ServiceConfigurationNetworkConfiguration networkConfigurationField;
+
         private string xmlns_xsdField;
 
         private string xmlns_xsiField;
@@ -411,6 +428,19 @@ namespace LivesiteAutomation.Json2Class.RDFESubscriptionWrapper
             set
             {
                 this.roleField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfiguration NetworkConfiguration
+        {
+            get
+            {
+                return this.networkConfigurationField;
+            }
+            set
+            {
+                this.networkConfigurationField = value;
             }
         }
 
@@ -541,6 +571,7 @@ namespace LivesiteAutomation.Json2Class.RDFESubscriptionWrapper
         }
 
         /// <remarks/>
+
         public ServiceConfigurationRoleCertificates Certificates
         {
             get
@@ -691,6 +722,523 @@ namespace LivesiteAutomation.Json2Class.RDFESubscriptionWrapper
             set
             {
                 this.thumbprintAlgorithmField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfiguration
+    {
+
+        private ServiceConfigurationNetworkConfigurationVirtualNetworkSite virtualNetworkSiteField;
+
+        private ServiceConfigurationNetworkConfigurationAddressAssignments addressAssignmentsField;
+
+        private ServiceConfigurationNetworkConfigurationAccessControls accessControlsField;
+
+        private ServiceConfigurationNetworkConfigurationEndpointAcls endpointAclsField;
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationVirtualNetworkSite VirtualNetworkSite
+        {
+            get
+            {
+                return this.virtualNetworkSiteField;
+            }
+            set
+            {
+                this.virtualNetworkSiteField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationAddressAssignments AddressAssignments
+        {
+            get
+            {
+                return this.addressAssignmentsField;
+            }
+            set
+            {
+                this.addressAssignmentsField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationAccessControls AccessControls
+        {
+            get
+            {
+                return this.accessControlsField;
+            }
+            set
+            {
+                this.accessControlsField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationEndpointAcls EndpointAcls
+        {
+            get
+            {
+                return this.endpointAclsField;
+            }
+            set
+            {
+                this.endpointAclsField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationVirtualNetworkSite
+    {
+
+        private string nameField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationAddressAssignments
+    {
+
+        private ServiceConfigurationNetworkConfigurationAddressAssignmentsInstanceAddress[] instanceAddressField;
+
+        private ServiceConfigurationNetworkConfigurationAddressAssignmentsReservedIPs reservedIPsField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("InstanceAddress")]
+        public ServiceConfigurationNetworkConfigurationAddressAssignmentsInstanceAddress[] InstanceAddress
+        {
+            get
+            {
+                return this.instanceAddressField;
+            }
+            set
+            {
+                this.instanceAddressField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationAddressAssignmentsReservedIPs ReservedIPs
+        {
+            get
+            {
+                return this.reservedIPsField;
+            }
+            set
+            {
+                this.reservedIPsField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationAddressAssignmentsInstanceAddress
+    {
+
+        private ServiceConfigurationNetworkConfigurationAddressAssignmentsInstanceAddressSubnets subnetsField;
+
+        private string roleNameField;
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationAddressAssignmentsInstanceAddressSubnets Subnets
+        {
+            get
+            {
+                return this.subnetsField;
+            }
+            set
+            {
+                this.subnetsField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string roleName
+        {
+            get
+            {
+                return this.roleNameField;
+            }
+            set
+            {
+                this.roleNameField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationAddressAssignmentsInstanceAddressSubnets
+    {
+
+        private ServiceConfigurationNetworkConfigurationAddressAssignmentsInstanceAddressSubnetsSubnet subnetField;
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationAddressAssignmentsInstanceAddressSubnetsSubnet Subnet
+        {
+            get
+            {
+                return this.subnetField;
+            }
+            set
+            {
+                this.subnetField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationAddressAssignmentsInstanceAddressSubnetsSubnet
+    {
+
+        private string nameField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationAddressAssignmentsReservedIPs
+    {
+
+        private ServiceConfigurationNetworkConfigurationAddressAssignmentsReservedIPsReservedIP reservedIPField;
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationAddressAssignmentsReservedIPsReservedIP ReservedIP
+        {
+            get
+            {
+                return this.reservedIPField;
+            }
+            set
+            {
+                this.reservedIPField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationAddressAssignmentsReservedIPsReservedIP
+    {
+
+        private string nameField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationAccessControls
+    {
+
+        private ServiceConfigurationNetworkConfigurationAccessControlsAccessControl accessControlField;
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationAccessControlsAccessControl AccessControl
+        {
+            get
+            {
+                return this.accessControlField;
+            }
+            set
+            {
+                this.accessControlField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationAccessControlsAccessControl
+    {
+
+        private ServiceConfigurationNetworkConfigurationAccessControlsAccessControlRule[] ruleField;
+
+        private string nameField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Rule")]
+        public ServiceConfigurationNetworkConfigurationAccessControlsAccessControlRule[] Rule
+        {
+            get
+            {
+                return this.ruleField;
+            }
+            set
+            {
+                this.ruleField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationAccessControlsAccessControlRule
+    {
+
+        private ushort orderField;
+
+        private string actionField;
+
+        private string remoteSubnetField;
+
+        private string descriptionField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public ushort order
+        {
+            get
+            {
+                return this.orderField;
+            }
+            set
+            {
+                this.orderField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string action
+        {
+            get
+            {
+                return this.actionField;
+            }
+            set
+            {
+                this.actionField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string remoteSubnet
+        {
+            get
+            {
+                return this.remoteSubnetField;
+            }
+            set
+            {
+                this.remoteSubnetField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string description
+        {
+            get
+            {
+                return this.descriptionField;
+            }
+            set
+            {
+                this.descriptionField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationEndpointAcls
+    {
+
+        private ServiceConfigurationNetworkConfigurationEndpointAclsEndpointAcl endpointAclField;
+
+        /// <remarks/>
+        public ServiceConfigurationNetworkConfigurationEndpointAclsEndpointAcl EndpointAcl
+        {
+            get
+            {
+                return this.endpointAclField;
+            }
+            set
+            {
+                this.endpointAclField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration")]
+    public partial class ServiceConfigurationNetworkConfigurationEndpointAclsEndpointAcl
+    {
+
+        private string roleField;
+
+        private string endPointField;
+
+        private string accessControlField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string role
+        {
+            get
+            {
+                return this.roleField;
+            }
+            set
+            {
+                this.roleField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string endPoint
+        {
+            get
+            {
+                return this.endPointField;
+            }
+            set
+            {
+                this.endPointField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string accessControl
+        {
+            get
+            {
+                return this.accessControlField;
+            }
+            set
+            {
+                this.accessControlField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    public partial class SubscriptionHostedServiceDeploymentLastChangingOperationTracking
+    {
+
+        private string errorDetailField;
+
+        private string[] textField;
+
+        /// <remarks/>
+        public string ErrorDetail
+        {
+            get
+            {
+                return this.errorDetailField;
+            }
+            set
+            {
+                this.errorDetailField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlTextAttribute()]
+        public string[] Text
+        {
+            get
+            {
+                return this.textField;
+            }
+            set
+            {
+                this.textField = value;
             }
         }
     }

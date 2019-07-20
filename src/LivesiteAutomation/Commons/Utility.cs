@@ -166,7 +166,7 @@ namespace LivesiteAutomation
         {
             var sasToken = BlobStorage.GetSASToken(Id, name);
             // Since we build our own HTML, we directly call the AddICMDiscussion instead of callign SALsA.GetInstance(icm)?.Log.Online
-            if (SALsA.GetInstance(Id).ICM.AddICMDiscussion(Utility.UrlToHml(name, sasToken), false, false))
+            if (!SALsA.GetInstance(Id).ICM.AddICMDiscussion(Utility.UrlToHml(name, sasToken), false, false))
             {
                 SALsA.GetInstance(Id)?.Log.Error("Failed to add to ICM discussion : {0} with sasToken {1}", name, sasToken);
             }

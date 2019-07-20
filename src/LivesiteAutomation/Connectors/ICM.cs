@@ -63,7 +63,7 @@ namespace LivesiteAutomation
                 var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
                 var reason = response.Content.ReadAsStringAsync().Result;
                 response.EnsureSuccessStatusCode();
-                SALsA.GetInstance(Id)?.Log.Verbose("Got response for IMC {0}", this.Id);
+                SALsA.GetInstance(Id)?.Log.Verbose("Got response for ICM {0}", this.Id);
                 return true;
 
             }
