@@ -26,7 +26,7 @@ namespace LivesiteAutomation
 
             // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
-                new StreamReader(Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First().Open(), System.Text.Encoding.UTF8).ReadToEnd()
+                 task.Result != null ? new StreamReader(Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First().Open(), System.Text.Encoding.UTF8).ReadToEnd() : "N/A"
                 ));
         }
         // TODO : make sovereign cloud available
@@ -46,7 +46,7 @@ namespace LivesiteAutomation
 
             // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
-                new StreamReader(Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First().Open(), System.Text.Encoding.UTF8).ReadToEnd()
+                 task.Result != null ? new StreamReader(Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First().Open(), System.Text.Encoding.UTF8).ReadToEnd() : "N/A"
                 ));
         }
     }

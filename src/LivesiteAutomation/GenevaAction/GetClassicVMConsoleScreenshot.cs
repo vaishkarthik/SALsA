@@ -25,7 +25,7 @@ namespace LivesiteAutomation
 
             // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
-                    Image.FromStream(Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First().Open())
+                     task.Result != null ? Image.FromStream(Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First().Open()) : null
                 ));
         }
     }

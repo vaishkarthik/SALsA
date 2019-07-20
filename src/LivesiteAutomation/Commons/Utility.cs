@@ -175,6 +175,11 @@ namespace LivesiteAutomation
         public static async Task SaveAndSendBlobTask(string name, Task<ZipArchiveEntry> task, int Id)
         {
             var output = (await task).Open();
+            if (output == null)
+            { 
+                // TODO : ICM SEND COULD NOT FIND FILE
+                return;
+            }
             await BlobStorage.UploadStream(Id, name, output);
             SendSASToICM(name, Id);
             Utility.SaveToFile(name, output, Id);
@@ -190,6 +195,11 @@ namespace LivesiteAutomation
         public static async Task SaveAndSendBlobTask(string name, Task<Image> task, int Id)
         {
             var output = await task;
+            if (output == null)
+            {
+                // TODO : ICM SEND COULD NOT FIND FILE
+                return;
+            }
             using (MemoryStream ms = new MemoryStream())
             {
                 output.Save(ms, ImageFormat.Png);
@@ -201,6 +211,11 @@ namespace LivesiteAutomation
         public static async Task SaveAndSendBlobTask(string name, Task<Stream> task, int Id)
         {
             var output = await task;
+            if (output == null)
+            {
+                // TODO : ICM SEND COULD NOT FIND FILE
+                return;
+            }
             await BlobStorage.UploadStream(Id, name, output);
             SendSASToICM(name, Id);
             Utility.SaveToFile(name, output, Id);

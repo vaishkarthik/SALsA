@@ -20,7 +20,7 @@ namespace LivesiteAutomation
             private ConnectionParameters cp;
             private GenevaActionsRestAPIClient client;
             private OperationRequest operationRequest;
-            private OperationResult operationResult;
+            internal OperationResult operationResult;
             string operationName;
             string extensionName;
             Dictionary<string, string> actionParam;
