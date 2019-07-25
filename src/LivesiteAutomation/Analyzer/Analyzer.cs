@@ -107,31 +107,38 @@ namespace LivesiteAutomation
 
         private (ComputeType type, object dep) DetectVMType(ARMSubscription arm, RDFESubscription rdfe)
         {
-            ARMDeployment[] armDeps = arm.deployments.Where(x =>
-                    x.Name.Contains(this.VMName) || this.VMName.Contains(x.Name)
-                ).ToArray();
-            string VMName = TryConvertInstanceNameToVMName(this.VMName);
-            if (armDeps.Length > 1)
-            {
-                var smallArmDeps = arm.deployments.Where(x =>
-                    x.Name == VMName || x.Name == this.VMName
-                ).ToArray();
-                if (smallArmDeps != null)
+            ARMDeployment dep = new ARMDeployment();
+            try { 
+                ARMDeployment[] armDeps = arm.deployments.Where(x =>
+                        x.Name.Contains(this.VMName) || this.VMName.Contains(x.Name)
+                    ).ToArray();
+                string VMName = TryConvertInstanceNameToVMName(this.VMName);
+                if (armDeps.Length > 1)
                 {
-                    armDeps = smallArmDeps;
+                    var smallArmDeps = arm.deployments.Where(x =>
+                        x.Name == VMName || x.Name == this.VMName
+                    ).ToArray();
+                    if (smallArmDeps != null)
+                    {
+                        armDeps = smallArmDeps;
+                    }
+                }
+                if(armDeps.Length > 1)
+                {
+                    SALsA.GetInstance(Id).Log.Error("Found more than one VM named {0} in RessourceGroup {1}, will take the first one.{2}{3}",
+                        VMName, ResourceGroupName, Environment.NewLine, armDeps);
+                }
+                if(armDeps.Length > 0)
+                {
+                    dep = armDeps.First();
+                }
+                else
+                {
+                    // Probably paaS
+                    dep.Type = Constants.AnalyzerARMDeploymentPaaSType;
                 }
             }
-            if(armDeps.Length > 1)
-            {
-                SALsA.GetInstance(Id).Log.Error("Found more than one VM named {0} in RessourceGroup {1}, will take the first one.{2}{3}",
-                    VMName, ResourceGroupName, Environment.NewLine, armDeps);
-            }
-            ARMDeployment dep = new ARMDeployment();
-            if(armDeps.Length > 0)
-            {
-                dep = armDeps.First();
-            }
-            else
+            catch
             {
                 // Probably paaS
                 dep.Type = Constants.AnalyzerARMDeploymentPaaSType;
@@ -148,7 +155,6 @@ namespace LivesiteAutomation
                 default:
                     return (ComputeType.Unknown, null);
             }
-            throw new NotSupportedException();
         }
 
         private RDFEDeployment AnalyseRDFEPaaSDeployment(RDFESubscription rdfe)
