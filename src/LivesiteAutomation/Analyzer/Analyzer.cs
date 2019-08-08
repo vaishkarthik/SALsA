@@ -94,7 +94,8 @@ namespace LivesiteAutomation
                 DeploymentId = dep.Name,
                 DeploymentName = dep.Id,
                 ContainerID = instance.ID,
-                NodeId = instance.VMID,
+                // TODO : Get the NodeId somehow
+                //NodeId = instance.VMID,
                 InstanceName = instance.RoleInstanceName
             };
             SALsA.GetInstance(Id)?.Log.Send(vmInfo);
