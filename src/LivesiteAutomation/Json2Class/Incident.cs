@@ -179,7 +179,7 @@ namespace LivesiteAutomation
         public string ResponsibleTenantId { get; set; }
         public string RoutingId { get; set; }
         public int Severity { get; set; }
-        public string SiloId { get; set; }
+        public int SiloId { get; set; }
         public object SiteReliabilityContactId { get; set; }
         public IncidentSource Source { get; set; }
         public string SourceOrigin { get; set; }

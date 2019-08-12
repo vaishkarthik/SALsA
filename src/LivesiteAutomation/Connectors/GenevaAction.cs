@@ -26,14 +26,31 @@ namespace LivesiteAutomation
             Dictionary<string, string> actionParam;
             ActionsEnvironments actionsEnvironments;
 
-            internal GenevaAction(int icm, string extensionName, string operationName, Dictionary<string, string> actionParam, ActionsEnvironments actionsEnvironments = ActionsEnvironments.Public)
+            internal GenevaAction(int icm, string extensionName, string operationName, Dictionary<string, string> actionParam)
             {
                 try
                 {
                     this.extensionName = extensionName;
                     this.operationName = operationName;
                     this.actionParam = actionParam;
-                    this.actionsEnvironments = actionsEnvironments;
+                    switch(SALsA.GetInstance(icm)?.ICM.CurrentICM.SiloId)
+                    {
+                        case 1:
+                            this.actionsEnvironments = ActionsEnvironments.Public;
+                            break;
+                        case 2:
+                            this.actionsEnvironments = ActionsEnvironments.Fairfax;
+                            break;
+                        case 3:
+                            this.actionsEnvironments = ActionsEnvironments.Mooncake;
+                            break;
+                        case 4:
+                            this.actionsEnvironments = ActionsEnvironments.Blackforest;
+                            break;
+                        default:
+                            this.actionsEnvironments = ActionsEnvironments.Public;
+                            break;
+                    }
 
                     SALsA.GetInstance(icm)?.Log.Verbose("Creating GenevaAction for {0}: {1}, with parameters : ", extensionName, operationName,
                         actionParam.Select(kvp => kvp.Key + ": " + kvp.Value.ToString()));

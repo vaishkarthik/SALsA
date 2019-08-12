@@ -111,13 +111,13 @@ namespace LivesiteAutomation
             ARMDeployment dep = new ARMDeployment();
             try { 
                 ARMDeployment[] armDeps = arm.deployments.Where(x =>
-                        x.Name.Contains(this.VMName) || this.VMName.Contains(x.Name)
+                        x.Name.ToLower().Contains(this.VMName.ToLower()) || this.VMName.ToLower().Contains(x.Name.ToLower())
                     ).ToArray();
                 string VMName = TryConvertInstanceNameToVMName(this.VMName);
                 if (armDeps.Length > 1)
                 {
                     var smallArmDeps = arm.deployments.Where(x =>
-                        x.Name == VMName || x.Name == this.VMName
+                        x.Name.ToLower() == VMName.ToLower() || x.Name.ToLower() == this.VMName.ToLower()
                     ).ToArray();
                     if (smallArmDeps != null)
                     {
