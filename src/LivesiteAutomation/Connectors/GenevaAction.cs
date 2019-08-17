@@ -33,29 +33,44 @@ namespace LivesiteAutomation
                     this.extensionName = extensionName;
                     this.operationName = operationName;
                     this.actionParam = actionParam;
+                    Uri dstsUri = null;
                     switch(SALsA.GetInstance(icm)?.ICM.CurrentICM.SiloId)
                     {
                         case 1:
                             this.actionsEnvironments = ActionsEnvironments.Public;
+                            dstsUri = new Uri("https://ch1-dsts.dsts.core.windows.net");
                             break;
-                        case 2:
+                        case 5:
                             this.actionsEnvironments = ActionsEnvironments.Fairfax;
+                            dstsUri = new Uri("https://prod-dsts.dsts.core.usgovcloudapi.net");
                             break;
                         case 3:
                             this.actionsEnvironments = ActionsEnvironments.Mooncake;
+                            dstsUri = new Uri("https://ch1-dsts.dsts.core.windows.net");
                             break;
-                        case 4:
+                        case 8:
                             this.actionsEnvironments = ActionsEnvironments.Blackforest;
+                            dstsUri = new Uri("https://ch1-dsts.dsts.core.windows.net");
                             break;
+                        /*
+                        case -1:
+                            this.actionsEnvironments = ActionsEnvironments.USNat;
+                            dstsUri = new Uri("https://usnatw-dsts.dsts.core.eaglex.ic.gov");
+                            break;
+                        case -2:
+                            this.actionsEnvironments = ActionsEnvironments.USSec;
+                            dstsUri = new Uri("https://ussecw-dsts.dsts.core.microsoft.scloud");
+                            break;
+                        */
                         default:
-                            this.actionsEnvironments = ActionsEnvironments.Public;
-                            break;
+                            SALsA.GetInstance(icm)?.Log.Warning("Unkown Environment. SilotId : {0}. Will default to public Environment! ", SALsA.GetInstance(icm)?.ICM.CurrentICM.SiloId);
+                            goto case 1;
                     }
 
                     SALsA.GetInstance(icm)?.Log.Verbose("Creating GenevaAction for {0}: {1}, with parameters : ", extensionName, operationName,
                         actionParam.Select(kvp => kvp.Key + ": " + kvp.Value.ToString()));
 
-                    sts = new ClientHomeSts(new Uri("https://ch1-dsts.dsts.core.windows.net"));
+                    sts = new ClientHomeSts(dstsUri);
                     cp = ConnectionParameters.Create(actionsEnvironments, Authentication.Instance.Cert, sts, X509CertCredentialType.SubjectNameCredential);
                     client = new GenevaActionsRestAPIClient(cp);
                     SALsA.GetInstance(icm)?.Log.Verbose("Client created for {0}: {1}", extensionName, operationName);
