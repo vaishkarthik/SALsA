@@ -46,11 +46,11 @@ namespace LivesiteAutomation
                             break;
                         case 3:
                             this.actionsEnvironments = ActionsEnvironments.Mooncake;
-                            dstsUri = new Uri("https://ch1-dsts.dsts.core.windows.net");
+                            dstsUri = new Uri("https://bjb-dsts.dsts.core.chinacloudapi.cn");
                             break;
                         case 8:
                             this.actionsEnvironments = ActionsEnvironments.Blackforest;
-                            dstsUri = new Uri("https://ch1-dsts.dsts.core.windows.net");
+                            dstsUri = new Uri("https://fr1-dsts.dsts.core.cloudapi.de");
                             break;
                         /*
                         case -1:
