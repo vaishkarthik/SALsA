@@ -13,10 +13,10 @@ namespace LivesiteAutomation
         {
             var currentICM = SALsA.GetInstance(Id).ICM;
             var subscriptionId = GetSubscriptionId(currentICM); ;
-            var resourceGroupName = GetCustomField(currentICM, Constants.AnalyzerResourceGroupField);
-            var VMName = GetCustomField(currentICM, Constants.AnalyzerVMNameField);
+            var resourceGroupName = ICM.GetCustomField(Id, Constants.AnalyzerResourceGroupField);
+            var VMName = ICM.GetCustomField(Id, Constants.AnalyzerVMNameField);
             DateTime startTime;
-            if (!DateTime.TryParse(GetCustomField(currentICM, Constants.AnalyzerStartTimeField), out startTime))
+            if (!DateTime.TryParse(ICM.GetCustomField(Id, Constants.AnalyzerStartTimeField), out startTime))
             {
                 SALsA.GetInstance(Id)?.Log.Warning("Failed to parse DateTime");
             }
@@ -28,7 +28,7 @@ namespace LivesiteAutomation
             try
             {
                 // Look for the custom field "subscription"
-                String subscriptionId = GetCustomField(icm, Constants.AnalyzerSubscriptionIdField);
+                String subscriptionId = ICM.GetCustomField(Id, Constants.AnalyzerSubscriptionIdField);
 
                 // Look in the ICM field for the subscriptionId
                 if (!CheckIfSubscriptionIdIsValid(subscriptionId))
@@ -58,28 +58,6 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
                 throw ex;
             }
-        }
-
-        private string GetCustomField(ICM icm, string lookup)
-        {
-            try
-            {
-                foreach (var fields in icm.CurrentICM.CustomFieldGroups)
-                {
-                    var sid = fields.CustomFields.Find(x => x.Name == lookup);
-                    if (sid != null && sid.Value != "")
-                    {
-                        return sid.Value;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                SALsA.GetInstance(Id)?.Log.Error("Failed to find a valid value for <{0}> in ICM : {1}", lookup, icm.CurrentICM.Id);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
-            }
-            return null;
-
         }
 
         private bool CheckIfSubscriptionIdIsValid(string s)

@@ -168,5 +168,26 @@ namespace LivesiteAutomation
         {
             return response.Content.ReadAsStringAsync().Result;
         }
+
+        public static string GetCustomField(int icm, string lookup)
+        {
+            try
+            {
+                foreach (var fields in SALsA.GetInstance(icm).ICM.CurrentICM.CustomFieldGroups)
+                {
+                    var sid = fields.CustomFields.Find(x => x.Name == lookup);
+                    if (sid != null && sid.Value != "")
+                    {
+                        return sid.Value;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SALsA.GetInstance(icm)?.Log.Error("Failed to find a valid value for <{0}> in ICM : {1}", lookup, icm);
+                SALsA.GetInstance(icm)?.Log.Exception(ex);
+            }
+            return null;
+        }
     }
 }

@@ -92,6 +92,14 @@ namespace LivesiteAutomation
         public const string GetClassicVMClassicScreenshotOperatorName = "GetVMScreenshot";
         public const string GetClassicVMClassicScreenshotSize = "XLarge";
 
+        // KustoClient.cs
+        public const string KustoClientQueryLimit = " | limit 1000";
+
+        // GuestAgentGenericLogs.cs
+        public const string KustoGuestAgentGenericLogsCluster = "rdos";
+        public const string KustoGuestAgentGenericLogsDataBase = "rdos";
+        public const string KustoGuestAgentGenericLogsTable = "GuestAgentGenericLogs";
+
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
         public readonly static Dictionary<string, Guid> ICMTeamToTenantLookupTable = new Dictionary<string, Guid>

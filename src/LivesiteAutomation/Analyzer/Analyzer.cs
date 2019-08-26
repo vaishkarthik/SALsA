@@ -38,7 +38,11 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(Id).Log.Send("Could not find VM: {0} in RG: {1}. This VM might have been already deleted or moved", this.VMName, this.ResourceGroupName);
                 throw new Exception("VM not found");
             }
-            
+
+            // TODO : Kusto fun
+            //var a = new LivesiteAutomation.Kusto.GuestAgentGenericLogs(icm);
+            //a.BuildAndSendRequest();
+
             switch (type)
             {
                 case ComputeType.IaaS:
