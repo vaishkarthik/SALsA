@@ -38,19 +38,19 @@ namespace LivesiteAutomation
                     {
                         case 1:
                             this.actionsEnvironments = ActionsEnvironments.Public;
-                            dstsUri = new Uri("https://ch1-dsts.dsts.core.windows.net");
+                            dstsUri = new Uri("https://prod-dsts.dsts.core.windows.net");
                             break;
                         case 5:
                             this.actionsEnvironments = ActionsEnvironments.Fairfax;
-                            dstsUri = new Uri("https://prod-dsts.dsts.core.usgovcloudapi.net");
+                            dstsUri = new Uri("https://usgoveast-dsts.dsts.core.usgovcloudapi.net");
                             break;
                         case 3:
                             this.actionsEnvironments = ActionsEnvironments.Mooncake;
-                            dstsUri = new Uri("https://bjb-dsts.dsts.core.chinacloudapi.cn");
+                            dstsUri = new Uri("https://chinanorth-dsts.dsts.core.chinacloudapi.cn");
                             break;
                         case 8:
                             this.actionsEnvironments = ActionsEnvironments.Blackforest;
-                            dstsUri = new Uri("https://fr1-dsts.dsts.core.cloudapi.de");
+                            dstsUri = new Uri("https://germanycentral-dsts.dsts.core.cloudapi.de");
                             break;
                         /*
                         case -1:
@@ -67,7 +67,7 @@ namespace LivesiteAutomation
                             goto case 1;
                     }
 
-                    SALsA.GetInstance(icm)?.Log.Verbose("Creating GenevaAction for {0}: {1}, with parameters : ", extensionName, operationName,
+                    SALsA.GetInstance(icm)?.Log.Verbose("Creating GenevaAction for {0}: {1}, with parameters : {2}", extensionName, operationName,
                         actionParam.Select(kvp => kvp.Key + ": " + kvp.Value.ToString()));
 
                     sts = new ClientHomeSts(dstsUri);
