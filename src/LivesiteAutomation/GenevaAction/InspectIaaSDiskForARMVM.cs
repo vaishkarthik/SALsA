@@ -19,7 +19,7 @@ namespace LivesiteAutomation
                 smecrpregion = deployment.Location,
                 smeresourcegroupname = deployment.ResourceGroups,
                 smevmname = deployment.Name,
-                wellknownsubscriptionid = deployment.Subscriptions,
+                wellknownscopedsubscriptionid = deployment.Subscriptions,
                 smelogextractmode = Constants.InspectIaaSDiskForARMVMMode,
                 smeskiptostep = Constants.InspectIaaSDiskForARMVMStep,
                 smetimeoutinmins = Constants.InspectIaaSDiskForARMVMTimeout
@@ -41,7 +41,7 @@ namespace LivesiteAutomation
                 smecrpregion = deployment.Location,
                 smeresourcegroupname = deployment.ResourceGroups,
                 smevmssname = deployment.Name,
-                wellknownsubscriptionid = deployment.Subscriptions,
+                wellknownscopedsubscriptionid = deployment.Subscriptions,
                 smelogextractmode = Constants.InspectIaaSDiskForARMVMMode,
                 smeskiptostep = Constants.InspectIaaSDiskForARMVMStep,
                 smetimeoutinmins = Constants.InspectIaaSDiskForARMVMTimeout,

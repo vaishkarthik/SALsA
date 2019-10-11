@@ -11,6 +11,7 @@ namespace LivesiteAutomation.Json2Class
         public class GetARMSubscriptionResources
         {
             public string wellknownsubscriptionid { get; set; }
+            public string wellknownscopedsubscriptionid { get { return wellknownsubscriptionid; } }
             public string resourcegroupname { get; set; }
             public string skiptoken { get; set; } = null;
             public override string ToString() { return Utility.ObjectToJson(this, true); }
@@ -18,6 +19,7 @@ namespace LivesiteAutomation.Json2Class
         public class GetRDFESubscriptionResources
         {
             public string wellknownsubscriptionid { get; set; }
+            public string wellknownscopedsubscriptionid { get { return wellknownsubscriptionid; } }
             public string detaillevel { get; set; }
             public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
@@ -27,6 +29,7 @@ namespace LivesiteAutomation.Json2Class
         {
             public string smecrpregion { get; set; }
             public string wellknownsubscriptionid { get; set; }
+            public string wellknownscopedsubscriptionid { get { return wellknownsubscriptionid; } }
             public string smeresourcegroupnameparameter { get; set; }
             public string smevmnameparameter { get; set; }
             public override string ToString() { return Utility.ObjectToJson(this, true); }
@@ -42,7 +45,8 @@ namespace LivesiteAutomation.Json2Class
         public class InspectIaaSDiskForARMVM
         {
             public string smecrpregion { get; set; }
-            public string wellknownsubscriptionid { get; set; }
+            public string wellknownscopedsubscriptionid { get; set; }
+            public string smeblobsasurl { get { return ""; } }
             public string smeresourcegroupname { get; set; }
             public string smevmname { get; set; }
             public string smelogextractmode { get; set; }
@@ -57,6 +61,7 @@ namespace LivesiteAutomation.Json2Class
             public string smeresourcegroupnameparameter { get; set; }
             public string smevirtualmachinescalesetnameparameter { get; set; }
             public string wellknownsubscriptionid { get; set; }
+            public string wellknownscopedsubscriptionid { get { return wellknownsubscriptionid; } }
             public int smevirtualmachinescalesetvminstanceidparameter { get; set; }
             public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
@@ -68,7 +73,9 @@ namespace LivesiteAutomation.Json2Class
             public string smecrpregion { get; set; }
             public string smeresourcegroupname { get; set; }
             public string smevmssname { get; set; }
-            public string wellknownsubscriptionid { get; set; }
+            public string smeblobsasurl { get { return ""; } }
+            public string wellknownscopedsubscriptionid { get; set; }
+            
             public string smelogextractmode { get; set; }
             public string smeskiptostep { get; set; }
             public int smetimeoutinmins { get; set; }
@@ -82,6 +89,7 @@ namespace LivesiteAutomation.Json2Class
             public string smeresourcegroupnameparameter { get; set; }
             public string smevirtualmachinescalesetnameparameter { get; set; }
             public string wellknownsubscriptionid { get; set; }
+            public string wellknownscopedsubscriptionid { get { return wellknownsubscriptionid; } }
             public string smegetvmscalesetvmoptionparameter { get; set; }
             public int smevirtualmachinescalesetvminstanceidparameter { get; set; }
             public override string ToString() { return Utility.ObjectToJson(this, true); }

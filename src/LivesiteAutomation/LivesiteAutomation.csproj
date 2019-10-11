@@ -38,23 +38,14 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bond, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DsmsCredentialsManagement.2.15.755\lib\net40\Bond.dll</HintPath>
-    </Reference>
-    <Reference Include="Bond.Attributes, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DsmsCredentialsManagement.2.15.755\lib\net40\Bond.Attributes.dll</HintPath>
-    </Reference>
-    <Reference Include="Bond.IO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DsmsCredentialsManagement.2.15.755\lib\net40\Bond.IO.dll</HintPath>
-    </Reference>
     <Reference Include="Cfx.Assert, Version=132.300.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.201\lib\net462\Cfx.Assert.dll</HintPath>
+      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.207\lib\net462\Cfx.Assert.dll</HintPath>
     </Reference>
     <Reference Include="DstsAuthenticationLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b53a8e41a8ed1467, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\GenevaActionsLibrary.3.0.4.990\lib\net462\DstsAuthenticationLibrary.dll</HintPath>
+      <HintPath>..\..\packages\GenevaActionsLibrary.3.0.4.1061\lib\net462\DstsAuthenticationLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="GenevaActionsLibrary, Version=3.0.4.990, Culture=neutral, PublicKeyToken=b53a8e41a8ed1467, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\GenevaActionsLibrary.3.0.4.990\lib\net462\GenevaActionsLibrary.dll</HintPath>
+    <Reference Include="GenevaActionsLibrary, Version=3.0.4.1061, Culture=neutral, PublicKeyToken=b53a8e41a8ed1467, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\GenevaActionsLibrary.3.0.4.1061\lib\net462\GenevaActionsLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Kusto.Cloud.Platform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=829a00acde12d551, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Azure.Kusto.Data.6.1.8\lib\net462\Kusto.Cloud.Platform.dll</HintPath>
@@ -87,7 +78,7 @@
       <HintPath>..\..\packages\Microsoft.Azure.Storage.Common.10.0.3\lib\net452\Microsoft.Azure.Storage.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.201\lib\net462\Microsoft.IdentityModel.dll</HintPath>
+      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.207\lib\net462\Microsoft.IdentityModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=4.5.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.4.5.1\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
@@ -102,34 +93,31 @@
       <HintPath>..\..\packages\Microsoft.Rest.ClientRuntime.Azure.3.3.19\lib\net461\Microsoft.Rest.ClientRuntime.Azure.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Security.Authentication, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.201\lib\net462\Microsoft.WindowsAzure.Security.Authentication.dll</HintPath>
+      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.207\lib\net462\Microsoft.WindowsAzure.Security.Authentication.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Security.Authentication.Contracts, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.201\lib\net462\Microsoft.WindowsAzure.Security.Authentication.Contracts.dll</HintPath>
+      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.207\lib\net462\Microsoft.WindowsAzure.Security.Authentication.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Security.Authentication.Helpers.PassiveAuthHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.201\lib\net462\Microsoft.WindowsAzure.Security.Authentication.Helpers.PassiveAuthHelper.dll</HintPath>
+      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.207\lib\net462\Microsoft.WindowsAzure.Security.Authentication.Helpers.PassiveAuthHelper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Security.Authentication.Logging, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.201\lib\net462\Microsoft.WindowsAzure.Security.Authentication.Logging.dll</HintPath>
+      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.207\lib\net462\Microsoft.WindowsAzure.Security.Authentication.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Security.CredentialsManagement.Client, Version=2.15.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DsmsCredentialsManagement.2.15.755\lib\net40\Microsoft.WindowsAzure.Security.CredentialsManagement.Client.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAzure.Security.CredentialsManagement.Client, Version=2.17.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DsmsCredentialsManagement.2.17.906\lib\net40\Microsoft.WindowsAzure.Security.CredentialsManagement.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Security.CredentialsManagement.SecureBlob, Version=2.15.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DsmsCredentialsManagement.2.15.755\lib\net40\Microsoft.WindowsAzure.Security.CredentialsManagement.SecureBlob.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Security.CredentialsManagement.StorageHelper, Version=2.15.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DsmsCredentialsManagement.2.15.755\lib\net40\Microsoft.WindowsAzure.Security.CredentialsManagement.StorageHelper.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAzure.Security.CredentialsManagement.StorageHelper, Version=2.17.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DsmsCredentialsManagement.2.17.906\lib\net40\Microsoft.WindowsAzure.Security.CredentialsManagement.StorageHelper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Security.TestUtilities, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.201\lib\net462\Test\Microsoft.WindowsAzure.Security.TestUtilities.dll</HintPath>
+      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.207\lib\net462\Test\Microsoft.WindowsAzure.Security.TestUtilities.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RetryEngine, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.201\lib\net462\RetryEngine\RetryEngine.dll</HintPath>
+      <HintPath>..\..\packages\DstsAuthentication.master.3.0.2.207\lib\net462\RetryEngine\RetryEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -189,4 +177,11 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\packages\DsmsCredentialsManagement.2.17.906\build\DsmsCredentialsManagement.targets" Condition="Exists('..\..\packages\DsmsCredentialsManagement.2.17.906\build\DsmsCredentialsManagement.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\DsmsCredentialsManagement.2.17.906\build\DsmsCredentialsManagement.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\DsmsCredentialsManagement.2.17.906\build\DsmsCredentialsManagement.targets'))" />
+  </Target>
 </Project>
