@@ -9,7 +9,7 @@ namespace LivesiteAutomation
 {
     public partial class Analyzer
     {
-        private (Guid subscriptionId, string resourceGroupName, string VMName, DateTime startTime) AnalyzeICM()
+        private (Nullable<Guid> subscriptionId, string resourceGroupName, string VMName, DateTime startTime) AnalyzeICM()
         {
             var currentICM = SALsA.GetInstance(Id).ICM;
             var subscriptionId = GetSubscriptionId(currentICM); ;
@@ -23,7 +23,7 @@ namespace LivesiteAutomation
             return (subscriptionId, resourceGroupName, VMName, startTime);
         }
 
-        private Guid GetSubscriptionId(ICM icm)
+        private Nullable<Guid> GetSubscriptionId(ICM icm)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace LivesiteAutomation
             {
                 SALsA.GetInstance(Id)?.Log.Error("Failed to find a valid subscription id for ICM : {0}", icm.CurrentICM.Id);
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
-                throw ex;
+                return null;
             }
         }
 

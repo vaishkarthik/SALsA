@@ -24,9 +24,15 @@ namespace LivesiteAutomation
         public Analyzer(int Id)
         {
             this.Id = Id;
-            (SubscriptionId, ResourceGroupName, VMName, StartTime) = AnalyzeICM();
+            Nullable<Guid> sub;
+            (sub, ResourceGroupName, VMName, StartTime) = AnalyzeICM();
+            var isHostIssue = AnalyzeHost();
+            if (isHostIssue == true)
+            {
+                return;
+            }
+            SubscriptionId = (Guid)sub;
             SALsA.GetInstance(Id)?.Log.Send("{0}", Utility.ObjectToJson(this, true));
-
             // TODO analyse ARM and REDFE in parallel
             var arm  = AnalyzeARMSubscription(SubscriptionId, this.ResourceGroupName);
             var rdfe = AnalyzeRDFESubscription(SubscriptionId);
@@ -57,6 +63,33 @@ namespace LivesiteAutomation
                 default:
                     break;
             }
+        }
+
+        private bool AnalyzeHost()
+        {
+            var currentICM = SALsA.GetInstance(Id).ICM;
+            var title = currentICM.CurrentICM.Title;
+            var isHostIssue = Regex.Match(title, @"HostGAPlugin.*Cluster.*Node.*(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}", RegexOptions.IgnoreCase).Success;
+            if(isHostIssue)
+            {
+                var splitTitle = title.ToLowerInvariant().Replace(" :", ":").Replace(": ", ":").Replace(",", " ").Replace(".", " ").Replace("nodeid", "node").Split(' ');
+                splitTitle = Array.FindAll(splitTitle, s => s.Contains(":"));
+                var dict = splitTitle.ToDictionary(
+                    k => k.Split(':')[0],
+                    e => e.Split(':')[1]
+                );
+                var cluster = dict["cluster"];
+                var nodeid = dict["node"];
+                var creationTime = currentICM.CurrentICM.CreateDate;
+                var startTime = creationTime.AddHours(-12);
+                var endTime = new DateTime(Math.Min(creationTime.AddHours(+12).Ticks, DateTime.UtcNow.Ticks));
+                SALsA.GetInstance(Id).TaskManager.AddTask(
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename, 
+                GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid,startTime.ToString("s"), endTime.ToString("s")), Id)
+                );
+            }
+            return isHostIssue;
+
         }
 
         private void ExecuteAllActionsForIaaS(ARMDeployment dep)
@@ -106,7 +139,7 @@ namespace LivesiteAutomation
 
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnostics(Id, vmInfo), Id)
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id)
             );
         }
 

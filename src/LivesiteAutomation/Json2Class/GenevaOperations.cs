@@ -95,12 +95,25 @@ namespace LivesiteAutomation.Json2Class
             public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
 
-        public class GetNodeDiagnostics
+        public class GetNodeDiagnosticsDeployment
         {
             public string smevmnameparam { get; set; }
             public string smedeploymentidordeploymentparam { get; set; }
             public string smenodediagnosticstagparam { get; set; }
             public string smefabrichostparam { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this, true); }
+        }
+
+
+        public class GetNodeDiagnosticsFiles
+        {
+            public string smefabrichostparam { get; set; }
+            public string smenodeidparam { get; set; }
+            public string smenodediagnosticstypeparam { get; set; }
+            public string smenodediagnosticstagparam { get; set; }
+            public string smecontaineriddiagnosticsfileparam { get { return ""; } }
+            public string smestarttimeparam { get; set; }
+            public string smeendtimeparam { get; set; }
             public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
 

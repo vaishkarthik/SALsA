@@ -47,6 +47,7 @@ namespace LivesiteAutomation
         public const string AnalyzerVMModelAndViewOutputFilename = "ModelAndView.json";
         public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zip";
         public const string AnalyzerNodeDiagnosticsFilename = "Logs.zip";
+        public const string AnalyzerHostGAPluginFilename = "RdAgent.log";
 
         // GetARMSubscriptionRG.cs
         public const string GetARMSubscriptionRGExtensionName = "Azure Resource Manager";
@@ -84,8 +85,11 @@ namespace LivesiteAutomation
 
         // GetNodeDiagnostics.cs
         public const string GetNodeDiagnosticsExtensionName = "SupportabilityFabric";
-        public const string GetNodeDiagnosticsOperatorName = "GetNodeDiagnosticsFileByVMNameAndDeploymentId";
+        public const string GetNodeDiagnosticsOperatorNameDeployment = "GetNodeDiagnosticsFileByVMNameAndDeploymentId";
+        public const string GetNodeDiagnosticsOperatorNameFiles = "GetNodeDiagnosticsFiles";
         public const string GetNodeDiagnosticsParam = "GuestAgentVMLogs";
+        public const string GetNodeDiagnosticsAllFilesParam = "GuestAgentLogs";
+        public const string GetNodeDiagnosticsFilesTagsParam = "AllLogs";
 
         // GetClassicVMConsoleScreenshot.cs
         public const string GetClassicVMClassicScreenshotExtensionName = "SupportabilityFabric";
