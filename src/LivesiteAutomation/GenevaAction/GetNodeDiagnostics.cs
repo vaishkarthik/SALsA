@@ -31,7 +31,7 @@ namespace LivesiteAutomation
                 ));
         }
 
-        public static Task<ZipArchiveEntry> GetNodeDiagnosticsFiles(int icm, string cluster, string nodeid, string startTime, string endTime)
+        public static Task<Stream> GetNodeDiagnosticsFiles(int icm, string cluster, string nodeid, string startTime, string endTime)
         {
             SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetNodeDiagnostics (for host) with params cluster:{0} and nodeid:", cluster, nodeid);
             var param = new GenevaOperations.GetNodeDiagnosticsFiles
@@ -46,9 +46,8 @@ namespace LivesiteAutomation
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
             var task = new GenevaAction(icm, Constants.GetNodeDiagnosticsExtensionName, Constants.GetNodeDiagnosticsOperatorNameFiles, actionParam).GetOperationFileOutputAsync(icm);
 
-            // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
-                    task.Result != null ? Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First() : null
+                    task.Result
                 ));
         }
     }
