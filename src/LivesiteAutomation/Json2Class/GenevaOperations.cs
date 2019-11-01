@@ -125,5 +125,14 @@ namespace LivesiteAutomation.Json2Class
             public string smescreenshotsizeparam { get; set; }
             public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
+
+        public class GetContainerSettings
+        {
+
+            public string smefabrichostparam { get; set; }
+            public string smecontaineridparam { get; set; }
+            public override string ToString() { return Utility.ObjectToJson(this, true); }
+
+        }
     }
 }

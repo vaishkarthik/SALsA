@@ -45,7 +45,7 @@ namespace LivesiteAutomation
                         Subscriptions = SubscriptionId.ToString(),
                         ResourceGroups = id[4],
                         Location = Constants.CRPRegions.Where(x => String.Equals(x, deployment.location, StringComparison.OrdinalIgnoreCase)).FirstOrDefault(),
-                        Name = deployment.name.Contains("/") ? deployment.name.Split('/')[1] : deployment.name,
+                        Name = deployment.name.Contains("/") ? deployment.name.Split('/')[0] : deployment.name,
                         Type = deployment.type.Split('/')[1]
                     };
                     if (!armAnalysed.ContainsKey(dep.Name))

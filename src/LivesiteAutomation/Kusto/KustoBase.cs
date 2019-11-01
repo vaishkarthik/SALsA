@@ -16,12 +16,10 @@ namespace LivesiteAutomation.Kusto
 
         protected int Icm;
         protected KustoClient kustoClient;
-        protected string ContainerId;
 
-        public KustoBase(int icm, string containerId)
+        public KustoBase(int icm)
         {
             this.Icm = icm;
-            this.ContainerId = containerId;
             kustoClient = new KustoClient(Cluster, DataBase, Icm);
         }
     }

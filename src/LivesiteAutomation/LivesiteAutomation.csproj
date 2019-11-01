@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8F1A0325-B90E-4FEC-B79A-C7EC8DF063B1}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>LivesiteAutomation</RootNamespace>
     <AssemblyName>LivesiteAutomation</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -166,6 +166,7 @@
     <Compile Include="Connectors\ICM.cs" />
     <Compile Include="Commons\Constants.cs" />
     <Compile Include="GenevaAction\GetClassicVMConsoleScreenshot.cs" />
+    <Compile Include="GenevaAction\GetContainerSettings.cs" />
     <Compile Include="GenevaAction\GetNodeDiagnostics.cs" />
     <Compile Include="GenevaAction\GetRDFESubscription.cs" />
     <Compile Include="GenevaAction\GetVMModelAndInstanceView.cs" />
@@ -173,12 +174,14 @@
     <Compile Include="GenevaAction\GetVMSerialLogs.cs" />
     <Compile Include="GenevaAction\InspectIaaSDiskForARMVM.cs" />
     <Compile Include="Json2Class\ARMSubscription.cs" />
+    <Compile Include="Json2Class\ContainerSettings.cs" />
     <Compile Include="Json2Class\GenevaOperations.cs" />
     <Compile Include="Json2Class\Incident.cs" />
     <Compile Include="Json2Class\RDFESubscription.cs" />
     <Compile Include="Json2Class\RDFESubscriptionWrapper.cs" />
     <Compile Include="Json2Class\ServicePrincipal.cs" />
     <Compile Include="Commons\Log.cs" />
+    <Compile Include="Kusto\AzureCMVMIdToContainerID.cs" />
     <Compile Include="Kusto\GuestAgentGenericLogs.cs" />
     <Compile Include="Kusto\KustoBase.cs" />
     <Compile Include="Program.cs" />

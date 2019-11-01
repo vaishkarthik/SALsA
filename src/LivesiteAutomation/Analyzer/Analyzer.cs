@@ -1,4 +1,5 @@
 ﻿using LivesiteAutomation.Json2Class;
+using LivesiteAutomation.Kusto;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -94,28 +95,53 @@ namespace LivesiteAutomation
 
         private void ExecuteAllActionsForIaaS(ARMDeployment dep)
         {
+            Task<string> modelTask = null;
             SALsA.GetInstance(Id).Log.Send(dep);
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(Id, dep), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, modelTask = GenevaActions.GetVMModelAndInstanceView(Id, dep), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep), Id)
             );
-
+            LogContainerId(modelTask, Id);
         }
+
+        private void LogContainerId(Task<string> modelTask, int Id)
+        {
+
+            if (modelTask != null)
+            {
+                try
+                {
+                    var model = Utility.JsonToObject<Dictionary<string, dynamic>>(modelTask.Result);
+                    var vmid = (string)(model["VM Model"].properties.vmId);
+                    var kusto = new AzureCMVMIdToContainerID(Id, vmid);
+                    var vmInfo = kusto.BuildAndSendRequest();
+                    SALsA.GetInstance(Id).Log.Send(vmInfo);
+                }
+                catch (Exception ex)
+                {
+                    SALsA.GetInstance(Id)?.Log.Critical("Failed to populate ContainerId");
+                    SALsA.GetInstance(Id)?.Log.Exception(ex);
+                }
+            }
+        }
+
         private void ExecuteAllActionsForVMSS(ARMDeployment dep)
         {
             int instanceId = TryConvertInstanceNameToInstanceId(this.VMName);
             // TODO instead of using 0, take 5 random and use them
             instanceId = instanceId == -1 ? 0 : instanceId;
 
+            Task<string> modelTask = null;
             SALsA.GetInstance(Id).Log.Send(dep);
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep, instanceId), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep, instanceId), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, GenevaActions.GetVMModelAndInstanceView(Id, dep, instanceId), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, modelTask = GenevaActions.GetVMModelAndInstanceView(Id, dep, instanceId), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep, instanceId), Id)
             );
+            LogContainerId(modelTask, Id);
         }
 
         private void ExecuteAllActionsForPaaS(RDFEDeployment dep)
@@ -131,16 +157,31 @@ namespace LivesiteAutomation
                 DeploymentId = dep.Name,
                 DeploymentName = dep.Id,
                 ContainerID = instance.ID,
-                // TODO : Get the NodeId somehow
-                //NodeId = instance.VMID,
                 InstanceName = instance.RoleInstanceName
             };
-            SALsA.GetInstance(Id)?.Log.Send(vmInfo);
+
+            Task<string> modelTask = null;
 
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id)
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, vmInfo), Id)
+
             );
+            try
+            {
+                var model = Utility.JsonToObject<Json2Class.ContainerSettings>(modelTask.Result);
+                vmInfo.NodeId = new Guid(model.NodeId);
+            }
+            catch (Exception ex)
+            {
+                SALsA.GetInstance(Id)?.Log.Critical("Failed to populate NodeId");
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
+            }
+            finally
+            {
+                SALsA.GetInstance(Id)?.Log.Send(vmInfo);
+            }
         }
 
         private (ComputeType type, object dep) DetectVMType(ARMSubscription arm, RDFESubscription rdfe)

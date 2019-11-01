@@ -5,6 +5,7 @@ using LivesiteAutomation.Connectors;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -53,10 +54,11 @@ namespace LivesiteAutomation.Kusto
         override protected string Cluster { get { return Constants.KustoGuestAgentGenericLogsCluster; } }
         override protected string DataBase { get { return Constants.KustoGuestAgentGenericLogsDataBase; } }
         override protected string Table { get { return Constants.KustoGuestAgentGenericLogsTable; } }
-
-        public GuestAgentGenericLogs(int icm, string containerId = null) : base(icm, containerId) { }
+        private readonly string ContainerID;
+        public GuestAgentGenericLogs(int icm, string containerId) : base(icm) { this.ContainerID = containerId; }
         public MessageLine[] BuildAndSendRequest()
         {
+            // TODO : Should be ICM datetime - 1day
             var query = String.Format("{0} | where TIMESTAMP > datetime({1})", Table, ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField));
             List<object[]> table = kustoClient.Query(query);
             return ParseResult(table);

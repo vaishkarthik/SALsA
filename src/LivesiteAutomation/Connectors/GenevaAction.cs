@@ -16,7 +16,7 @@ namespace LivesiteAutomation
     { 
         private class GenevaAction
         {
-            private ClientHomeSts sts;
+            //private ClientHomeSts sts;
             private ConnectionParameters cp;
             private GenevaActionsRestAPIClient client;
             private OperationRequest operationRequest;

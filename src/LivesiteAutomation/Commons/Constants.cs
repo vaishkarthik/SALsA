@@ -48,6 +48,7 @@ namespace LivesiteAutomation
         public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zip";
         public const string AnalyzerNodeDiagnosticsFilename = "Logs.zip";
         public const string AnalyzerHostGAPluginFilename = "HostGAPlugin.zip";
+        public const string AnalyzerContainerSettings = "ContainerSettings.json";
 
         // GetARMSubscriptionRG.cs
         public const string GetARMSubscriptionRGExtensionName = "Azure Resource Manager";
@@ -96,6 +97,10 @@ namespace LivesiteAutomation
         public const string GetClassicVMClassicScreenshotOperatorName = "GetVMScreenshot";
         public const string GetClassicVMClassicScreenshotSize = "XLarge";
 
+        // GetContainerSettings.cs
+        public const string GetContainerSettingsExtensionName = "SupportabilityFabric";
+        public const string GetContainerSettingsOperatorName = "GetContainerSettings";
+
         // KustoClient.cs
         public const string KustoClientQueryLimit = " | limit 1000";
 
@@ -103,6 +108,11 @@ namespace LivesiteAutomation
         public const string KustoGuestAgentGenericLogsCluster = "rdos";
         public const string KustoGuestAgentGenericLogsDataBase = "rdos";
         public const string KustoGuestAgentGenericLogsTable = "GuestAgentGenericLogs";
+
+        // AzureCMVMIdToContainerID.cs
+        public const string KustoLogContainerSnapshotCluster = "AzureCM";
+        public const string KustoLogContainerSnapshotDatabase = "AzureCM";
+        public const string KustoLogContainerSnapshotTable = "LogContainerSnapshot";
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
