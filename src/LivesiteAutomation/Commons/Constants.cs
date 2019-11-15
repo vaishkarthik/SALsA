@@ -78,8 +78,8 @@ namespace LivesiteAutomation
 
         // InspectIaaSDiskForARMVM.cs
         public const string InspectIaaSDiskForARMVMExtensionName = "AzLinux";
-        public const string InspectIaaSDiskForARMVMOperationName = "InspectIaaSDiskForARMVMEx";
-        public const string InspectIaaSDiskForARMVMSSOperationName = "InspectIaaSDiskForARMVmssVMEx";
+        public const string InspectIaaSDiskForARMVMOperationName = "InspectIaaSDiskForARMVM";
+        public const string InspectIaaSDiskForARMVMSSOperationName = "InspectIaaSDiskForARMVmssVM";
         public const string InspectIaaSDiskForARMVMMode = "Diagnostic";
         public const string InspectIaaSDiskForARMVMStep = "0";
         public const int InspectIaaSDiskForARMVMTimeout = 0;

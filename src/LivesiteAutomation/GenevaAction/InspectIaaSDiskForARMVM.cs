@@ -13,7 +13,6 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Stream> InspectIaaSDiskForARMVM(int icm, ARMDeployment deployment)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling InspectIaaSDiskForARMVM with params {0}", deployment);
             var param = new GenevaOperations.InspectIaaSDiskForARMVM
             {
                 smecrpregion = deployment.Location,
@@ -24,6 +23,7 @@ namespace LivesiteAutomation
                 smeskiptostep = Constants.InspectIaaSDiskForARMVMStep,
                 smetimeoutinmins = Constants.InspectIaaSDiskForARMVMTimeout
             };
+            SALsA.GetInstance(icm)?.Log.Information("Calling InspectIaaSDiskForARMVM with params {0}", param);
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
             var task = new GenevaAction(icm, Constants.InspectIaaSDiskForARMVMExtensionName, Constants.InspectIaaSDiskForARMVMOperationName, actionParam).GetOperationFileOutputAsync(icm);
 
@@ -35,7 +35,6 @@ namespace LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Stream> InspectIaaSDiskForARMVM(int icm, ARMDeployment deployment, int id)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling InspectIaaSDiskForARMVM of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.InspectIaaSDiskForARMVMVMSS
             {
                 smecrpregion = deployment.Location,
@@ -47,6 +46,7 @@ namespace LivesiteAutomation
                 smetimeoutinmins = Constants.InspectIaaSDiskForARMVMTimeout,
                 smevmssinstanceid = id
             };
+            SALsA.GetInstance(icm)?.Log.Information("Calling InspectIaaSDiskForARMVM of id:{0} with params {1}", id, param);
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
             var task = new GenevaAction(icm, Constants.InspectIaaSDiskForARMVMExtensionName, Constants.InspectIaaSDiskForARMVMSSOperationName, actionParam).GetOperationFileOutputAsync(icm);
 
