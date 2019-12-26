@@ -86,7 +86,7 @@ namespace LivesiteAutomation
                 var endTime = new DateTime(Math.Min(creationTime.AddHours(+12).Ticks, DateTime.UtcNow.Ticks));
                 SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename, 
-                GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid,startTime.ToString("s"), endTime.ToString("s")), Id)
+                    GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid,startTime.ToString("s"), endTime.ToString("s")), Id)
                 );
             }
             return isHostIssue;

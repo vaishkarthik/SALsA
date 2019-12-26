@@ -172,8 +172,16 @@ namespace LivesiteAutomation
             }
         }
 
+        private static string FormatFileName(int Id, string name)
+        {
+            name = String.Format("[{0}]{1}_{2}.{3}", Id, Path.GetFileNameWithoutExtension(name),
+                DateTime.UtcNow.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture), Path.GetExtension(name));
+            return name;
+        }
+
         public static async Task SaveAndSendBlobTask(string name, Task<ZipArchiveEntry> task, int Id)
         {
+            name = FormatFileName(Id, name);
             var output = (await task).Open();
             if (output == null)
             { 
@@ -187,6 +195,7 @@ namespace LivesiteAutomation
 
         public static async Task SaveAndSendBlobTask(string name, Task<String> task, int Id)
         {
+            name = FormatFileName(Id, name);
             var output = await task; 
             await BlobStorage.UploadText(Id, name, output);
             SendSASToICM(name, Id);
@@ -194,6 +203,7 @@ namespace LivesiteAutomation
         }
         public static async Task SaveAndSendBlobTask(string name, Task<Image> task, int Id)
         {
+            name = FormatFileName(Id, name);
             var output = await task;
             if (output == null)
             {
@@ -210,6 +220,7 @@ namespace LivesiteAutomation
         }
         public static async Task SaveAndSendBlobTask(string name, Task<Stream> task, int Id)
         {
+            name = FormatFileName(Id, name);
             var output = await task;
             if (output == null)
             {

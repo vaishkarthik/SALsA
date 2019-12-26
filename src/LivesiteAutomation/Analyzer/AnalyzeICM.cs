@@ -12,7 +12,7 @@ namespace LivesiteAutomation
         private (Nullable<Guid> subscriptionId, string resourceGroupName, string VMName, DateTime startTime) AnalyzeICM()
         {
             var currentICM = SALsA.GetInstance(Id).ICM;
-            var subscriptionId = GetSubscriptionId(currentICM); ;
+            var subscriptionId = GetSubscriptionId(currentICM);
             var resourceGroupName = ICM.GetCustomField(Id, Constants.AnalyzerResourceGroupField);
             var VMName = ICM.GetCustomField(Id, Constants.AnalyzerVMNameField);
             DateTime startTime;
