@@ -174,7 +174,7 @@ namespace LivesiteAutomation
 
         private static string FormatFileName(int Id, string name)
         {
-            name = String.Format("[{0}]{1}_{2}.{3}", Id, Path.GetFileNameWithoutExtension(name),
+            name = String.Format("[{0}]{1}_{2}{3}", Id, Path.GetFileNameWithoutExtension(name),
                 DateTime.UtcNow.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture), Path.GetExtension(name));
             return name;
         }
