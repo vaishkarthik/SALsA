@@ -254,7 +254,7 @@ namespace LivesiteAutomation
             }
             if (rdfeDeps.Count > 1)
             {
-                rdfeDeps = rdfeDeps.Where(x => x.HostedServiceName == this.ResourceGroupName).ToList();
+                rdfeDeps = rdfeDeps.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()).ToList();
             }
             if (rdfeDeps.Count == 1)
             {
@@ -263,8 +263,15 @@ namespace LivesiteAutomation
             else if (rdfeDeps.Count > 1)
             {
                 // Best effort guess
-                return rdfeDeps.Where(x => x.HostedServiceName == this.ResourceGroupName
-                && x.RoleInstances.Where(y => y.RoleName == VMName).ToList().Count >= 1).ToList().First();
+                var ret = rdfeDeps.Where(x => x.RoleInstances.Where(y => y.RoleName == this.VMName).ToList().Count >= 1).ToList();
+                if(ret.Count() > 0)
+                {
+                    return ret.First();
+                }
+                else
+                {
+                    return rdfeDeps.First();
+                }
             }
             else
             {
