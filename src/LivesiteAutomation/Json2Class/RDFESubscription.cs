@@ -12,43 +12,43 @@ namespace LivesiteAutomation.Json2Class
     {
         public string ApplicationPackage { get; set; }
         public string BillingContext { get; set; }
-        public int CountOfRoleAborts { get; set; }
-        public int CountOfRoleAbortsInTimeWindow { get; set; }
-        public int CountOfStartRoleFailures { get; set; }
-        public int CountOfSuccessfulStartRoles { get; set; }
-        public int EndpointPort { get; set; }
+        public Nullable<long> CountOfRoleAborts { get; set; }
+        public Nullable<long> CountOfRoleAbortsInTimeWindow { get; set; }
+        public Nullable<long> CountOfStartRoleFailures { get; set; }
+        public Nullable<long> CountOfSuccessfulStartRoles { get; set; }
+        public Nullable<long> EndpointPort { get; set; }
         public string EndpointVIP { get; set; }
         public string HostName { get; set; }
         public Guid ID { get; set; }
-        public int InstanceCount { get; set; }
-        public int InstanceErrorCode { get; set; }
+        public Nullable<long> InstanceCount { get; set; }
+        public Nullable<long> InstanceErrorCode { get; set; }
         public string InstanceStatus { get; set; }
         public string IpAddress { get; set; }
         public string IsAlerted { get; set; }
         public DateTime LastRoleAbortUtcTime { get; set; }
         public string LastRoleStartResult { get; set; }
         public DateTime LastRoleStartUtcTime { get; set; }
-        public int LastStartRoleFailureErrorCode { get; set; }
+        public Nullable<long> LastStartRoleFailureErrorCode { get; set; }
         public DateTime LastStartRoleFailureUtcTime { get; set; }
         public DateTime LastSuccessfulStartRoleUtcTime { get; set; }
-        public int LastVMStartFailureErrorCode { get; set; }
+        public Nullable<long> LastVMStartFailureErrorCode { get; set; }
         public string LastVMStartFailureFabricOperation { get; set; }
         public DateTime LastVMStartFailureTime { get; set; }
         public string LastVMStartResult { get; set; }
-        public int LogicalFaultDomain { get; set; }
+        public Nullable<long> LogicalFaultDomain { get; set; }
         public string ManagementRole { get; set; }
-        public int MemoryInMBs { get; set; }
-        public int NumProcessors { get; set; }
+        public Nullable<long> MemoryInMBs { get; set; }
+        public Nullable<long> NumProcessors { get; set; }
         public string OS { get; set; }
         public string OsVersion { get; set; }
-        public int PhysicalFaultDomain { get; set; }
+        public Nullable<long> PhysicalFaultDomain { get; set; }
         public string PowerState { get; set; }
         public string RoleInstanceName { get; set; }
         public string RoleName { get; set; }
         public string RoleState { get; set; }
         public string RoleStateDetails { get; set; }
         public string Size { get; set; }
-        public int UpdateDomain { get; set; }
+        public Nullable<long> UpdateDomain { get; set; }
         public Guid VMID { get; set; }
         public string VirtualMachineWorkflowStep { get; set; }
     }
