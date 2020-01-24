@@ -115,8 +115,8 @@ namespace LivesiteAutomation
                 {
                     var model = Utility.JsonToObject<Dictionary<string, dynamic>>(modelTask.Result);
                     var vmid = (string)(model["VM Model"].properties.vmId);
-                    var kusto = new AzureCMVMIdToContainerID(Id, vmid);
-                    var vmInfo = kusto.BuildAndSendRequest();
+                    var kusto = new AzureCMVMIdToContainerID(Id);
+                    var vmInfo = kusto.BuildAndSendRequest(vmid);
                     SALsA.GetInstance(Id).Log.Send(vmInfo);
                 }
                 catch (Exception ex)

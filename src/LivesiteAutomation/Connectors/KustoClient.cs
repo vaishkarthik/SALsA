@@ -34,9 +34,24 @@ namespace LivesiteAutomation.Connectors
             SALsA.GetInstance(icm)?.Log.Information("Finished creating Kusto connector : {0}", kcsb);
         }
 
-        public List<object[]> Query(string query)
+        public List<object[]> Query(string table, string query, int icm, string timestampField = "TIMESTAMP")
         {
-            query += Constants.KustoClientQueryLimit;
+
+            if (timestampField != null)
+            {
+                DateTime startTime;
+                if (!DateTime.TryParse(ICM.GetCustomField(icm, Constants.AnalyzerStartTimeField), out startTime))
+                {
+                    startTime = SALsA.GetInstance(icm).ICM.CurrentICM.CreateDate.AddDays(-1);
+                }
+                string start = startTime.ToString("u");
+                string end = SALsA.GetInstance(icm).ICM.CurrentICM.CreateDate.ToString("u");
+                query = String.Format("{0} | {1} > datetime({2}) and {1} < datetime({3}) | {4} | limit {5}", table, timestampField, start, end, query, Constants.KustoClientQueryLimit);
+            }
+            else
+            {
+                query = String.Format("{0} | {1} | limit {2}", table, query, Constants.KustoClientQueryLimit);
+            }
             var clientRequestProperties = new ClientRequestProperties() { ClientRequestId = Guid.NewGuid().ToString() };
             using (var reader = client.ExecuteQuery(query, clientRequestProperties))
             {

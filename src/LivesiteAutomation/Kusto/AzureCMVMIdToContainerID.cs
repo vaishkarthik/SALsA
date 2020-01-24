@@ -20,13 +20,13 @@ namespace LivesiteAutomation.Kusto
         override protected string Cluster { get { return Constants.KustoLogContainerSnapshotCluster; } }
         override protected string DataBase { get { return Constants.KustoLogContainerSnapshotDatabase; } }
         override protected string Table { get { return Constants.KustoLogContainerSnapshotTable; } }
-        private readonly string VMID;
-        public AzureCMVMIdToContainerID(int icm, string vmId) : base(icm) { this.VMID = vmId; }
-        public MessageLine BuildAndSendRequest()
+        private string VMID;
+        public AzureCMVMIdToContainerID(int icm) : base(icm) { }
+        public MessageLine BuildAndSendRequest(string vmId)
         {
-            // TODO : Should be ICM datetime - 1day
-            var query = String.Format("{0} | where virtualMachineUniqueId == \"{1}\" | sort by TIMESTAMP desc | extend Cluster=Tenant, NodeId=nodeId, ContainerId=containerId | take 1 | project Cluster, NodeId, ContainerId", Table, VMID);
-            List<object[]> table = kustoClient.Query(query);
+            this.VMID = vmId;
+            var query = String.Format("where virtualMachineUniqueId == \"{0}\" | sort by TIMESTAMP desc | extend Cluster=Tenant, NodeId=nodeId, ContainerId=containerId | take 1 | project Cluster, NodeId, ContainerId", VMID);
+            List<object[]> table = kustoClient.Query(Table, query, this.Icm);
             return ParseResult(table);
         }
 

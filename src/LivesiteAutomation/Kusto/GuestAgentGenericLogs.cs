@@ -54,13 +54,13 @@ namespace LivesiteAutomation.Kusto
         override protected string Cluster { get { return Constants.KustoGuestAgentGenericLogsCluster; } }
         override protected string DataBase { get { return Constants.KustoGuestAgentGenericLogsDataBase; } }
         override protected string Table { get { return Constants.KustoGuestAgentGenericLogsTable; } }
-        private readonly string ContainerID;
-        public GuestAgentGenericLogs(int icm, string containerId) : base(icm) { this.ContainerID = containerId; }
-        public MessageLine[] BuildAndSendRequest()
+        private string ContainerID;
+        public GuestAgentGenericLogs(int icm) : base(icm) { }
+        public MessageLine[] BuildAndSendRequest(string containerId)
         {
-            // TODO : Should be ICM datetime - 1day
-            var query = String.Format("{0} | where TIMESTAMP > datetime({1})", Table, ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField));
-            List<object[]> table = kustoClient.Query(query);
+            this.ContainerID = containerId;
+            var query = String.Format("where TIMESTAMP > datetime({0})", ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField));
+            List<object[]> table = kustoClient.Query(Table, query, this.Icm);
             return ParseResult(table);
         }
 

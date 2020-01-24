@@ -102,7 +102,7 @@ namespace LivesiteAutomation
         public const string GetContainerSettingsOperatorName = "GetContainerSettings";
 
         // KustoClient.cs
-        public const string KustoClientQueryLimit = " | limit 1000";
+        public const int KustoClientQueryLimit = 1000;
 
         // GuestAgentGenericLogs.cs
         public const string KustoGuestAgentGenericLogsCluster = "rdos";
@@ -113,6 +113,11 @@ namespace LivesiteAutomation
         public const string KustoLogContainerSnapshotCluster = "AzureCM";
         public const string KustoLogContainerSnapshotDatabase = "AzureCM";
         public const string KustoLogContainerSnapshotTable = "LogContainerSnapshot";
+
+        // VMEGAnalysis.cs
+        public const string KustoExecutionGraphCluster = "ExecutionGraph";
+        public const string KustoExecutionGraphDatabase = "eg";
+        public const string KustoExecutionGraphTable = "VmaEgAnalysis";
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
