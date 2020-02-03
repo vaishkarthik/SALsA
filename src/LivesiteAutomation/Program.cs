@@ -13,12 +13,6 @@ namespace LivesiteAutomation
         // For when compiling as an exe
         static void Main(string[] args)
         {
-            int icm = 168599367;
-            SALsA.AddInstance(icm);
-            var kusto = new VMEGAnalysis(icm);
-            var result = kusto.BuildAndSendRequest("7ba1957c-ddc7-47c0-8b63-92036604d16e");
-            Console.WriteLine(result);
-
             // Test if input arguments were supplied:
             if (args.Length >= 1 && int.TryParse(args[0], out int num))
             {
