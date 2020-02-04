@@ -64,6 +64,12 @@ namespace LivesiteAutomation
             InternalLog(toSend, LogLevel.Online);
             SendOnline(toSend);
         }
+        public void Send(string ss, bool htmlfy, params object[] arg)
+        {
+            string toSend = arg.Length > 0 ? String.Format(CultureInfo.InvariantCulture, ss, arg) : ss;
+            InternalLog(toSend, LogLevel.Online);
+            SendOnline(toSend, htmlfy: false);
+        }
 
         // SendForce will force write the log entry, even if it already exists.
         public void SendForce(object obj)
@@ -187,9 +193,9 @@ namespace LivesiteAutomation
         }
 
 
-        private void SendOnline(string ss, bool force = false)
+        private void SendOnline(string ss, bool force = false, bool htmlfy = true)
         {
-            SALsA.GetInstance(Id)?.ICM.AddICMDiscussion(ss, force);
+            SALsA.GetInstance(Id)?.ICM.AddICMDiscussion(ss, force, htmlfy);
         }
 
         internal void FlushAndClose()

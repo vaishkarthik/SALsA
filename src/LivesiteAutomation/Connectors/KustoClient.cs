@@ -39,14 +39,15 @@ namespace LivesiteAutomation.Connectors
 
             if (timestampField != null)
             {
+                // TODO : If ICM AnalyzerStartTimeField was changed, it might be newer than the ICM creation date
                 DateTime startTime;
                 if (!DateTime.TryParse(ICM.GetCustomField(icm, Constants.AnalyzerStartTimeField), out startTime))
                 {
                     startTime = SALsA.GetInstance(icm).ICM.CurrentICM.CreateDate.AddDays(-1);
                 }
                 string start = startTime.ToString("u");
-                string end = SALsA.GetInstance(icm).ICM.CurrentICM.CreateDate.ToString("u");
-                query = String.Format("{0} | {1} > datetime({2}) and {1} < datetime({3}) | {4} | limit {5}", table, timestampField, start, end, query, Constants.KustoClientQueryLimit);
+                //string end = SALsA.GetInstance(icm).ICM.CurrentICM.CreateDate.ToString("u");
+                query = String.Format("{0} | where {1} > datetime({2}) | {3} | limit {4}", table, timestampField, start, /*end,*/ query, Constants.KustoClientQueryLimit);
             }
             else
             {

@@ -14,6 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web.UI.HtmlControls;
 
 namespace LivesiteAutomation
 {
@@ -285,6 +286,34 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(Id)?.Log.Warning("Failed to upload log for this run");
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
+        }
+
+        public static string KustoToHTML(List<object[]> result)
+        {
+            HtmlTableRow row;
+            HtmlTableCell cell;
+            var table = new HtmlTable();
+            var message = new StringBuilder();
+            string html;
+            foreach (var line in result)
+            {
+                row = new HtmlTableRow();
+                foreach (var element in line)
+                { 
+                    cell = new HtmlTableCell();
+                    cell.InnerText = element.ToString();
+                    row.Cells.Add(cell);
+                }
+                table.Rows.Add(row);
+            }
+            table.Rows[0].BgColor = "#d3d3d3";
+            table.Rows[0].Style.Add("font-weight", "bold");
+            using (var sw = new StringWriter())
+            {
+                table.RenderControl(new System.Web.UI.HtmlTextWriter(sw));
+                html = sw.ToString();
+            }
+            return html;
         }
     }
 }

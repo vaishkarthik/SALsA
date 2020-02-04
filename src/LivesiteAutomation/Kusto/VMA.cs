@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace LivesiteAutomation.Kusto
 {
-    class VMEGAnalysis : KustoBase
+    class VMA : KustoBase
     {
         override protected string Cluster { get { return Constants.KustoExecutionGraphCluster; } }
         override protected string DataBase { get { return Constants.KustoExecutionGraphDatabase; } }
         override protected string Table { get { return Constants.KustoExecutionGraphTable; } }
         private string ContainerId;
-        public VMEGAnalysis(int icm) : base(icm) { }
+        public VMA(int icm) : base(icm) { }
         public String BuildAndSendRequest(string containerId)
         {
             this.ContainerId = containerId;
-            var query = String.Format("where ContainerId == \"{0}\" | sort by TIMESTAMP desc | project ResourceId, DowntimeStartInUtc, DowntimeEndInUtc, DowntimeDurationInSec, IncarnationId, DowntimeCategory, FailureCategory, FailureSignature, Followup", ContainerId);
-            List<object[]> table = kustoClient.Query(Table, query, this.Icm);
+            var query = String.Format("where ContainerId == \"{0}\" | sort by PreciseTimeStamp desc | project DowntimeStartInUtc, DowntimeEndInUtc, DowntimeDurationInSec, ResourceId, IncarnationId, DowntimeCategory, FailureCategory, FailureSignature, FailureDetails", ContainerId);
+            List<object[]> table = kustoClient.Query(Table, query, this.Icm, "PreciseTimeStamp");
             return ParseResult(table);
         }
 

@@ -66,6 +66,23 @@ namespace LivesiteAutomation
             }
         }
 
+        static void CallAndPostEG(int Id, string ContainerId)
+        {
+            try
+            {
+                var vmEGAnalysis = new VMEGAnalysis(Id).BuildAndSendRequest(ContainerId);
+                SALsA.GetInstance(Id).Log.Send(vmEGAnalysis, htmlfy: false);
+
+                var vma = new VMA(Id).BuildAndSendRequest(ContainerId);
+                SALsA.GetInstance(Id).Log.Send(vma, htmlfy: false);
+            }
+            catch (Exception ex)
+            {
+                SALsA.GetInstance(Id)?.Log.Critical("Failed to query EG");
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
+            }
+        }
+
         private bool AnalyzeHost()
         {
             var currentICM = SALsA.GetInstance(Id).ICM;
@@ -115,9 +132,10 @@ namespace LivesiteAutomation
                 {
                     var model = Utility.JsonToObject<Dictionary<string, dynamic>>(modelTask.Result);
                     var vmid = (string)(model["VM Model"].properties.vmId);
-                    var kusto = new AzureCMVMIdToContainerID(Id);
-                    var vmInfo = kusto.BuildAndSendRequest(vmid);
+                    var vmInfo = new AzureCMVMIdToContainerID(Id).BuildAndSendRequest(vmid);
                     SALsA.GetInstance(Id).Log.Send(vmInfo);
+
+                    CallAndPostEG(Id, vmInfo.ContainerId);
                 }
                 catch (Exception ex)
                 {
@@ -160,6 +178,7 @@ namespace LivesiteAutomation
                 InstanceName = instance.RoleInstanceName
             };
 
+            CallAndPostEG(Id, instance.ID.ToString());
             Task<string> modelTask = null;
 
             SALsA.GetInstance(Id).TaskManager.AddTask(

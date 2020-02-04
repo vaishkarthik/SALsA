@@ -115,8 +115,8 @@ namespace LivesiteAutomation
         public const string KustoLogContainerSnapshotTable = "LogContainerSnapshot";
 
         // VMEGAnalysis.cs
-        public const string KustoExecutionGraphCluster = "ExecutionGraph";
-        public const string KustoExecutionGraphDatabase = "eg";
+        public const string KustoExecutionGraphCluster = "Vmakpi";
+        public const string KustoExecutionGraphDatabase = "vmadb";
         public const string KustoExecutionGraphTable = "VmaEgAnalysis";
 
         // TODO : Replace this by a Kusto lookup ;)
