@@ -21,7 +21,7 @@ namespace LivesiteAutomation.Json2Class
         public string HostName { get; set; }
         public Guid ID { get; set; }
         public Nullable<long> InstanceCount { get; set; }
-        public Nullable<long> InstanceErrorCode { get; set; }
+        public string InstanceErrorCode { get; set; }
         public string InstanceStatus { get; set; }
         public string IpAddress { get; set; }
         public string IsAlerted { get; set; }
