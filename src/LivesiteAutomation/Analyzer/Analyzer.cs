@@ -264,16 +264,21 @@ namespace LivesiteAutomation
             {
                 foreach(var instance in deployment.RoleInstances)
                 {
-                    if (instance.RoleName.Contains(VMName) || VMName.Contains(instance.RoleName))
+                    if (instance.RoleName.Contains(VMName) || VMName.Contains(instance.RoleName)
+                     || instance.ID.ToString().Contains(VMName) || VMName.Contains(instance.ID.ToString()))
                     {
                         rdfeDeps.Add(deployment);
-                        break;
                     }
                 }
             }
             if (rdfeDeps.Count > 1)
             {
-                rdfeDeps = rdfeDeps.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()).ToList();
+                var tmp = rdfeDeps.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()
+                                      || this.ResourceGroupName.ToLowerInvariant().Contains(x.Id.ToLowerInvariant())).ToList();
+                if(tmp.Count > 0)
+                {
+                    rdfeDeps = tmp;
+                }
             }
             if (rdfeDeps.Count == 1)
             {
@@ -282,7 +287,7 @@ namespace LivesiteAutomation
             else if (rdfeDeps.Count > 1)
             {
                 // Best effort guess
-                var ret = rdfeDeps.Where(x => x.RoleInstances.Where(y => y.RoleName == this.VMName).ToList().Count >= 1).ToList();
+                var ret = rdfeDeps.Where(x => x.RoleInstances.Where(y => y.RoleName.ToLowerInvariant().Trim() == this.VMName.ToLowerInvariant().Trim()).ToList().Count >= 1).ToList();
                 if(ret.Count() > 0)
                 {
                     return ret.First();
