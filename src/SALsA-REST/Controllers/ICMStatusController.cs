@@ -28,10 +28,10 @@ namespace SALsA_REST.Controllers
                 string icm = icms[0].ToString();
 
                 var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icm);
-                icmLink = LivesiteAutomation.Utility.UrlToHml(icm, icmLink, 12);
+                icmLink = LivesiteAutomation.Utility.UrlToHml(icm, icmLink, 14);
 
                 var status = String.Format("/api/icm/status/{0}", icm);
-                status = LivesiteAutomation.Utility.UrlToHml(ICMModel.Instance.IsRunning(icms[i]) ? "Running" : "Done", status, 12);
+                status = LivesiteAutomation.Utility.UrlToHml(ICMModel.Instance.IsRunning(icms[i]) ? "Running" : "Done", status, 14);
      
                 lst.Add(new string[] { icmLink, status });
             }
