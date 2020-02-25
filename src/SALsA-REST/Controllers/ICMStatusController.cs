@@ -25,11 +25,13 @@ namespace SALsA_REST.Controllers
             lst.Add(new string[] { "ICM", "Status" });
             for (int i = 0; i < icms.Count; i++)
             {
-                var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icms[i]);
-                icmLink = LivesiteAutomation.Utility.UrlToHml(icms[i].ToString(), icmLink);
+                string icm = icms[0].ToString();
 
-                var status = String.Format("<a href=\"https://salsa.westus2.cloudapp.azure.com/api/icm/status/{0}\">{0}</a>", icms[i]);
-                status = LivesiteAutomation.Utility.UrlToHml(ICMModel.Instance.IsRunning(icms[i]) ? "Running" : "Done", status);
+                var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icm);
+                icmLink = LivesiteAutomation.Utility.UrlToHml(icm, icmLink, 12);
+
+                var status = String.Format("/api/icm/status/{0}", icm);
+                status = LivesiteAutomation.Utility.UrlToHml(ICMModel.Instance.IsRunning(icms[i]) ? "Running" : "Done", status, 12);
      
                 lst.Add(new string[] { icmLink, status });
             }
