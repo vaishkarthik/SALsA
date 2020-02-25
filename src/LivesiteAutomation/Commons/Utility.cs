@@ -288,7 +288,7 @@ namespace LivesiteAutomation
             }
         }
 
-        public static string List2DToHTML<T> (List<T[]> result)
+        public static string List2DToHTML<T> (List<T[]> result, bool raw = false)
         {
             HtmlTableRow row;
             HtmlTableCell cell;
@@ -301,7 +301,14 @@ namespace LivesiteAutomation
                 foreach (var element in line)
                 { 
                     cell = new HtmlTableCell();
-                    cell.InnerText = element.ToString();
+                    if (raw == true)
+                    {
+                        cell.InnerHtml = element.ToString();
+                    }
+                    else
+                    { 
+                        cell.InnerText = element.ToString();
+                    }
                     row.Cells.Add(cell);
                 }
                 table.Rows.Add(row);

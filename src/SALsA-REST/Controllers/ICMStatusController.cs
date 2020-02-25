@@ -29,7 +29,7 @@ namespace SALsA_REST.Controllers
                 var status = String.Format("<a href=\"https://salsa.westus2.cloudapp.azure.com/api/icm/status/{0}\">{1}</a>", icms[i], ICMModel.Instance.IsRunning(icms[i]) ? "Running" : "Done");
                 lst.Add(new string[] { icmLink, status });
             }
-            string result = LivesiteAutomation.Utility.List2DToHTML(lst);
+            string result = LivesiteAutomation.Utility.List2DToHTML(lst, true);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/html");
 
