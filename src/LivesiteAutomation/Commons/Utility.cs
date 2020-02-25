@@ -288,7 +288,7 @@ namespace LivesiteAutomation
             }
         }
 
-        public static string KustoToHTML(List<object[]> result)
+        public static string List2DToHTML<T> (List<T[]> result)
         {
             HtmlTableRow row;
             HtmlTableCell cell;

@@ -24,7 +24,7 @@ namespace LivesiteAutomation.Kusto
 
         private String ParseResult(List<object[]> table)
         {
-            return Utility.KustoToHTML(table);
+            return Utility.List2DToHTML(table);
         }
     }
 }
