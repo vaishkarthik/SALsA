@@ -310,11 +310,18 @@ namespace LivesiteAutomation
                     }
                     row.Cells.Add(cell);
                 }
+                row.Style.Add("text-align", "left");
+                row.Style.Add("padding-top", "0.5em");
+                row.Style.Add("padding-bottom", "0.5em");
                 table.Rows.Add(row);
+
             }
             table.Rows[0].BgColor = "#d3d3d3";
             table.Rows[0].Style.Add("font-weight", "bold");
             table.Rows[0].Style.Add("font-size", "22");
+            table.Style.Add("margin-right", "auto");
+            table.Style.Add("margin-left", "auto");
+            table.Style.Add("width", "25%");
             using (var sw = new StringWriter())
             {
                 table.RenderControl(new System.Web.UI.HtmlTextWriter(sw));
