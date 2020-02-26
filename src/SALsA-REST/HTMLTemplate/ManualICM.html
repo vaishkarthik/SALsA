@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <h1>SALSA - Manual ICM</h1>
+
+    <form action="/manualrun/icm" method="post">
+        <!-- ICM ID -->
+        <label for="icmid"><b>ICM : </b></label></br>
+        <input type="number" id="icmid" name="icmid" min="0" placeholder="00000000" required><br><br>
+
+        <!-- Subscription ID -->
+        <label for="subid">Subscription ID</label></br>
+        <input type="text" id="subid" name="subid" placeholder="00000000-0000-0000-0000-000000000000" pattern="[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}" title="Use a valid GUID format" required><br><br>
+
+        <!-- Resource Group -->
+        <label for="rgroup">Resource Group / TenantName</label></br>
+        <input type="text" id="rgroup" name="rgroup" placeholder="salsa-prod" required><br><br>
+
+        <!-- VM Name -->
+        <label for="vmname">VM Name</label></br>
+        <input type="text" id="vmname" name="vmname" placeholder="salsa_IN_0" Title="If VMSS or PaaS, please add the instance ID" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>

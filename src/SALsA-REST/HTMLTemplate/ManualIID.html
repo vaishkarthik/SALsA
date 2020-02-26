@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <h1>SALSA - Manual IID</h1>
+
+    <form action="/manualrun/iid" method="post">
+        <!-- ICM ID -->
+        <label for="icmid"><b>ICM : </b></label></br>
+        <input type="number" id="icmid" name="icmid" min="0" placeholder="00000000" required><br><br>
+
+        <!-- Subscription ID -->
+        <label for="subid">Subscription ID</label></br>
+        <input type="text" id="subid" name="subid" placeholder="00000000-0000-0000-0000-000000000000" pattern="[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}" title="Use a valid GUID format" required><br><br>
+
+        <!-- Resource Group -->
+        <label for="rgroup">Resource Group</label></br>
+        <input type="text" id="rgroup" name="rgroup" placeholder="salsa-prod" required><br><br>
+
+        <!-- VM Name -->
+        <label for="vmname">VM Name</label></br>
+        <input type="text" id="vmname" name="vmname" placeholder="salsa" Title="If VMSS, you can remove id, or leave it for autoamtic detection" required><br><br>
+
+        <!-- VM Name -->
+        <label for="vmssid">VMSS Id (if VMSS)</label></br>
+        <input type="number" id="vmssid" name="vmssid" placeholder="(optional)" Title="If VMSS, include id, ex: myVM_3 will be 3. Leave empty otherwise"><br><br>
+
+        <!-- Region-->
+        <label for="region">RegionName</label></br>
+        <input type="text" id="region" name="region" placeholder="(optional)" Title="Exact region name, case sensitive. If empty, will automatically determine it from subscription."><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+<p> Note : If you put a VMSS Id, you must remove it from the VM Name (ex: myVM_3 would be myVM</p>
+
+</html>
