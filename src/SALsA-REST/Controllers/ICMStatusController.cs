@@ -23,15 +23,13 @@ namespace SALsA_REST.Controllers
             StringBuilder sb = new StringBuilder();
             var lst = new List<string[]>();
             lst.Add(new string[] { "ICM", "Status" });
-            for (int i = 0; i < icms.Count; i++)
+            foreach (var icm in icms)
             {
-                string icm = icms[0].ToString();
-
                 var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icm);
-                icmLink = LivesiteAutomation.Utility.UrlToHml(icm, icmLink, 14);
+                icmLink = LivesiteAutomation.Utility.UrlToHml(icm.ToString(), icmLink, 20);
 
                 var status = String.Format("/api/icm/status/{0}", icm);
-                status = LivesiteAutomation.Utility.UrlToHml(ICMModel.Instance.IsRunning(icms[i]) ? "Running" : "Done", status, 14);
+                status = LivesiteAutomation.Utility.UrlToHml(ICMModel.Instance.IsRunning(icm) ? "Running" : "Done", status, 20);
      
                 lst.Add(new string[] { icmLink, status });
             }

@@ -293,7 +293,6 @@ namespace LivesiteAutomation
             HtmlTableRow row;
             HtmlTableCell cell;
             var table = new HtmlTable();
-            var message = new StringBuilder();
             string html;
             foreach (var line in result)
             {
@@ -315,6 +314,7 @@ namespace LivesiteAutomation
             }
             table.Rows[0].BgColor = "#d3d3d3";
             table.Rows[0].Style.Add("font-weight", "bold");
+            table.Rows[0].Style.Add("font-size", "22");
             using (var sw = new StringWriter())
             {
                 table.RenderControl(new System.Web.UI.HtmlTextWriter(sw));
