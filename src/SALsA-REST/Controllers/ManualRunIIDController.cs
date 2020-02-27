@@ -4,44 +4,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace SALsA_REST.Controllers
 {
     public class ManualRunIIDController : ApiController
     {
-        static HttpResponseMessage response = null;
+        static StringContent Content = null;
         // GET: manualrun/iid
         [System.Web.Http.HttpGet]
         public HttpResponseMessage Get()
-        {   
-            if (response == null)
+        {
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            if (Content == null)
             {
-                response = new HttpResponseMessage(HttpStatusCode.OK);
                 response.Content = new StringContent(System.IO.File.ReadAllText(
                     System.Web.Hosting.HostingEnvironment.MapPath("~/HTMLTemplate/ManualIID.html")),
                     System.Text.Encoding.UTF8, "text/html");
+            }
+            else
+            {
+                response.Content = Content;
             }
 
             return response;
         }
 
-        // POST: manualrun/iid
         [System.Web.Http.HttpPost]
-        public string Post([FromBody]LivesiteAutomation.ManualRun.ManualRun_ICM iid) 
+        public bool Post(HttpRequestMessage request)
         {
-            return iid.VMName;
-            /*
-            LivesiteAutomation.ManualRun.ManualRun_IID iid = new LivesiteAutomation.ManualRun.ManualRun_IID
+            string ret = request.Content.ReadAsStringAsync().Result;
+            var parsed = HttpUtility.ParseQueryString(ret);
+            var dic = parsed.AllKeys.ToDictionary(k => k, k => parsed[k]);
+            var iid = LivesiteAutomation.Utility.JsonToObject<LivesiteAutomation.ManualRun.ManualRun_IID>(
+                LivesiteAutomation.Utility.ObjectToJson(dic));
+            if(iid != null)
             {
-                SubscriptionID = new Guid(subid),
-                ResourceGroupName = rgroup,
-                VMName = rgroup
-                //Region = region
-            };
-            //int.TryParse(vmssid, out iid.Instance);
-            */
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+
 
         /*
         // GET: api/ICM

@@ -304,9 +304,6 @@ namespace LivesiteAutomation
                         return (ComputeType.Unknown, null);
                 }
             }
-
-
-            return (ComputeType.Unknown, null);
         }
 
         private ARMDeployment AnalyzeARMDeployment(ARMSubscription arm)

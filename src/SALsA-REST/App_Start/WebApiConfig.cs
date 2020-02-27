@@ -27,7 +27,7 @@ namespace SALsA_REST
             );
 
             config.Routes.MapHttpRoute(
-                name: "ManualRunIID_Get",
+                name: "ManualRunIID",
                 routeTemplate: "manualrun/iid",
                 defaults: new { controller = "ManualRunIID", id = RouteParameter.Optional }
             );
