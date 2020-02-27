@@ -1,5 +1,6 @@
 ﻿using LivesiteAutomation.Json2Class;
 using LivesiteAutomation.Kusto;
+using LivesiteAutomation.ManualRun;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace LivesiteAutomation
         public string VMName { get; private set; }
         public DateTime StartTime { get; private set; }
         private int Id;
+        private bool IsCustomRun = false;
         public Analyzer(int Id)
         {
             this.Id = Id;
@@ -34,13 +36,18 @@ namespace LivesiteAutomation
             }
             SubscriptionId = (Guid)sub;
             SALsA.GetInstance(Id)?.Log.Send("{0}", Utility.ObjectToJson(this, true));
+            AnalyzerInternal();
+        }
+
+        private void AnalyzerInternal(bool checkARM = true, bool checkRDFE = true)
+        {
             // TODO analyse ARM and REDFE in parallel
-            var arm  = AnalyzeARMSubscription(SubscriptionId, this.ResourceGroupName);
-            var rdfe = AnalyzeRDFESubscription(SubscriptionId);
+            ARMSubscription arm = checkARM ? AnalyzeARMSubscription(SubscriptionId, this.ResourceGroupName) : null;
+            RDFESubscription rdfe = checkRDFE ? AnalyzeRDFESubscription(SubscriptionId) : null;
 
             (var type, var dep) = DetectVMType(arm, rdfe);
 
-            if (dep == null)
+            if (dep == null && IsCustomRun == false)
             {
                 SALsA.GetInstance(Id).Log.Send("Could not find VM: {0} in RG: {1}. This VM might have been already deleted or moved", this.VMName, this.ResourceGroupName);
                 throw new Exception("VM not found");
@@ -50,6 +57,11 @@ namespace LivesiteAutomation
             //var a = new LivesiteAutomation.Kusto.GuestAgentGenericLogs(icm);
             //a.BuildAndSendRequest();
 
+            CallInternalComputeTypes(type, dep);
+        }
+
+        private void CallInternalComputeTypes(ComputeType type, object dep)
+        {
             switch (type)
             {
                 case ComputeType.IaaS:
@@ -59,10 +71,72 @@ namespace LivesiteAutomation
                     ExecuteAllActionsForVMSS((ARMDeployment)dep);
                     break;
                 case ComputeType.PaaS:
-                     ExecuteAllActionsForPaaS((RDFEDeployment)dep);
+                    ExecuteAllActionsForPaaS((RDFEDeployment)dep);
                     break;
                 default:
                     break;
+            }
+        }
+
+        public Analyzer(int Id, object manualRun)
+        {
+            this.IsCustomRun = true;
+            this.Id = Id;
+            StartTime = SALsA.GetInstance(Id).ICM.CurrentICM.CreateDate;
+            SALsA.GetInstance(Id).Log.Information("Received ManualRun order type {0} with param {1} : ",
+                manualRun.GetType(), Utility.ObjectToJson(manualRun));
+            if(manualRun.GetType() == typeof(ManualRun_ICM))
+            {
+                ManualRun_ICM manualArm = (ManualRun_ICM)manualRun;
+
+                SubscriptionId = manualArm.SubscriptionID;
+                ResourceGroupName = manualArm.ResourceGroupName;
+                VMName = manualArm.VMName;
+
+                AnalyzerInternal();
+            }
+            else if (manualRun.GetType() == typeof(ManualRun_IID))
+            {
+                ManualRun_IID manualIID = (ManualRun_IID)manualRun;
+
+                SubscriptionId = manualIID.SubscriptionID;
+                ResourceGroupName = manualIID.ResourceGroupName;
+                VMName = manualIID.VMName;
+
+                ARMDeployment dep = null;
+                int instanceId = -1;
+                if(String.IsNullOrEmpty(manualIID.Region))
+                {
+                    SALsA.GetInstance(Id).Log.Information("Calling automatic ARM VMdetection. No Region parameter provided.");
+                    ARMSubscription arm = AnalyzeARMSubscription(SubscriptionId, this.ResourceGroupName);
+                    dep = AnalyzeARMDeployment(arm);
+                    instanceId = TryConvertInstanceNameToInstanceId(this.VMName);
+                }
+                else
+                {
+                    dep = new ARMDeployment();
+                    dep.Name = manualIID.VMName;
+                    dep.Subscriptions = manualIID.SubscriptionID.ToString();
+                    dep.ResourceGroups = manualIID.ResourceGroupName;
+                    dep.Location = manualIID.Region;
+                    instanceId = manualIID.Instance;
+                }
+                if (instanceId < 0)
+                {
+                    SALsA.GetInstance(Id).Log.Information("No Instance ID detected. Assuming this is a normal single IaaS VM");
+                    SALsA.GetInstance(Id).TaskManager.AddTask(
+                        Utility.SaveAndSendBlobTask(
+                            Constants.AnalyzerInspectIaaSDiskOutputFilename,
+                                GenevaActions.InspectIaaSDiskForARMVM(Id, dep), Id));
+                }
+                else
+                {
+                    SALsA.GetInstance(Id).Log.Information("No Instance ID detected. Assuming this is a normal single IaaS VM");
+                    SALsA.GetInstance(Id).TaskManager.AddTask(
+                        Utility.SaveAndSendBlobTask(
+                            Constants.AnalyzerInspectIaaSDiskOutputFilename,
+                                GenevaActions.InspectIaaSDiskForARMVM(Id, dep, instanceId), Id));
+                }
             }
         }
 
@@ -205,8 +279,38 @@ namespace LivesiteAutomation
 
         private (ComputeType type, object dep) DetectVMType(ARMSubscription arm, RDFESubscription rdfe)
         {
+            var armDep = AnalyzeARMDeployment(arm);
+            if (armDep == null)
+            {
+                var paasDep = AnalyseRDFEDeployment(rdfe);
+                if (paasDep == null)
+                {
+                    return (ComputeType.Unknown, null);
+                }
+                else 
+                {
+                    return (ComputeType.PaaS, paasDep);
+                }
+            }
+            else
+            {
+                switch (armDep.Type)
+                {
+                    case Constants.AnalyzerARMDeploymentIaaSType:
+                        return (ComputeType.IaaS, armDep);
+                    case Constants.AnalyzerARMDeploymentVMSSType:
+                        return (ComputeType.VMSS, armDep);
+                    default:
+                        return (ComputeType.Unknown, null);
+                }
+            }
+        }
+
+        private ARMDeployment AnalyzeARMDeployment(ARMSubscription arm)
+        {
             ARMDeployment dep = new ARMDeployment();
-            try { 
+            try
+            {
                 ARMDeployment[] armDeps = arm.deployments.Where(x =>
                         x.Name.ToLower().Contains(this.VMName.ToLower()) || this.VMName.ToLower().Contains(x.Name.ToLower())
                     ).ToArray();
@@ -221,43 +325,32 @@ namespace LivesiteAutomation
                         armDeps = smallArmDeps;
                     }
                 }
-                if(armDeps.Length > 1)
+                if (armDeps.Length > 1)
                 {
                     SALsA.GetInstance(Id).Log.Error("Found more than one VM named {0} in RessourceGroup {1}, will take the first one.{2}{3}",
                         VMName, ResourceGroupName, Environment.NewLine, armDeps);
                 }
-                if(armDeps.Length > 0)
+                if (armDeps.Length > 0)
                 {
                     dep = armDeps.First();
                 }
                 else
                 {
                     // Probably paaS
-                    dep.Type = Constants.AnalyzerARMDeploymentPaaSType;
+                    dep = null;
                 }
             }
             catch
             {
                 // Probably paaS
-                dep.Type = Constants.AnalyzerARMDeploymentPaaSType;
+                dep = null;
             }
-
-            switch (dep.Type)
-            {
-                case Constants.AnalyzerARMDeploymentIaaSType:
-                    return (ComputeType.IaaS, dep);
-                case Constants.AnalyzerARMDeploymentVMSSType:
-                    return (ComputeType.VMSS, dep);
-                case Constants.AnalyzerARMDeploymentPaaSType:
-                    return (ComputeType.PaaS, AnalyseRDFEPaaSDeployment(rdfe));
-                default:
-                    return (ComputeType.Unknown, null);
-            }
+            return dep;
         }
 
-        private RDFEDeployment AnalyseRDFEPaaSDeployment(RDFESubscription rdfe)
+        private RDFEDeployment AnalyseRDFEDeployment(RDFESubscription rdfe)
         {
-
+            if (rdfe == null) return null;
             string VMName = TryConvertInstanceNameToVMNamePaaS(this.VMName);
             List<RDFEDeployment> rdfeDeps = new List<RDFEDeployment>();
             foreach (var deployment in rdfe.deployments)

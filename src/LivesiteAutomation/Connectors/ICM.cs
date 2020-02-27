@@ -24,7 +24,7 @@ namespace LivesiteAutomation
         public int Id { get; private set; }
         public Incident CurrentICM { get; private set; }
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
-        private HttpClient client = null;
+        private static HttpClient client = null;
 
         public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
         {
@@ -145,7 +145,7 @@ namespace LivesiteAutomation
             return new Uri(String.Format("{0}({1}){2}", Constants.ICMRelativeBaseAPIUri, id, suffix), UriKind.Relative);
         }
 
-        internal HttpClient Client
+        static internal HttpClient Client
         {
             get
             {
@@ -164,7 +164,7 @@ namespace LivesiteAutomation
             }
         }
 
-        private string ReadResponseBody(HttpResponseMessage response)
+        private static string ReadResponseBody(HttpResponseMessage response)
         {
             return response.Content.ReadAsStringAsync().Result;
         }
@@ -188,6 +188,27 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(icm)?.Log.Exception(ex);
             }
             return null;
+        }
+
+        public static bool CheckIfICMExists(int icm)
+        {
+            try
+            {
+                var response = Client.GetAsync(BuildUri(icm)).Result;
+                response.EnsureSuccessStatusCode();
+                SALsA.GetInstance(icm)?.Log.Verbose("Got response for IMC {0}", icm);
+
+                var currentICM = Utility.JsonToObject<Incident>(ReadResponseBody(response));
+                SALsA.GetInstance(icm)?.Log.Verbose(currentICM);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                SALsA.GetInstance(icm)?.Log.Error("Failed to get ICM {0}", icm);
+                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                return false;
+            }
         }
     }
 }

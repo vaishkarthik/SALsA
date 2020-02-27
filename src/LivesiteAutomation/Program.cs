@@ -23,13 +23,13 @@ namespace LivesiteAutomation
                 throw new ArgumentException("Please enter a valid numeric argument for the ICM. Usage : SALsA.exe <icmId>");
             }
         }
-        public static void Run(int icm)
+        public static void Run(int icm, object manualRun = null)
         {
             try
             {
                 SALsA.AddInstance(icm);
                 // We do not need to keep the analyzer in memory, for now.
-                _ = new Analyzer(icm);
+                _ = manualRun == null ? new Analyzer(icm) : new Analyzer(icm, manualRun);
 
                 SALsA.GetInstance(icm)?.TaskManager.WaitAllTasks();
             }
