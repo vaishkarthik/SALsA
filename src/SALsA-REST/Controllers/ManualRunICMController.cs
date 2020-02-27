@@ -9,7 +9,7 @@ using System.Web.Http;
 
 namespace SALsA_REST.Controllers
 {
-    public class ManualRunIIDController : ApiController
+    public class ManualRunICMController : ApiController
     {
         static StringContent Content = null;
         // GET: manualrun/iid
@@ -20,7 +20,7 @@ namespace SALsA_REST.Controllers
             if (Content == null)
             {
                 response.Content = new StringContent(System.IO.File.ReadAllText(
-                    System.Web.Hosting.HostingEnvironment.MapPath("~/HTMLTemplate/ManualIID.html")),
+                    System.Web.Hosting.HostingEnvironment.MapPath("~/HTMLTemplate/ManualICM.html")),
                     System.Text.Encoding.UTF8, "text/html");
             }
             else
@@ -37,7 +37,7 @@ namespace SALsA_REST.Controllers
             string ret = request.Content.ReadAsStringAsync().Result;
             var parsed = HttpUtility.ParseQueryString(ret);
             var dic = parsed.AllKeys.ToDictionary(k => k, k => parsed[k]);
-            var obj = LivesiteAutomation.Utility.JsonToObject<LivesiteAutomation.ManualRun.ManualRun_IID>(
+            var obj = LivesiteAutomation.Utility.JsonToObject<LivesiteAutomation.ManualRun.ManualRun_ICM>(
                 LivesiteAutomation.Utility.ObjectToJson(dic));
             int icm = int.Parse(dic["icmid"]);
             if (obj != null && LivesiteAutomation.ICM.CheckIfICMExists(icm))

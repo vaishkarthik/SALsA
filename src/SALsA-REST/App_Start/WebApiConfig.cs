@@ -31,6 +31,12 @@ namespace SALsA_REST
                 routeTemplate: "manualrun/iid",
                 defaults: new { controller = "ManualRunIID", id = RouteParameter.Optional }
             );
+
+            config.Routes.MapHttpRoute(
+                name: "ManualRunICM",
+                routeTemplate: "manualrun/icm",
+                defaults: new { controller = "ManualRunICM", id = RouteParameter.Optional }
+            );
         }
     }
 }

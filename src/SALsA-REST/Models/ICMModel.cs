@@ -1,4 +1,5 @@
 ﻿using LivesiteAutomation;
+using LivesiteAutomation.ManualRun;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace SALsA_REST.Models
             RunningPool = new ConcurrentDictionary<int, Task>();
         }
 
-        public bool RunAutomation(int id)
+        public bool RunAutomation(int id, object obj = null)
         {
             if(IsRunning(id))
             {
@@ -37,7 +38,7 @@ namespace SALsA_REST.Models
             }
             else
             {
-                CreateAndRunInBackground(id);
+                CreateAndRunInBackground(id, obj);
                 return true;
             }
         }
@@ -47,18 +48,18 @@ namespace SALsA_REST.Models
             return RunningPool.ContainsKey(id);
         }
 
-        private void CreateAndRunInBackground(int id)
+        private void CreateAndRunInBackground(int id, object obj)
         {
-            Task task = new Task(() => RunTask(id));
+            Task task = new Task(() => RunTask(id, obj));
             task.Start();
             RunningPool.TryAdd(id, task);
         }
 
-        private void RunTask(int id)
+        private void RunTask(int id, object obj)
         {
-            LivesiteAutomation.Program.Run(id);
+            LivesiteAutomation.Program.Run(id, obj);
             RunningPool.TryRemove(id, out _);
         }
-            
+
     }
 }
