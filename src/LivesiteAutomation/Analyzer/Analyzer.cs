@@ -353,17 +353,8 @@ namespace LivesiteAutomation
             if (rdfe == null) return null;
             string VMName = TryConvertInstanceNameToVMNamePaaS(this.VMName);
             List<RDFEDeployment> rdfeDeps = new List<RDFEDeployment>();
-            foreach (var deployment in rdfe.deployments)
-            {
-                foreach(var instance in deployment.RoleInstances)
-                {
-                    if (instance.RoleName.Contains(VMName) || VMName.Contains(instance.RoleName)
-                     || instance.ID.ToString().Contains(VMName) || VMName.Contains(instance.ID.ToString()))
-                    {
-                        rdfeDeps.Add(deployment);
-                    }
-                }
-            }
+            rdfeDeps = rdfe.deployments.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()
+                                      || this.ResourceGroupName.ToLowerInvariant().Contains(x.Id.ToLowerInvariant())).ToList();
             if (rdfeDeps.Count > 1)
             {
                 var tmp = rdfeDeps.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()
@@ -380,7 +371,8 @@ namespace LivesiteAutomation
             else if (rdfeDeps.Count > 1)
             {
                 // Best effort guess
-                var ret = rdfeDeps.Where(x => x.RoleInstances.Where(y => y.RoleName.ToLowerInvariant().Trim() == this.VMName.ToLowerInvariant().Trim()).ToList().Count >= 1).ToList();
+                var paasVMName = VMName == this.VMName ? String.Format("{0}_IN_0", VMName) : this.VMName;
+                var ret = rdfeDeps.Where(x => x.RoleInstances.Where(y => y.RoleInstanceName.ToLowerInvariant().Trim() == paasVMName.ToLowerInvariant().Trim()).ToList().Count >= 1).ToList();
                 if(ret.Count() > 0)
                 {
                     return ret.First();
