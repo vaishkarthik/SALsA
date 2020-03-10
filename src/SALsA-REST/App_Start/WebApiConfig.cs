@@ -37,6 +37,18 @@ namespace SALsA_REST
                 routeTemplate: "manualrun/icm",
                 defaults: new { controller = "ManualRunICM", id = RouteParameter.Optional }
             );
+
+            config.Routes.MapHttpRoute(
+                name: "ManualRunICM",
+                routeTemplate: "manualrun/rdfe/fabric",
+                defaults: new { controller = "ManualRunRdfeFabric", id = RouteParameter.Optional }
+            );
+
+            config.Routes.MapHttpRoute(
+                name: "ManualRunICM",
+                routeTemplate: "manualrun/rdfe/tenant",
+                defaults: new { controller = "ManualRunRdfeTenant", id = RouteParameter.Optional }
+            );
         }
     }
 }

@@ -187,6 +187,7 @@
     <Compile Include="Kusto\KustoBase.cs" />
     <Compile Include="Kusto\VMA.cs" />
     <Compile Include="Kusto\VMEGAnalysis.cs" />
+    <Compile Include="ManualRun\ManualRun_RDFE.cs" />
     <Compile Include="ManualRun\ManualRun_ICM.cs" />
     <Compile Include="ManualRun\ManualRun_IID.cs" />
     <Compile Include="Program.cs" />

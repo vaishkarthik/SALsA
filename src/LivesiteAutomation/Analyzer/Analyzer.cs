@@ -85,7 +85,7 @@ namespace LivesiteAutomation
             StartTime = SALsA.GetInstance(Id).ICM.CurrentICM.CreateDate;
             SALsA.GetInstance(Id).Log.Information("Received ManualRun order type {0} with param {1} : ",
                 manualRun.GetType(), Utility.ObjectToJson(manualRun));
-            if(manualRun.GetType() == typeof(ManualRun_ICM))
+            if (manualRun.GetType() == typeof(ManualRun_ICM))
             {
                 ManualRun_ICM manualArm = (ManualRun_ICM)manualRun;
 
@@ -105,7 +105,7 @@ namespace LivesiteAutomation
 
                 ARMDeployment dep = null;
                 int instanceId = -1;
-                if(String.IsNullOrEmpty(manualIID.Region))
+                if (String.IsNullOrEmpty(manualIID.Region))
                 {
                     SALsA.GetInstance(Id).Log.Information("Calling automatic ARM VMdetection. No Region parameter provided.");
                     ARMSubscription arm = AnalyzeARMSubscription(SubscriptionId, this.ResourceGroupName);
@@ -137,6 +137,27 @@ namespace LivesiteAutomation
                             Constants.AnalyzerInspectIaaSDiskOutputFilename,
                                 GenevaActions.InspectIaaSDiskForARMVM(Id, dep, instanceId), Id));
                 }
+            }
+            else if (manualRun.GetType() == typeof(ManualRun_RDFE_Fabric))
+            {
+                var rdfe = (ManualRun_RDFE_Fabric)manualRun;
+                var vmInfo = new ShortRDFERoleInstance { 
+                    ContainerID = new Guid(rdfe.ContainerID),
+                    Fabric = rdfe.FabricCluster,
+                    NodeId = new Guid(rdfe.NodeId)
+                };
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id).Wait();
+            }
+            else if (manualRun.GetType() == typeof(ManualRun_RDFE_Tenant))
+            {
+                var rdfe = (ManualRun_RDFE_Tenant)manualRun;
+                var vmInfo = new ShortRDFERoleInstance
+                {
+                    Fabric = rdfe.FabricCluster,
+                    DeploymentId = rdfe.DeploymentID,
+                    InstanceName = rdfe.RoleInstanceName
+                };
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id).Wait();
             }
         }
 
@@ -194,10 +215,23 @@ namespace LivesiteAutomation
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, modelTask = GenevaActions.GetVMModelAndInstanceView(Id, dep), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep), Id)
             );
-            LogContainerId(modelTask, Id);
+
+            var rawInfo = LogContainerId(modelTask, Id);
+            if(rawInfo != null)
+            { 
+                var vmInfo = new ShortRDFERoleInstance
+                {
+                    ContainerID = new Guid(rawInfo.ContainerId),
+                    Fabric = rawInfo.Cluster,
+                    NodeId = new Guid(rawInfo.NodeId)
+                };
+                SALsA.GetInstance(Id).TaskManager.AddTask(
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
+                );
+            }
         }
 
-        private void LogContainerId(Task<string> modelTask, int Id)
+        private AzureCMVMIdToContainerID.MessageLine LogContainerId(Task<string> modelTask, int Id)
         {
 
             if (modelTask != null)
@@ -210,6 +244,7 @@ namespace LivesiteAutomation
                     SALsA.GetInstance(Id).Log.Send(vmInfo);
 
                     CallAndPostEG(Id, vmInfo.ContainerId);
+                    return vmInfo;
                 }
                 catch (Exception ex)
                 {
@@ -217,6 +252,7 @@ namespace LivesiteAutomation
                     SALsA.GetInstance(Id)?.Log.Exception(ex);
                 }
             }
+            return null;
         }
 
         private void ExecuteAllActionsForVMSS(ARMDeployment dep)
@@ -232,8 +268,20 @@ namespace LivesiteAutomation
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep, instanceId), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, modelTask = GenevaActions.GetVMModelAndInstanceView(Id, dep, instanceId), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep, instanceId), Id)
-            );
-            LogContainerId(modelTask, Id);
+            ); 
+            var rawInfo = LogContainerId(modelTask, Id);
+            if (rawInfo != null)
+            {
+                var vmInfo = new ShortRDFERoleInstance
+                {
+                    ContainerID = new Guid(rawInfo.ContainerId),
+                    Fabric = rawInfo.Cluster,
+                    NodeId = new Guid(rawInfo.NodeId)
+                };
+                SALsA.GetInstance(Id).TaskManager.AddTask(
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
+                );
+            }
         }
 
         private void ExecuteAllActionsForPaaS(RDFEDeployment dep)

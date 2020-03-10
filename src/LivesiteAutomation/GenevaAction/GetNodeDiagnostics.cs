@@ -50,5 +50,25 @@ namespace LivesiteAutomation
                     task.Result
                 ));
         }
+        public static Task<ZipArchiveEntry> GetNodeDiagnosticsFilesByContainerId(int icm, ShortRDFERoleInstance instance)
+        {
+            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetNodeDiagnostics with params {0}", instance);
+            var param = new GenevaOperations.GetNodeDiagnosticsFiles
+            {
+                smefabrichostparam = instance.Fabric,
+                smenodeidparam = instance.NodeId.ToString(),
+                smenodediagnosticstypeparam = "",
+                smenodediagnosticstagparam = Constants.GetNodeDiagnosticsParam,
+                smecontaineriddiagnosticsfileparam = instance.ContainerID.ToString()
+            };
+            var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));
+            var task = new GenevaAction(icm, Constants.GetNodeDiagnosticsExtensionName, Constants.GetNodeDiagnosticsOperatorNameFiles, actionParam).GetOperationFileOutputAsync(icm);
+
+            // VMConsoleSerialLog contain only one file, compressed in a zip.
+            return Task.Run(() => (
+                    task.Result != null ? Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First() : null
+                ));
+        }
+
     }
 }
