@@ -1,0 +1,803 @@
+// ---------------------------------------------------------------------
+// DOB	: 2020-03-23
+// Author : romalh@microsoft.com
+//
+// Summary : 
+// This cook job cooks the GuestAgentExtensionEvents (including all of its _alt versions) cosmos stream
+// It publishes the AzCrp.GuestAgentExtensionEvents cooked stream
+//
+// Change Log:
+// 2020-03-23 (romalh) - Create the cook script
+
+MODULE @"/shares/AzureAnalytics.Prod/Sdk/AzureAnalytics1.4.module" AS AzureAnalytics;
+
+// Job variables
+
+#DECLARE IsCasJob bool = "@@jobFrequency@@".StartsWith("@@") == false;
+
+// The begin/end dates used by the job scheduler
+
+#IF (@IsCasJob)
+    #DECLARE BeginDate DateTime = DateTime.Parse(@@startDateTime@@);
+    #DECLARE EndDate   DateTime = DateTime.Parse(@@endDateTime@@);
+#ELSE
+    #DECLARE BeginDate DateTime = DateTime.UtcNow().AddHours(-1);
+    #DECLARE EndDate   DateTime = DateTime.UtcNow();
+#ENDIF
+
+#DECLARE CasJobBeginPublish string = @BeginDate.ToUniversalTime().ToString("yyyy-MM-dd HH:mmZ");
+#DECLARE CasJobBegin string = @BeginDate.ToUniversalTime().ToString("yyyy-MM-dd HH:mmZ");
+#DECLARE CasJobEnd   string = @EndDate.ToUniversalTime().ToString("yyyy-MM-dd HH:mmZ");
+
+// Initialize all the streams (public cloud, national cloud etc.) upfront 
+
+// Public
+
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt1");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt2");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt3");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt4");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt5");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt6");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt7");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt8");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt9");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt10");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt11");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt12");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt13");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt14");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt15");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt16");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt17");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt18");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt19");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt20");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt21");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt22");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt23");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt24");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt25");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt26");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt27");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt28");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt29");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt30");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt31");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt32");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt33");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt34");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt35");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt36");
+AzureAnalytics.Initialize(entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt37");
+
+// Fairfax
+
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt1");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt2");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt3");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt4");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt5");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt6");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt7");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt8");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt9");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt10");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt11");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt12");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt13");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt14");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt15");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt16");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt17");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt18");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt19");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt20");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt21");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt22");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt23");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt24");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt25");
+AzureAnalytics.Initialize(entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt26");
+
+// Mooncake
+
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt1");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt2");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt3");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt4");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt5");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt6");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt7");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt8");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt9");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt10");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt11");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt12");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt13");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt14");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt15");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt16");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt17");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt18");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt19");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt20");
+AzureAnalytics.Initialize(entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt21");
+
+// Blackforest
+
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt1");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt2");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt3");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt4");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt5");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt6");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt7");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt8");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt9");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt10");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt11");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt12");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt13");
+AzureAnalytics.Initialize(entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt14");
+
+// Load all the streams
+
+// Public 
+
+stPublicGuestAgentExtensionEvents = AzureAnalytics.LoadStream(
+																 entity = "Public.Production.Fa.GuestAgentExtensionEvents", 
+																 startDateTime = @CasJobBegin, 
+																 endDateTime = @CasJobEnd
+															  );
+stPublicGuestAgentExtensionEvents_alt1 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt1", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt2 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt2", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt3 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt3", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt4 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt4", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																  );
+stPublicGuestAgentExtensionEvents_alt5 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt5", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt6 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt6", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt7 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt7", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt8 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt8", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																   );
+stPublicGuestAgentExtensionEvents_alt9 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt9", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt10 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt10", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt11 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt11", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt12 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt12", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt13 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt13", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stPublicGuestAgentExtensionEvents_alt14 = AzureAnalytics.LoadStream(
+																		entity = "Public.Production.Fa.GuestAgentExtensionEvents_alt14", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+
+// Fairfax
+
+stFairfaxGuestAgentExtensionEvents = AzureAnalytics.LoadStream(
+																	  entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents", 
+																	  startDateTime = @CasJobBegin, 
+																	  endDateTime = @CasJobEnd
+															  );
+stFairfaxGuestAgentExtensionEvents_alt1 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt1", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt2 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt2", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt3 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt3", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt4 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt4", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt5 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt5", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt6 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt6", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt7 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt7", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt8 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt8", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt9 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt9", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt10 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt10", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt11 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt11", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt12 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt12", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt13 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt13", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt14 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt14", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt15 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt15", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt16 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt16", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt17 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt17", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt18 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt18", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt19 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt19", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt20 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt20", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt21 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt21", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt22 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt22", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt23 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt23", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt24 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt24", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt25 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt25", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stFairfaxGuestAgentExtensionEvents_alt26 = AzureAnalytics.LoadStream(
+																		entity = "Fairfax.Production.Fa.GuestAgentExtensionEvents_alt26", 
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+
+// Mooncake
+
+stMooncakeGuestAgentExtensionEvents = AzureAnalytics.LoadStream(
+																   entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents",
+																   startDateTime = @CasJobBegin, 
+																   endDateTime = @CasJobEnd
+															   );
+stMooncakeGuestAgentExtensionEvents_alt1 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt1",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt2 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt2",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt3 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt3",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt4 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt4",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt5 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt5",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt6 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt6",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt7 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt7",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt8 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt8",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt9 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt9",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt10 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt10",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt11 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt11",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt12 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt12",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt13 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt13",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt14 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt14",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt15 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt15",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt16 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt16",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt17 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt17",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt18 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt18",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt19 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt19",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt20 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt20",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+stMooncakeGuestAgentExtensionEvents_alt21 = AzureAnalytics.LoadStream(
+																		entity = "Mooncake.Production.Fa.GuestAgentExtensionEvents_alt21",
+																		startDateTime = @CasJobBegin, 
+																		endDateTime = @CasJobEnd
+																	);
+
+// Blackforest
+
+stBlackforestGuestAgentExtensionEvents = AzureAnalytics.LoadStream(
+																   entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents",
+																   startDateTime = @CasJobBegin, 
+																   endDateTime = @CasJobEnd
+																);
+stBlackforestGuestAgentExtensionEvents_alt1 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt1",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt2 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt2",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt3 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt3",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt4 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt4",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt5 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt5",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt6 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt6",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt7 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt7",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt8 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt8",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt9 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt9",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt10 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt10",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt11 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt11",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt12 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt12",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt13 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt13",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+stBlackforestGuestAgentExtensionEvents_alt14 = AzureAnalytics.LoadStream(
+																			entity = "Blackforest.Production.Fa.GuestAgentExtensionEvents_alt14",
+																			startDateTime = @CasJobBegin, 
+																			endDateTime = @CasJobEnd
+																	   );
+
+// Merge data from all the streams
+
+stGuestAgentExtensionEvents = 
+
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents UNION ALL                                                        
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt1 UNION ALL                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt2 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt3 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt4 UNION ALL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt5 UNION ALL                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt6 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt7 UNION ALL                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt8 UNION ALL                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt9 UNION ALL                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt10 UNION ALL                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt11 UNION ALL                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt12 UNION ALL                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt13 UNION ALL                                                         
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stPublicGuestAgentExtensionEvents_alt14 UNION ALL                                                       
+                                                                                                                                                        
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt1 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt2 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt3 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt4 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt5 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt6 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt7 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt8 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt9 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt10 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt11 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt12 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt13 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt14 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt15 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt16 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt17 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt18 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt19 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt20 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt21 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt22 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt23 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt24 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt25 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stFairfaxGuestAgentExtensionEvents_alt26 UNION ALL
+
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt1 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt2 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt3 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt4 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt5 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt6 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt7 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt8 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt9 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt10 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt11 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt12 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt13 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt14 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt15 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt16 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt17 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt18 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt19 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt20 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stMooncakeGuestAgentExtensionEvents_alt21 UNION ALL
+                                                                                                              
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt1 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt2 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt3 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt4 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt5 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt6 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt7 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt8 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt9 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt10 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt11 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt12 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt13 UNION ALL
+SELECT TIMESTAMP,PreciseTimeStamp,DataCenter,Cluster,NodeIdentity,NodeId,ProviderGuid,ActivityId,OSVersion,GAVersion,TenantName,RoleName,RoleInstanceName,ContainerId,Name,Util.ToString(Version) AS Version,Operation,Util.StringToBool(OperationSuccess) AS OperationSuccess,Message FROM stBlackforestGuestAgentExtensionEvents_alt14;
+					
+// Transform the data 
+// Breakdown OSVersion into OS, Distro, DistroVersion and KernelVersion
+
+output = SELECT Util.GetOS(OSVersion)             AS OS,
+				Util.GetDistro(OSVersion)         AS Distro,
+				Util.GetDistroVersion(OSVersion)  AS DistroVersion,
+				Util.GetKernelVersion(OSVersion)  AS KernelVersion,	
+				*
+		FROM stGuestAgentExtensionEvents;
+
+#IF (@IsCasJob)
+    AzureAnalytics.PublishStream(
+        entity           = "AzCrp.GuestAgentExtensionEvents",
+        startDateTime    = @CasJobBeginPublish,
+        periodInMinutes  = "60",
+        input            = output,
+        expiryInDays     = "90",
+        clusteredBy      = "ContainerId",
+        sortedBy         = "ContainerId,TIMESTAMP",
+        serviceOid       = "ae53b53f-9347-4198-b9b7-ff4b8228d6a7"
+    );
+#ELSE
+    OUTPUT output TO SSTREAM "/my/azcrp-guestagentextensionevents.ss";
+#ENDIF
+														   
+// C-Sharp Code
+
+#CS
+	
+public static class Util {
+
+    private static Regex distroRegex         = new Regex(@"^[^:]*:([A-Za-z\-\s]+)-?([0-9\.\-]*)[^:]*:[^:]*$", RegexOptions.Compiled);
+    private static Regex winDistroRegex      = new Regex(@"^[^:]*:([^-]+)-([0-9\.\-]+)$", RegexOptions.Compiled);
+    private static Regex kernelVersionRegex  = new Regex(@"^[^:]*:[^:]*:([0-9\.\-]*)", RegexOptions.Compiled);
+
+	public static bool StringToBool(object obj)
+	{
+		if(obj is bool)
+		{
+			return (bool)obj;
+		}
+		else if(obj is string)
+		{		
+			if(obj == "True" || obj == "true" || obj == "1")
+			{
+				return true;
+			}
+			else if (obj == "False" || obj == "false" || obj == "0")
+			{
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public static string ToString(object obj)
+	{
+		return obj.ToString();
+	}
+
+    public static string GetOS(string osVersion) {
+        if (string.IsNullOrWhiteSpace(osVersion)) {
+            return string.Empty;
+        }
+
+        int i = osVersion.IndexOf(':');
+        if (i != -1) {
+            return osVersion.Substring(0, i).ToLower();
+        }
+        
+        return string.Empty;
+    }
+
+    public static string GetDistro(string osVersion) {
+        var distro = MatchOSVersionRegex(osVersion, distroRegex, 1).Trim('-');
+        return distro != string.Empty ?
+            NormalizeDistro(distro) :
+            MatchOSVersionRegex(osVersion, winDistroRegex, 1);
+    }
+    
+    public static string GetDistroVersion(string osVersion) {
+        var version = MatchOSVersionRegex(osVersion, distroRegex, 2).TrimEnd('-');
+        return version != string.Empty ?
+            version :
+            MatchOSVersionRegex(osVersion, winDistroRegex, 2);
+    }
+    
+    public static string GetKernelVersion(string osVersion) {
+        return MatchOSVersionRegex(osVersion, kernelVersionRegex, 1).TrimEnd('.', '-');
+    }
+
+    private static string MatchOSVersionRegex(string osVersion, Regex regex, int groupOffset) {
+        if (string.IsNullOrWhiteSpace(osVersion)) {
+            return string.Empty;
+        }
+        
+        var m = regex.Match(osVersion);
+        if (m.Success) {
+            return m.Groups[groupOffset].Value;
+        }
+        
+        return string.Empty;
+    }
+
+	private static string NormalizeDistro(string distro) {
+        switch (distro.ToUpper()) {
+            case "ALPINE":
+                return "alpine";
+            case "ARCH":
+            case "ARCH-ARCH-LINUX":
+            case "ARCHLINUX":
+                return "arch";
+            case "CENTOS": 
+            case "CENTOS LINUX": 
+                return "CentOS";
+            case "CLEAR LINUX OS FOR INTEL ARCHITECTURE":
+            case "CLEAR LINUX SOFTWARE FOR INTEL ARCHITECTURE":
+                return "Clear Linux";
+            case "CLOUDLINUX":
+            case "CLOUDLINUX SERVER":
+                return "CloudLinux";
+            case "COREOS":
+                return "CoreOS";
+            case "DEBIAN":
+                return "debian";
+            case "FEDORA":
+                return "Fedora";
+            case "FREEBSD": 
+                return "FreeBSD";
+            case "GENTOO":
+            case "GENTOO BASE SYSTEM":
+                return "Gentoo";
+            case "KALI":
+            case "KALI-KALI-ROLLING-KALI-ROLLING":
+                return "kali";
+            case "ORACLE":
+            case "ORACLE LINUX SERVER":
+                return "Oracle Linux Server";
+            case "OPENBSD":
+                return "OpenBSD";
+            case "OPENSUSE":
+                return "OpenSuSE";
+            case "REDHAT":
+            case "RED HAT ENTERPRISE LINUX SERVER":
+                return "RHEL";
+            case "SUSE":
+                return "SuSE";
+            case "SUSE LINUX ENTERPRISE SERVER":
+            case "SLES":
+                return "SLES";
+            case "UBUNTU":
+                return "Ubuntu";
+            default:
+                return distro;
+        }
+    }
+}
+
+#ENDCS
+
