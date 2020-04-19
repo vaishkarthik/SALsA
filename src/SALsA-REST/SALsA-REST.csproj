@@ -17,8 +17,10 @@
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
     <IISExpressSSLPort>44351</IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
-    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressAnonymousAuthentication>
+    </IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>
+    </IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
@@ -106,8 +108,8 @@
     <Compile Include="Controllers\ICMController.cs" />
     <Compile Include="Controllers\ICMStatusController.cs" />
     <Compile Include="Controllers\ManualRunICMController.cs" />
-    <Compile Include="Controllers\ManualRunRdfeTenant.cs" />
-    <Compile Include="Controllers\ManualRunRdfeFabric.cs" />
+    <Compile Include="Controllers\ManualRunRdfeTenantController.cs" />
+    <Compile Include="Controllers\ManualRunRdfeFabricController.cs" />
     <Compile Include="Controllers\ManualRunIIDController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

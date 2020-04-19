@@ -19,14 +19,11 @@ namespace SALsA_REST.Controllers
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             if (Content == null)
             {
-                response.Content = new StringContent(System.IO.File.ReadAllText(
+                Content = new StringContent(System.IO.File.ReadAllText(
                     System.Web.Hosting.HostingEnvironment.MapPath("~/HTMLTemplate/ManualRdfeFabric.html")),
                     System.Text.Encoding.UTF8, "text/html");
             }
-            else
-            {
-                response.Content = Content;
-            }
+            response.Content = Content;
 
             return response;
         }
