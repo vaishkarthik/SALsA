@@ -49,6 +49,12 @@ namespace SALsA_REST
                 routeTemplate: "manualrun/rdfe/tenant",
                 defaults: new { controller = "ManualRunRdfeTenant", id = RouteParameter.Optional }
             );
+
+            config.Routes.MapHttpRoute(
+                name: "Tools",
+                routeTemplate: "tools",
+                defaults: new { controller = "Tools", action = "Get", id = RouteParameter.Optional }
+            );
         }
     }
 }
