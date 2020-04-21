@@ -48,6 +48,10 @@ namespace LivesiteAutomation
                         Name = deployment.name.Contains("/") ? deployment.name.Split('/')[0] : deployment.name,
                         Type = deployment.type.Split('/')[1]
                     };
+                    if (String.IsNullOrEmpty(dep.Location))
+                    {
+                        dep.Location = deployment.location;
+                    }
                     if (!armAnalysed.ContainsKey(dep.Name))
                     {
                         armAnalysed[dep.Name] = dep;
