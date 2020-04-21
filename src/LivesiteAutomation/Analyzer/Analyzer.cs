@@ -461,7 +461,7 @@ namespace LivesiteAutomation
         {
             try
             {
-                return Convert.ToInt32(Regex.Match(VMName, @"_?[a-z][a-z0-9\-]+_([0-9]+)", RegexOptions.IgnoreCase).Groups[1].Value);
+                return Convert.ToInt32(VMName.Split('_').Last());
             }
             catch
             {
