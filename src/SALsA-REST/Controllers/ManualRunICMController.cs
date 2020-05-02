@@ -11,7 +11,7 @@ namespace SALsA_REST.Controllers
 {
     public class ManualRunICMController : ApiController
     {
-        static StringContent Content = null;
+        static string Content = null;
         // GET: manualrun/iid
         [System.Web.Http.HttpGet]
         public HttpResponseMessage Get()
@@ -19,11 +19,11 @@ namespace SALsA_REST.Controllers
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             if (Content == null)
             {
-                Content = new StringContent(System.IO.File.ReadAllText(
-                    System.Web.Hosting.HostingEnvironment.MapPath("~/HTMLTemplate/ManualICM.html")),
-                    System.Text.Encoding.UTF8, "text/html");
+                Content = System.IO.File.ReadAllText(
+                    System.Web.Hosting.HostingEnvironment.MapPath("~/HTMLTemplate/ManualICM.html"));
             }
-            response.Content = Content;
+            response.Content = new StringContent(Content,
+                    System.Text.Encoding.UTF8, "text/html");
 
             return response;
         }
