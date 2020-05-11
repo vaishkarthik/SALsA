@@ -36,11 +36,22 @@ namespace LivesiteAutomation
 
         private RDFESubscription AnalyzeRDFESubscriptionResult(string xml)
         {
-            XmlDocument doc = new XmlDocument();
             xml = xml.Replace("=== <", "<").Replace("> ===", ">").Replace("&", "&amp;").Trim();
             xml = xml.Replace("xmlns:xsd", "xmlns_xsd").Replace("xmlns:xsi", "xmlns_xsi");
-
-            var serializer = new XmlSerializer(typeof(Json2Class.RDFESubscriptionWrapper.Subscription)); using (var stream = new StringReader(xml))
+            var xmlArray = xml.Split( new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None );
+            var comp = new Regex(@"^\s*\w*(Label|LastRefreshTime):.*", RegexOptions.Singleline | RegexOptions.Compiled);
+            for (int i = 0; i < xmlArray.Length; ++i)
+            {
+                if(comp.IsMatch(xmlArray[i]))
+                {
+                    var pieces = xmlArray[i].Split(new[] { ':' }, 2);
+                    pieces[1] = WebUtility.UrlEncode(pieces[1]);
+                    xmlArray[i] = String.Format("{0}:{1}", pieces[0], pieces[1]);
+                }
+            }
+            xml = string.Join(Environment.NewLine, xmlArray);
+            var serializer = new XmlSerializer(typeof(Json2Class.RDFESubscriptionWrapper.Subscription));
+            using (var stream = new StringReader(xml))
             using (var reader = XmlReader.Create(stream))
             {
                 var result = (Json2Class.RDFESubscriptionWrapper.Subscription)serializer.Deserialize(reader);
