@@ -87,7 +87,7 @@ namespace LivesiteAutomation.Json2Class
         public string Label { get; set; }
         public DateTime LastChangingOperationStarted { get; set; }
         public DateTime LastModified { get; set; }
-        public DateTime LastRefreshTime { get; set; }
+        public string LastRefreshTime { get; set; }
         public DateTime LastServiceHealingTime { get; set; }
         public string Locked { get; set; }
         public string Name { get; set; }

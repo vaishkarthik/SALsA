@@ -50,7 +50,6 @@ namespace LivesiteAutomation
                 {
                     var pieces = xmlArray[i].Split(new[] { ':' }, 2);
                     pieces[1] = WebUtility.UrlEncode(pieces[1]);
-                    pieces[1] = pieces[1].Replace("%2F", "/").Replace("%3A", ":");
                     xmlArray[i] = String.Format("{0}:{1}", pieces[0], pieces[1]);
                 }
             }
