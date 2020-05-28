@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace LivesiteAutomation.Json2Class
 {
 
-    class RDFERoleInstance
+    public class RDFERoleInstance
     {
         public string ApplicationPackage { get; set; }
         public string BillingContext { get; set; }
@@ -53,7 +53,7 @@ namespace LivesiteAutomation.Json2Class
         public string VirtualMachineWorkflowStep { get; set; }
     }
 
-    class RDFEDeployment
+    public class RDFEDeployment
     {
         public string AccessRestrictionLevel { get; set; }
         public string AllowLazyGeoAllocation { get; set; }
@@ -120,7 +120,7 @@ namespace LivesiteAutomation.Json2Class
         public List<RDFERoleInstance> RoleInstances {get; set;}
 }
 
-    class RDFESubscription
+    public class RDFESubscription
     {
         public List<RDFEDeployment> deployments { get; set; } = new List<RDFEDeployment>();
     }

@@ -36,11 +36,8 @@ namespace LivesiteAutomation
 
         private RDFESubscription AnalyzeRDFESubscriptionResult(string xml)
         {
-            var openB = Guid.NewGuid().ToString();
-            var closeB = Guid.NewGuid().ToString();
-            xml = xml.Replace("=== <", openB).Replace("> ===", closeB).Replace("&", "&amp;").Trim();
-            xml = xml.Replace("<", "&lt;").Replace(" > ", "&gt;").Trim();
-            xml = xml.Replace(openB, "<").Replace(closeB, ">");
+            xml = xml.Replace("=== <", "<").Replace("> ===", ">").Replace("&", "&amp;").Trim();
+            xml = xml.Replace("<", "\n<").Replace(">", ">\n").Trim();
             xml = xml.Replace("xmlns:xsd", "xmlns_xsd").Replace("xmlns:xsi", "xmlns_xsi");
             var xmlArray = xml.Split( new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None );
             var comp = new Regex(@"^\s*\w*(Label|LastRefreshTime):.*", RegexOptions.Singleline | RegexOptions.Compiled);
@@ -64,6 +61,10 @@ namespace LivesiteAutomation
                 var rdfeSubscription = new RDFESubscription();
                 foreach (var element in multiDeployments)
                 {
+                    if (element.Deployment == null)
+                    {
+                        continue;
+                    }
                     var deployments = BuildDeployment(element);
                     if (deployments != null)
                     {
