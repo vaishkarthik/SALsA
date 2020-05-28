@@ -121,7 +121,7 @@ namespace LivesiteAutomation
         private ServicePrincipal PopulateServicePrincipal()
         {
 
-            SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationServicePrinciaplSecretURI).GetAwaiter().GetResult();
+            SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationServicePrincioalSecretURI).GetAwaiter().GetResult();
             return Utility.JsonToObject<ServicePrincipal>(secret.Value);
 
         }
