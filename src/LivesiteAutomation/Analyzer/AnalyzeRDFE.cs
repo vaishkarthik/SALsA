@@ -10,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -136,7 +137,7 @@ namespace LivesiteAutomation
                 {
                     split.Append("");
                 }
-                dep[i] = String.Format("\"{0}\":\"{1}\"", split[0].Trim(), split[1].Trim());
+                dep[i] = String.Format("\"{0}\":\"{1}\"", split[0].Trim(), HttpUtility.JavaScriptStringEncode(split[1].Trim()));
             }
             return dep;
         }
