@@ -27,7 +27,7 @@ namespace LivesiteAutomation
 
         // ICM.cs
         public const string ICMIdentityName = "CN=azurevmguestagentsandextensions-manual.geneva.keyvault.com";
-        public const string ICMBaseUri = "https://icm.ad.msft.net/";
+        public const string ICMBaseUri = "https://prod.microsofticm.com/";
         public const string ICMRelativeBaseAPIUri = "api/cert/incidents";
         public const string ICMTrnasferIncidentSuffix = "/TransferIncident";
         public const string ICMDescriptionEntriesSuffix = "/DescriptionEntries?$inlinecount=allpages";
