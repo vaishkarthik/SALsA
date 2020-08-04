@@ -31,7 +31,7 @@ namespace LivesiteAutomation.Connectors
             SALsA.GetInstance(icm)?.Log.Information("Finished creating Kusto connector : {0}", kcsb);
         }
 
-        public List<object[]> Query(string table, string query, int icm, string timestampField = "TIMESTAMP")
+        public List<object[]> Query(string table, ref string query, int icm, string timestampField = "TIMESTAMP")
         {
             if (timestampField != null)
             {

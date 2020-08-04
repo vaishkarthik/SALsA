@@ -130,9 +130,9 @@ namespace LivesiteAutomation
             return WebUtility.HtmlDecode((regex.Replace(html, "")));
         }
 
-        public static string EncodeHtml(string ss)
+        public static string EncodeHtml(object obj)
         {
-            ss = WebUtility.HtmlEncode(ss);
+            string ss = WebUtility.HtmlEncode(obj.ToString());
             var lines = ss.Split(
                             new[] { Environment.NewLine },
                             StringSplitOptions.None
@@ -290,44 +290,74 @@ namespace LivesiteAutomation
 
         public static string List2DToHTML<T> (List<T[]> result, bool raw = false)
         {
-            HtmlTableRow row;
-            HtmlTableCell cell;
-            var table = new HtmlTable();
-            string html;
-            foreach (var line in result)
-            {
-                row = new HtmlTableRow();
-                foreach (var element in line)
-                { 
-                    cell = new HtmlTableCell();
-                    if (raw == true)
-                    {
-                        cell.InnerHtml = element.ToString();
-                    }
-                    else
-                    { 
-                        cell.InnerText = element.ToString();
-                    }
-                    row.Cells.Add(cell);
-                }
-                row.Style.Add("text-align", "left");
-                row.Style.Add("padding-top", "0.5em");
-                row.Style.Add("padding-bottom", "0.5em");
-                table.Rows.Add(row);
-
-            }
-            table.Rows[0].BgColor = "#d3d3d3";
-            table.Rows[0].Style.Add("font-weight", "bold");
-            table.Rows[0].Style.Add("font-size", "22");
-            table.Style.Add("margin-right", "auto");
-            table.Style.Add("margin-left", "auto");
-            table.Style.Add("width", "25%");
             using (var sw = new StringWriter())
             {
-                table.RenderControl(new System.Web.UI.HtmlTextWriter(sw));
-                html = sw.ToString();
+                sw.WriteLine("<table style=\"margin-right:auto;margin-left:auto;width:25%;\">");
+                for(int i = 0; i < result.Count; ++i)
+                {
+                    if(i == 0)
+                    {
+                        sw.WriteLine("<tr style=\"text-align:left;padding-top:0.5em;padding-bottom:0.5em;font-weight:bold;font-size:22;\" bgcolor=\"#d3d3d3\">");
+                    }
+                    else
+                    {
+                        sw.WriteLine("<tr style=\"text-align:left;padding-top:0.5em;padding-bottom:0.5em;\">");
+                    }
+                    for(int j = 0; j < result[i].Length; ++j)
+                    {
+                        sw.Write("<td>");
+                        if(raw == true)
+                        {
+                            sw.Write(result[i][j]);
+                        }
+                        else
+                        {
+                            sw.Write(Utility.EncodeHtml(result[i][j]));
+                        }
+                        sw.WriteLine("</td>");
+                    }
+                    sw.WriteLine("</tr>");
+                }
+                return sw.ToString();
             }
-            return html;
+        }
+
+        public static byte[] CompressString(string input)
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+
+            using (var outputStream = new MemoryStream())
+            {
+                using (var gZipStream = new GZipStream(outputStream, CompressionMode.Compress))
+                    gZipStream.Write(inputBytes, 0, inputBytes.Length);
+
+                return outputStream.ToArray();
+            }
+        }
+
+        public static string DecompressString(byte[] input)
+        {
+            using (var inputStream = new MemoryStream(input))
+            using (var gZipStream = new GZipStream(inputStream, CompressionMode.Decompress))
+            using (var streamReader = new StreamReader(gZipStream))
+            {
+                return streamReader.ReadToEnd();
+            }
+        }
+
+        public static string Base64Encode(string input)
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            return Base64Encode(inputBytes);
+        }
+
+        public static string Base64Encode(byte[] input)
+        {
+            return Convert.ToBase64String(input);
+        }
+        public static string Base64Decode(string input)
+        {
+            return ASCIIEncoding.ASCII.GetString(Convert.FromBase64String(input));
         }
     }
 }

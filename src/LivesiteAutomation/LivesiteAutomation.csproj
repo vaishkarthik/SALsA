@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8F1A0325-B90E-4FEC-B79A-C7EC8DF063B1}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>LivesiteAutomation</RootNamespace>
     <AssemblyName>LivesiteAutomation</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -183,12 +183,15 @@
     <Compile Include="Json2Class\RDFESubscriptionWrapper.cs" />
     <Compile Include="Json2Class\ServicePrincipal.cs" />
     <Compile Include="Commons\Log.cs" />
-    <Compile Include="Kusto\AzureCMVMIdToContainerID.cs" />
-    <Compile Include="Kusto\GuestAgentGenericLogs.cs" />
+    <Compile Include="Kusto\Detect\LogContainerSnapshot2ContainerId.cs" />
+    <Compile Include="Kusto\Enrich\GuestAgentExtensionEvents.cs" />
+    <Compile Include="Kusto\Enrich\GuestAgentGenericLogs.cs" />
     <Compile Include="Kusto\KustoBase.cs" />
-    <Compile Include="Kusto\CAD.cs" />
-    <Compile Include="Kusto\VMA.cs" />
-    <Compile Include="Kusto\VMEGAnalysis.cs" />
+    <Compile Include="Kusto\Detect\CAD.cs" />
+    <Compile Include="Kusto\Detect\VMA2ContainerId.cs" />
+    <Compile Include="Kusto\Enrich\VMA.cs" />
+    <Compile Include="Kusto\Enrich\LogContainerHealthSnapshot.cs" />
+    <Compile Include="Kusto\Enrich\VMEGAnalysis.cs" />
     <Compile Include="ManualRun\ManualRun_RDFE.cs" />
     <Compile Include="ManualRun\ManualRun_ICM.cs" />
     <Compile Include="ManualRun\ManualRun_IID.cs" />

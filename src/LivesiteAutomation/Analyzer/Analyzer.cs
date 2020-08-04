@@ -13,6 +13,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web.UI;
 using System.Xml.Linq;
 
 namespace LivesiteAutomation
@@ -53,16 +54,29 @@ namespace LivesiteAutomation
             {
                 SALsA.GetInstance(Id).Log.Send("Could not find VM: {0} in RG: {1}. This VM might have been already deleted or moved", this.VMName, this.ResourceGroupName);
                 // Lets try to check kusto data
-                GuestAgentKustoStruct instance = null;
+
+                ShortRDFERoleInstance rdfeInfo;
                 try
                 {
-                    instance = AnalyzeARMResourceURI(SubscriptionId.ToString(), ResourceGroupName, VMName);
+                    var instance = AnalyzeARMResourceURI(SubscriptionId.ToString(), ResourceGroupName, VMName);
+                    rdfeInfo = new ShortRDFERoleInstance
+                    {
+                        ContainerID = new Guid(instance.Last().ContainerId),
+                        NodeId = new Guid(instance.Last().NodeId),
+                        Fabric = instance.Last().Cluster
+                    };
                 }
                 catch 
                 {
                     try
                     {
-                        instance = AnalyzeRDFEResourceURI(SubscriptionId.ToString(), ResourceGroupName, VMName);
+                        var instance = AnalyzeRDFEResourceURI(SubscriptionId.ToString(), ResourceGroupName, VMName);
+                        rdfeInfo = new ShortRDFERoleInstance
+                        {
+                            ContainerID = new Guid(instance.Last().ContainerId),
+                            NodeId = new Guid(instance.Last().NodeId),
+                            Fabric = instance.Last().Cluster
+                        };
                     }
                     catch
                     {
@@ -71,9 +85,8 @@ namespace LivesiteAutomation
                 }
 
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFiles(Id, instance.Cluster, instance.NodeId,
-                    StartTime.ToUtc().ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture), DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture)), Id)
-                );
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, rdfeInfo), Id));
+                ExecuteKustoEnrichment(Id, rdfeInfo.ContainerID.ToString());
             }
 
             // TODO : Kusto fun
@@ -184,15 +197,28 @@ namespace LivesiteAutomation
             }
         }
 
-        static void CallAndPostEG(int Id, string vmaField, string vmeganalysisField)
+        static void ExecuteKustoEnrichment(int Id, string containerId)
         {
             try
             {
-                var vmEGAnalysis = new VMEGAnalysis(Id).BuildAndSendRequest(vmeganalysisField);
-                SALsA.GetInstance(Id).Log.Send(vmEGAnalysis, htmlfy: false);
+                var vmEGAnalysis = new VMEGAnalysis(Id, containerId);
+                SALsA.GetInstance(Id).Log.Send(vmEGAnalysis.HTMLResults, htmlfy: false);
 
-                var vma = new VMA(Id).BuildAndSendRequest(vmaField);
-                SALsA.GetInstance(Id).Log.Send(vma, htmlfy: false);
+                var vma = new VMA(Id, containerId);
+                SALsA.GetInstance(Id).Log.Send(vma.HTMLResults, htmlfy: false);
+
+                var eg = new VMEGAnalysis(Id, containerId);
+                SALsA.GetInstance(Id).Log.Send(eg.HTMLResults, htmlfy: false);
+
+                var lchs = new LogContainerHealthSnapshot(Id, containerId);
+                SALsA.GetInstance(Id).Log.Send(lchs.HTMLResults, htmlfy: false);
+
+                var gagl = new GuestAgentGenericLogs(Id, containerId);
+                SALsA.GetInstance(Id).Log.Send(gagl.HTMLResults, htmlfy: false);
+
+                var gaee = new GuestAgentExtensionEvents(Id, containerId);
+                SALsA.GetInstance(Id).Log.Send(gaee.HTMLResults, htmlfy: false);
+
             }
             catch (Exception ex)
             {
@@ -251,10 +277,11 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(Id).TaskManager.AddTask(
                     Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
                 );
+                ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
             }
         }
 
-        private AzureCMVMIdToContainerID.MessageLine LogContainerId(Task<string> modelTask, int Id)
+        private LogContainerSnapshot2ContainerId.MessageLine LogContainerId(Task<string> modelTask, int Id)
         {
 
             if (modelTask != null)
@@ -263,11 +290,10 @@ namespace LivesiteAutomation
                 {
                     var model = Utility.JsonToObject<Dictionary<string, dynamic>>(modelTask.Result);
                     var vmid = (string)(model["VM Model"].properties.vmId);
-                    var vmInfo = new AzureCMVMIdToContainerID(Id).BuildAndSendRequest(vmid);
-                    SALsA.GetInstance(Id).Log.Send(vmInfo);
+                    var vmInfo = new LogContainerSnapshot2ContainerId(Id, vmid);
+                    SALsA.GetInstance(Id).Log.Send(vmInfo.HTMLResults, htmlfy: false);
 
-                    CallAndPostEG(Id, vmInfo.ContainerId, vmid);
-                    return vmInfo;
+                    return vmInfo.Results.Last();
                 }
                 catch (Exception ex)
                 {
@@ -304,6 +330,7 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(Id).TaskManager.AddTask(
                     Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
                 );
+                ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
             }
         }
 
@@ -323,15 +350,15 @@ namespace LivesiteAutomation
                 InstanceName = instance.RoleInstanceName
             };
 
-            CallAndPostEG(Id, instance.ID.ToString(), String.Format("{0}:{1}", dep.Id, instance.RoleInstanceName));
             Task<string> modelTask = null;
 
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, vmInfo), Id)
-
             );
+
+            ExecuteKustoEnrichment(Id, instance.ID.ToString());
             try
             {
                 var model = Utility.JsonToObject<Json2Class.ContainerSettings>(modelTask.Result);

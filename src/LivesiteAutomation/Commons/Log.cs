@@ -60,15 +60,23 @@ namespace LivesiteAutomation
 
         public void Send(string ss, params object[] arg)
         {
+            if (ss == null)
+            {
+                InternalLog("Got null string to Send to ICM !", LogLevel.Error);
+            }
             string toSend = arg.Length > 0 ?  String.Format(CultureInfo.InvariantCulture, ss, arg) : ss;
             InternalLog(toSend, LogLevel.Online);
             SendOnline(toSend);
         }
         public void Send(string ss, bool htmlfy, params object[] arg)
         {
+            if(ss == null)
+            {
+                InternalLog("Got null string to Send to ICM !", LogLevel.Error);
+            }
             string toSend = arg.Length > 0 ? String.Format(CultureInfo.InvariantCulture, ss, arg) : ss;
             InternalLog(toSend, LogLevel.Online);
-            SendOnline(toSend, htmlfy: false);
+            SendOnline(toSend, htmlfy: htmlfy);
         }
 
         // SendForce will force write the log entry, even if it already exists.

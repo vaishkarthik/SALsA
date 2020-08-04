@@ -109,6 +109,9 @@ namespace LivesiteAutomation
         public const string KustoGuestAgentGenericLogsDataBase = "rdos";
         public const string KustoGuestAgentGenericLogsTable = "GuestAgentGenericLogs";
 
+        // GuestAgentExtensionEvents.cs
+        public const string KustoGuestAgentExtensionEventsTable = "GuestAgentExtensionEvents";
+
         // AzureCMVMIdToContainerID.cs
         public const string KustoLogContainerSnapshotCluster = "AzureCM";
         public const string KustoLogContainerSnapshotDatabase = "AzureCM";
