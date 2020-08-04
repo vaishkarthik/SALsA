@@ -159,7 +159,6 @@
     <Compile Include="Analyzer\AnalyzeRDFE.cs" />
     <Compile Include="Commons\HttpClientExtensions.cs" />
     <Compile Include="Connectors\KustoClient.cs" />
-    <Compile Include="Connectors\ManualKeyVaultClientHack.cs" />
     <Compile Include="GenevaAction\GetARMSubscriptionRG.cs" />
     <Compile Include="Connectors\Authentication.cs" />
     <Compile Include="Connectors\BlobStorage.cs" />
