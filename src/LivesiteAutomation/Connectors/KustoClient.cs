@@ -20,9 +20,6 @@ namespace LivesiteAutomation.Connectors
         public KustoClient(string clusterName, string database, int icm)
         {
             SALsA.GetInstance(icm)?.Log.Information("Creating Kusto connector for Cluster : {0} in database : {1}", clusterName, database);
-            // Create Auth Context for AAD (common or tenant-specific endpoint):
-            AuthenticationContext authContext = new AuthenticationContext(String.Format("https://login.microsoftonline.com/{0}",
-                Authentication.Instance.ServicePrincipal.tenant));
 
             var authority = Authentication.Instance.ServicePrincipal.tenant;
             var applicationClientId = Authentication.Instance.ServicePrincipal.appId;
@@ -36,7 +33,6 @@ namespace LivesiteAutomation.Connectors
 
         public List<object[]> Query(string table, string query, int icm, string timestampField = "TIMESTAMP")
         {
-
             if (timestampField != null)
             {
                 // TODO : If ICM AnalyzerStartTimeField was changed, it might be newer than the ICM creation date

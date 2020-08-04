@@ -1,4 +1,5 @@
 ﻿using LivesiteAutomation.Json2Class;
+using LivesiteAutomation.Kusto;
 using Microsoft.IdentityModel.Protocols.WSFederation.Metadata;
 using Newtonsoft.Json;
 using System;
@@ -140,6 +141,30 @@ namespace LivesiteAutomation
                 dep[i] = String.Format("\"{0}\":\"{1}\"", split[0].Trim(), HttpUtility.JavaScriptStringEncode(split[1].Trim()));
             }
             return dep;
+        }
+
+        public GuestAgentKustoStruct AnalyzeRDFEResourceURI(string subscriptions, string tenantName, string virtualMachines)
+        {
+            var vminfo = new CAD(Id).BuildAndSendRequestRaw(subscriptions, tenantName, virtualMachines);
+
+            if (vminfo.Count <= 1)
+            {
+                throw new Exception(String.Format(
+                    "Kusto query for Deployment {0}//resourceGroups//virtualMachines returned empty results", subscriptions, tenantName, virtualMachines));
+            }
+
+            SALsA.GetInstance(Id)?.Log.Send(KustoBase.ParseResult(vminfo), htmlfy: false);
+
+            var kustoInfo = new GuestAgentKustoStruct
+            {
+                Cluster = (string)vminfo.Last()[2],
+                ContainerId = (string)vminfo.Last()[3],
+                NodeId = (string)vminfo.Last()[4],
+                RoleInstanceName = (string)vminfo.Last()[0]
+            };
+
+            SALsA.GetInstance(Id)?.Log.Information(vminfo);
+            return kustoInfo;
         }
     }
 }

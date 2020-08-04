@@ -159,6 +159,7 @@
     <Compile Include="Analyzer\AnalyzeRDFE.cs" />
     <Compile Include="Commons\HttpClientExtensions.cs" />
     <Compile Include="Connectors\KustoClient.cs" />
+    <Compile Include="Connectors\ManualKeyVaultClientHack.cs" />
     <Compile Include="GenevaAction\GetARMSubscriptionRG.cs" />
     <Compile Include="Connectors\Authentication.cs" />
     <Compile Include="Connectors\BlobStorage.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Json2Class\ARMSubscription.cs" />
     <Compile Include="Json2Class\ContainerSettings.cs" />
     <Compile Include="Json2Class\GenevaOperations.cs" />
+    <Compile Include="Json2Class\GuestAgentKustoStruct.cs" />
     <Compile Include="Json2Class\Incident.cs" />
     <Compile Include="Json2Class\RDFESubscription.cs" />
     <Compile Include="Json2Class\RDFESubscriptionWrapper.cs" />
@@ -185,6 +187,7 @@
     <Compile Include="Kusto\AzureCMVMIdToContainerID.cs" />
     <Compile Include="Kusto\GuestAgentGenericLogs.cs" />
     <Compile Include="Kusto\KustoBase.cs" />
+    <Compile Include="Kusto\CAD.cs" />
     <Compile Include="Kusto\VMA.cs" />
     <Compile Include="Kusto\VMEGAnalysis.cs" />
     <Compile Include="ManualRun\ManualRun_RDFE.cs" />

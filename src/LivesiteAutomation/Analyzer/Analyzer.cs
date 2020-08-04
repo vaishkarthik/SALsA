@@ -1,10 +1,12 @@
-﻿using LivesiteAutomation.Json2Class;
+﻿using Kusto.Cloud.Platform.Utils;
+using LivesiteAutomation.Json2Class;
 using LivesiteAutomation.Kusto;
 using LivesiteAutomation.ManualRun;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
@@ -50,7 +52,28 @@ namespace LivesiteAutomation
             if (dep == null && IsCustomRun == false)
             {
                 SALsA.GetInstance(Id).Log.Send("Could not find VM: {0} in RG: {1}. This VM might have been already deleted or moved", this.VMName, this.ResourceGroupName);
-                throw new Exception("VM not found");
+                // Lets try to check kusto data
+                GuestAgentKustoStruct instance = null;
+                try
+                {
+                    instance = AnalyzeARMResourceURI(SubscriptionId.ToString(), ResourceGroupName, VMName);
+                }
+                catch 
+                {
+                    try
+                    {
+                        instance = AnalyzeRDFEResourceURI(SubscriptionId.ToString(), ResourceGroupName, VMName);
+                    }
+                    catch
+                    {
+                        throw new Exception("VM not found");
+                    }
+                }
+
+                SALsA.GetInstance(Id).TaskManager.AddTask(
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFiles(Id, instance.Cluster, instance.NodeId,
+                    StartTime.ToUtc().ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture), DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture)), Id)
+                );
             }
 
             // TODO : Kusto fun
@@ -161,14 +184,14 @@ namespace LivesiteAutomation
             }
         }
 
-        static void CallAndPostEG(int Id, string ContainerId)
+        static void CallAndPostEG(int Id, string vmaField, string vmeganalysisField)
         {
             try
             {
-                var vmEGAnalysis = new VMEGAnalysis(Id).BuildAndSendRequest(ContainerId);
+                var vmEGAnalysis = new VMEGAnalysis(Id).BuildAndSendRequest(vmeganalysisField);
                 SALsA.GetInstance(Id).Log.Send(vmEGAnalysis, htmlfy: false);
 
-                var vma = new VMA(Id).BuildAndSendRequest(ContainerId);
+                var vma = new VMA(Id).BuildAndSendRequest(vmaField);
                 SALsA.GetInstance(Id).Log.Send(vma, htmlfy: false);
             }
             catch (Exception ex)
@@ -243,7 +266,7 @@ namespace LivesiteAutomation
                     var vmInfo = new AzureCMVMIdToContainerID(Id).BuildAndSendRequest(vmid);
                     SALsA.GetInstance(Id).Log.Send(vmInfo);
 
-                    CallAndPostEG(Id, vmInfo.ContainerId);
+                    CallAndPostEG(Id, vmInfo.ContainerId, vmid);
                     return vmInfo;
                 }
                 catch (Exception ex)
@@ -300,7 +323,7 @@ namespace LivesiteAutomation
                 InstanceName = instance.RoleInstanceName
             };
 
-            CallAndPostEG(Id, instance.ID.ToString());
+            CallAndPostEG(Id, instance.ID.ToString(), String.Format("{0}:{1}", dep.Id, instance.RoleInstanceName));
             Task<string> modelTask = null;
 
             SALsA.GetInstance(Id).TaskManager.AddTask(

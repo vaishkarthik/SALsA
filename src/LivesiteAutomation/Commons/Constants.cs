@@ -116,8 +116,16 @@ namespace LivesiteAutomation
 
         // VMEGAnalysis.cs
         public const string KustoExecutionGraphCluster = "Vmakpi";
-        public const string KustoExecutionGraphDatabase = "vmadb";
+        public const string KustoExecutionGraphDatabase = "CAD";
         public const string KustoExecutionGraphTable = "VmaEgAnalysis";
+
+        // VMEGAnalysis.cs
+        public const string KustoVMADatabase = "vmadb";
+        public const string KustoVMATable = "VMA";
+
+        // CAD.cs
+        public const string KustoCADTable = "CAD";
+
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */

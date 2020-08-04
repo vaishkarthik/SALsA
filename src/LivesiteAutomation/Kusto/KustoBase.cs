@@ -22,5 +22,9 @@ namespace LivesiteAutomation.Kusto
             this.Icm = icm;
             kustoClient = new KustoClient(Cluster, DataBase, Icm);
         }
+        public static String ParseResult(List<object[]> table)
+        {
+            return Utility.List2DToHTML(table);
+        }
     }
 }

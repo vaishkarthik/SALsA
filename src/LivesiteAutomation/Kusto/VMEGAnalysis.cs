@@ -17,14 +17,9 @@ namespace LivesiteAutomation.Kusto
         public String BuildAndSendRequest(string containerId)
         {
             this.ContainerId = containerId;
-            var query = String.Format("where ContainerId == \"{0}\" | sort by TIMESTAMP desc | project ResourceId, DowntimeStartInUtc, DowntimeEndInUtc, DowntimeDurationInSec, IncarnationId, DowntimeCategory, FailureCategory, FailureSignature, Followup", ContainerId);
+            var query = String.Format("where * =~ \"{0}\" | sort by TIMESTAMP desc | project ResourceId, DowntimeStartInUtc, DowntimeEndInUtc, DowntimeDurationInSec, IncarnationId, DowntimeCategory, FailureCategory, FailureSignature, FailureDetails, Followup", ContainerId);
             List<object[]> table = kustoClient.Query(Table, query, this.Icm);
             return ParseResult(table);
-        }
-
-        private String ParseResult(List<object[]> table)
-        {
-            return Utility.List2DToHTML(table);
         }
     }
 }

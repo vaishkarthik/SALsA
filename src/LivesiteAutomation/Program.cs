@@ -1,4 +1,5 @@
-﻿using LivesiteAutomation.Kusto;
+﻿using LivesiteAutomation.Json2Class;
+using LivesiteAutomation.Kusto;
 using System;
 using System.Collections.Generic;
 using System.Linq;

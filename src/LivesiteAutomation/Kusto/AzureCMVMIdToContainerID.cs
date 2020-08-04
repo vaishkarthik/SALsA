@@ -30,7 +30,7 @@ namespace LivesiteAutomation.Kusto
             return ParseResult(table);
         }
 
-        private MessageLine ParseResult(List<object[]> table)
+        private new MessageLine ParseResult(List<object[]> table)
         {
             MessageLine message = new MessageLine()
             {

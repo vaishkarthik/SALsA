@@ -1,9 +1,11 @@
 ﻿using LivesiteAutomation.Json2Class;
+using LivesiteAutomation.Kusto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LivesiteAutomation
 {
@@ -69,6 +71,31 @@ namespace LivesiteAutomation
             }
             var deployments = new ARMSubscription() { deployments = armAnalysed.Values.Cast<ARMDeployment>().ToList() };
             return deployments;
+        }
+
+
+        public GuestAgentKustoStruct AnalyzeARMResourceURI(string subscriptions, string resourceGroups, string virtualMachines)
+        {
+            var vminfo = new VMA(Id).BuildAndSendRequestRaw(subscriptions, resourceGroups, virtualMachines);
+
+            if(vminfo.Count <= 1)
+            {
+                throw new Exception(String.Format(
+                    "Kusto query for Deployment {0}//{1}//{2} returned empty results", subscriptions, resourceGroups, virtualMachines));
+            }    
+
+            SALsA.GetInstance(Id)?.Log.Send(KustoBase.ParseResult(vminfo), htmlfy: false);
+
+            var kustoInfo = new GuestAgentKustoStruct
+            {
+                Cluster = (string)vminfo.Last()[2],
+                ContainerId = (string)vminfo.Last()[3],
+                NodeId = (string)vminfo.Last()[4],
+                RoleInstanceName = (string)vminfo.Last()[0]
+            };
+           
+            SALsA.GetInstance(Id)?.Log.Information(vminfo);
+            return kustoInfo;
         }
     }
 }

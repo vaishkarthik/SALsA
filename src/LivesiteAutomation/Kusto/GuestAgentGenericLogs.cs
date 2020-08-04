@@ -64,7 +64,7 @@ namespace LivesiteAutomation.Kusto
             return ParseResult(table);
         }
 
-        private MessageLine[] ParseResult(List<object[]> table)
+        private new MessageLine[] ParseResult(List<object[]> table)
         {
             MessageLine[] messages = new MessageLine[table.Count - 1];
             for (int i = 1; i < table.Count; ++i)
