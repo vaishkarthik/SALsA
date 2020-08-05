@@ -28,7 +28,7 @@ namespace LivesiteAutomation
             // VMConsoleSerialLog contain only one file, compressed in a zip.
             return Task.Run(() => (
                      task.Result != null ? Image.FromStream(Utility.ExtractZip(task.Result).Entries.Where(x => x.Name != "").First().Open()) : null
-                )) ;
+                ));
         }
         // TODO : make sovereign cloud available
         public static Task<Image> GetVMConsoleScreenshot(int icm, ARMDeployment deployment, int id)

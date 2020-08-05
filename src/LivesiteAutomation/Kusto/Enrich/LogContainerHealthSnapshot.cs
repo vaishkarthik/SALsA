@@ -30,7 +30,7 @@ namespace LivesiteAutomation.Kusto
         public LogContainerHealthSnapshot(int icm, string containerId, string dateTime = null, bool send = false) : base(icm, send)
         {
             _startTime = dateTime != null ? dateTime : ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField);
-            if(_startTime == null) { _startTime = DefaultStartTime; }    
+            if (_startTime == null) { _startTime = DefaultStartTime; }
             _containerId = containerId;
             Init();
         }

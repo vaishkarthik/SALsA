@@ -75,7 +75,7 @@ namespace LivesiteAutomation.Json2Class
             public string smevmssname { get; set; }
             public string smeblobsasurl { get { return ""; } }
             public string wellknownscopedsubscriptionid { get; set; }
-            
+
             public string smelogextractmode { get; set; }
             public string smeskiptostep { get; set; }
             public int smetimeoutinmins { get; set; }

@@ -66,7 +66,7 @@ namespace LivesiteAutomation
                         Fabric = instance.Last().Cluster
                     };
                 }
-                catch 
+                catch
                 {
                     try
                     {
@@ -177,7 +177,8 @@ namespace LivesiteAutomation
             else if (manualRun.GetType() == typeof(ManualRun_RDFE_Fabric))
             {
                 var rdfe = (ManualRun_RDFE_Fabric)manualRun;
-                var vmInfo = new ShortRDFERoleInstance { 
+                var vmInfo = new ShortRDFERoleInstance
+                {
                     ContainerID = new Guid(rdfe.ContainerID),
                     Fabric = rdfe.FabricCluster,
                     NodeId = new Guid(rdfe.NodeId)
@@ -201,7 +202,7 @@ namespace LivesiteAutomation
         {
             try
             {
-                new VMEGAnalysis(Id, containerId, send : true);
+                new VMEGAnalysis(Id, containerId, send: true);
                 new VMA(Id, containerId, send: true);
                 new LogContainerHealthSnapshot(Id, containerId, send: true);
                 new GuestAgentGenericLogs(Id, containerId, send: true);
@@ -219,7 +220,7 @@ namespace LivesiteAutomation
             var currentICM = SALsA.GetInstance(Id).ICM;
             var title = currentICM.CurrentICM.Title;
             var isHostIssue = Regex.Match(title, @"HostGAPlugin.*Cluster.*Node.*(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}", RegexOptions.IgnoreCase).Success;
-            if(isHostIssue)
+            if (isHostIssue)
             {
                 var splitTitle = title.ToLowerInvariant().Replace(" :", ":").Replace(": ", ":").Replace(",", " ").Replace(".", " ").Replace("nodeid", "node").Split(' ');
                 splitTitle = Array.FindAll(splitTitle, s => s.Contains(":"));
@@ -233,8 +234,8 @@ namespace LivesiteAutomation
                 var startTime = creationTime.AddHours(-12);
                 var endTime = new DateTime(Math.Min(creationTime.AddHours(+12).Ticks, DateTime.UtcNow.Ticks));
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename, 
-                    GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid,startTime.ToString("s"), endTime.ToString("s")), Id)
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename,
+                    GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, startTime.ToString("s"), endTime.ToString("s")), Id)
                 );
             }
             return isHostIssue;
@@ -253,8 +254,8 @@ namespace LivesiteAutomation
             );
 
             var rawInfo = LogContainerId(modelTask, Id);
-            if(rawInfo != null)
-            { 
+            if (rawInfo != null)
+            {
                 var vmInfo = new ShortRDFERoleInstance
                 {
                     ContainerID = new Guid(rawInfo.ContainerId),
@@ -304,7 +305,7 @@ namespace LivesiteAutomation
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep, instanceId), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, modelTask = GenevaActions.GetVMModelAndInstanceView(Id, dep, instanceId), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep, instanceId), Id)
-            ); 
+            );
             var rawInfo = LogContainerId(modelTask, Id);
             if (rawInfo != null)
             {
@@ -372,7 +373,7 @@ namespace LivesiteAutomation
                 {
                     return (ComputeType.Unknown, null);
                 }
-                else 
+                else
                 {
                     return (ComputeType.PaaS, paasDep);
                 }
@@ -444,7 +445,7 @@ namespace LivesiteAutomation
             {
                 var tmp = rdfeDeps.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()
                                       || this.ResourceGroupName.ToLowerInvariant().Contains(x.Id.ToLowerInvariant())).ToList();
-                if(tmp.Count > 0)
+                if (tmp.Count > 0)
                 {
                     rdfeDeps = tmp;
                 }
@@ -458,7 +459,7 @@ namespace LivesiteAutomation
                 // Best effort guess
                 var paasVMName = VMName == this.VMName ? String.Format("{0}_IN_0", VMName) : this.VMName;
                 var ret = rdfeDeps.Where(x => x.RoleInstances.Where(y => y.RoleInstanceName.ToLowerInvariant().Trim() == paasVMName.ToLowerInvariant().Trim()).ToList().Count >= 1).ToList();
-                if(ret.Count() > 0)
+                if (ret.Count() > 0)
                 {
                     return ret.First();
                 }

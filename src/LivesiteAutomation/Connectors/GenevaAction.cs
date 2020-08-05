@@ -13,7 +13,7 @@ using System.IO;
 namespace LivesiteAutomation
 {
     public partial class GenevaActions
-    { 
+    {
         private class GenevaAction
         {
             //private ClientHomeSts sts;
@@ -34,7 +34,7 @@ namespace LivesiteAutomation
                     this.operationName = operationName;
                     this.actionParam = actionParam;
                     Uri dstsUri = null;
-                    switch(SALsA.GetInstance(icm)?.ICM.CurrentICM.SiloId)
+                    switch (SALsA.GetInstance(icm)?.ICM.CurrentICM.SiloId)
                     {
                         case 1:
                             this.actionsEnvironments = ActionsEnvironments.Public;

@@ -58,10 +58,10 @@ namespace LivesiteAutomation.Connectors
                 List<object[]> data = new List<object[]>();
                 data.Add(new object[dt.Columns.Count]);
                 dt.Columns.CopyTo(data[0], 0);
-                foreach(DataRow line in dt.Rows)
+                foreach (DataRow line in dt.Rows)
                 {
                     data.Add(new object[dt.Columns.Count]);
-                    line.ItemArray.CopyTo(data[data.Count-1], 0);
+                    line.ItemArray.CopyTo(data[data.Count - 1], 0);
                 }
                 return data;
             }

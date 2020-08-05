@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace LivesiteAutomation.Commons
 {
     /// <summary>
-    /// Source : Jorg Ian Floren
+    /// Source : 
     /// https://stackoverflow.com/a/39450277/4753483
     /// </summary>
     public static class HttpClientExtensions

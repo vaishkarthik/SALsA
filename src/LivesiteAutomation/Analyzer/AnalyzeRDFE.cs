@@ -41,11 +41,11 @@ namespace LivesiteAutomation
             xml = xml.Replace("=== <", "<").Replace("> ===", ">").Replace("&", "&amp;").Trim();
             xml = xml.Replace("<", "\n<").Replace(">", ">\n").Trim();
             xml = xml.Replace("xmlns:xsd", "xmlns_xsd").Replace("xmlns:xsi", "xmlns_xsi");
-            var xmlArray = xml.Split( new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None );
+            var xmlArray = xml.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             var comp = new Regex(@"^\s*\w*(Label|LastRefreshTime):.*", RegexOptions.Singleline | RegexOptions.Compiled);
             for (int i = 0; i < xmlArray.Length; ++i)
             {
-                if(comp.IsMatch(xmlArray[i]))
+                if (comp.IsMatch(xmlArray[i]))
                 {
                     var pieces = xmlArray[i].Split(new[] { ':' }, 2);
                     pieces[1] = WebUtility.UrlEncode(pieces[1]);
@@ -58,7 +58,7 @@ namespace LivesiteAutomation
             using (var reader = XmlReader.Create(stream))
             {
                 var result = (Json2Class.RDFESubscriptionWrapper.Subscription)serializer.Deserialize(reader);
-                
+
                 var multiDeployments = result.HostedService;
                 var rdfeSubscription = new RDFESubscription();
                 foreach (var element in multiDeployments)
@@ -76,7 +76,7 @@ namespace LivesiteAutomation
                 return rdfeSubscription;
             }
         }
-        
+
         private List<RDFEDeployment> BuildDeployment(Json2Class.RDFESubscriptionWrapper.SubscriptionHostedService element)
         {
             try
@@ -117,7 +117,7 @@ namespace LivesiteAutomation
                 return null;
             }
         }
-        
+
         private string[] PrepClassFromFakeXML(string[] tmp)
         {
             var dep = String.Join("\n", tmp).Trim().Replace("\r\n", "\n").Split('\n').Select(e => e.Trim()).ToArray();

@@ -32,7 +32,7 @@ namespace SALsA_REST.Models
 
         public bool RunAutomation(int id, object obj = null)
         {
-            if(IsRunning(id))
+            if (IsRunning(id))
             {
                 return false;
             }

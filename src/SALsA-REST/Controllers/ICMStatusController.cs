@@ -14,7 +14,7 @@ namespace SALsA_REST.Controllers
 {
     public class ICMStatusController : ApiController
     {
-        
+
         // GET: api/ICMStatus
         public HttpResponseMessage Get()
         {
@@ -30,7 +30,7 @@ namespace SALsA_REST.Controllers
 
                 var status = String.Format("/api/icm/status/{0}", icm);
                 status = LivesiteAutomation.Utility.UrlToHml(ICMModel.Instance.IsRunning(icm) ? "Running" : "Done", status, 20);
-     
+
                 lst.Add(new string[] { icmLink, status });
             }
             string result = LivesiteAutomation.Utility.List2DToHTML(lst, true);
@@ -46,7 +46,7 @@ namespace SALsA_REST.Controllers
             string content;
             try
             {
-                var filePath= LivesiteAutomation.SALsA.GetInstance(id)?.Log?.LogFullPath;
+                var filePath = LivesiteAutomation.SALsA.GetInstance(id)?.Log?.LogFullPath;
                 using (FileStream fileStream = new FileStream(
                         filePath,
                         FileMode.Open,

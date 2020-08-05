@@ -14,7 +14,8 @@ namespace LivesiteAutomation
         public static Task<Image> GetClassicVMConsoleScreenshot(int icm, ShortRDFERoleInstance instance)
         {
             SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetARMSubscription with params {0}", instance);
-            var param = new GenevaOperations.GetClassicVMScreenshot {
+            var param = new GenevaOperations.GetClassicVMScreenshot
+            {
                 smefabrichostparam = instance.Fabric,
                 smescreenshotsizeparam = Constants.GetClassicVMClassicScreenshotSize,
                 smetenantnameparam = instance.DeploymentName,

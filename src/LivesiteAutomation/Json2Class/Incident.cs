@@ -48,7 +48,7 @@ namespace LivesiteAutomation
         public class DescriptionPost
         {
             public class NewDescriptionEntryClass
-            { 
+            {
                 public string Text;
                 public string RenderType;
             }

@@ -51,7 +51,7 @@ namespace LivesiteAutomation
         }
 
         // https://msdn.microsoft.com/en-us/magazine/ff714589.aspx
-        private enum LogLevel { Online = 0x0020, Verbose = 0x0010, Information = 0x0008, Warning = 0x0004, Error = 0x002, Critical = 0x001};
+        private enum LogLevel { Online = 0x0020, Verbose = 0x0010, Information = 0x0008, Warning = 0x0004, Error = 0x002, Critical = 0x001 };
 
         public void Send(object obj)
         {
@@ -64,13 +64,13 @@ namespace LivesiteAutomation
             {
                 InternalLog("Got null string to Send to ICM !", LogLevel.Error);
             }
-            string toSend = arg.Length > 0 ?  String.Format(CultureInfo.InvariantCulture, ss, arg) : ss;
+            string toSend = arg.Length > 0 ? String.Format(CultureInfo.InvariantCulture, ss, arg) : ss;
             InternalLog(toSend, LogLevel.Online);
             SendOnline(toSend);
         }
         public void Send(string ss, bool htmlfy, params object[] arg)
         {
-            if(ss == null)
+            if (ss == null)
             {
                 InternalLog("Got null string to Send to ICM !", LogLevel.Error);
             }

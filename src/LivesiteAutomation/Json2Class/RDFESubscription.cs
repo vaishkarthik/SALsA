@@ -117,8 +117,8 @@ namespace LivesiteAutomation.Json2Class
         public string VirtualIPs { get; set; }
         public string VirtualNetworkId { get; set; }
         public string VirtualNetworkName { get; set; }
-        public List<RDFERoleInstance> RoleInstances {get; set;}
-}
+        public List<RDFERoleInstance> RoleInstances { get; set; }
+    }
 
     public class RDFESubscription
     {
@@ -133,6 +133,6 @@ namespace LivesiteAutomation.Json2Class
         public string Fabric;
         public Guid ContainerID;
         public Guid NodeId;
-        public override string ToString(){return Utility.ObjectToJson(this, true);}
+        public override string ToString() { return Utility.ObjectToJson(this, true); }
     }
 }

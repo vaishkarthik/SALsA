@@ -14,13 +14,13 @@ namespace LivesiteAutomation
         ARMSubscription AnalyzeARMSubscription(Guid subscriptionId, string ressourceGroupName)
         {
             try
-            { 
+            {
                 var arm = GenevaActions.GetARMSubscriptionRG(Id, subscriptionId, ressourceGroupName).Result;
                 var armSubscription = AnalyzeARMSubscriptionResult(arm);
-                
+
                 return armSubscription;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 SALsA.GetInstance(Id)?.Log.Error("Unable to get or analyse the ARM subscription {0}", this.SubscriptionId);
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
@@ -78,12 +78,12 @@ namespace LivesiteAutomation
         {
             var vminfo = new VMA2ContainerId(Id, subscriptions, resourceGroups, virtualMachines);
 
-            if(vminfo.Results.Length == 0)
+            if (vminfo.Results.Length == 0)
             {
                 throw new Exception(String.Format(
                     "Kusto query for Deployment {0}//{1}//{2} returned empty results", subscriptions, resourceGroups, virtualMachines));
-            }    
-           
+            }
+
             SALsA.GetInstance(Id)?.Log.Send(vminfo.HTMLResults, htmlfy: false);
             SALsA.GetInstance(Id)?.Log.Information(vminfo.Results);
             return vminfo.Results;

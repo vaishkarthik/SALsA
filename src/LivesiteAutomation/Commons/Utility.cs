@@ -34,8 +34,8 @@ namespace LivesiteAutomation
 
             public void AddOneTask(Task t)
             {
-                if(t != null)
-                { 
+                if (t != null)
+                {
                     Tasks.Add(t);
                 }
                 else
@@ -61,11 +61,11 @@ namespace LivesiteAutomation
                 }
                 catch
                 {
-                    for(int i = Tasks.Count - 1; i >= 0; --i)
+                    for (int i = Tasks.Count - 1; i >= 0; --i)
                     {
                         try
-                        { 
-                            if(!Tasks[i].IsCompleted)
+                        {
+                            if (!Tasks[i].IsCompleted)
                             {
                                 Tasks[i].GetAwaiter().GetResult();
                             }
@@ -88,7 +88,7 @@ namespace LivesiteAutomation
                 }
             }
         }
-        
+
         public static string ShortRandom
         {
             get
@@ -137,7 +137,8 @@ namespace LivesiteAutomation
                             new[] { Environment.NewLine },
                             StringSplitOptions.None
                         );
-            var htmlLine = lines.Select(c => {
+            var htmlLine = lines.Select(c =>
+            {
                 int sizeC = c.Length;
                 c = c.TrimStart();
                 sizeC -= c.Length;
@@ -185,7 +186,7 @@ namespace LivesiteAutomation
             name = FormatFileName(Id, name);
             var output = (await task).Open();
             if (output == null)
-            { 
+            {
                 // TODO : ICM SEND COULD NOT FIND FILE
                 return;
             }
@@ -197,7 +198,7 @@ namespace LivesiteAutomation
         public static async Task SaveAndSendBlobTask(string name, Task<String> task, int Id)
         {
             name = FormatFileName(Id, name);
-            var output = await task; 
+            var output = await task;
             await BlobStorage.UploadText(Id, name, output);
             SendSASToICM(name, Id);
             Utility.SaveToFile(name, output, Id);
@@ -272,7 +273,7 @@ namespace LivesiteAutomation
         public static void UploadLog(int Id)
         {
             try
-            { 
+            {
                 var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
                 var blobName = String.Format("{0}-{1}_{2}_{3}{4}", Constants.LogFileNamePrefix, SALsA.GetInstance(Id)?.Log.UID,
                     currentTime, Id, Constants.LogFileNameExtension);
@@ -288,14 +289,14 @@ namespace LivesiteAutomation
             }
         }
 
-        public static string List2DToHTML<T> (List<T[]> result, bool raw = false)
+        public static string List2DToHTML<T>(List<T[]> result, bool raw = false)
         {
             using (var sw = new StringWriter())
             {
                 sw.WriteLine("<table style=\"margin-right:auto;margin-left:auto;width:25%;\">");
-                for(int i = 0; i < result.Count; ++i)
+                for (int i = 0; i < result.Count; ++i)
                 {
-                    if(i == 0)
+                    if (i == 0)
                     {
                         sw.WriteLine("<tr style=\"text-align:left;padding-top:0.5em;padding-bottom:0.5em;font-weight:bold;font-size:22;\" bgcolor=\"#d3d3d3\">");
                     }
@@ -303,10 +304,10 @@ namespace LivesiteAutomation
                     {
                         sw.WriteLine("<tr style=\"text-align:left;padding-top:0.5em;padding-bottom:0.5em;\">");
                     }
-                    for(int j = 0; j < result[i].Length; ++j)
+                    for (int j = 0; j < result[i].Length; ++j)
                     {
                         sw.Write("<td>");
-                        if(raw == true)
+                        if (raw == true)
                         {
                             sw.Write(result[i][j]);
                         }
