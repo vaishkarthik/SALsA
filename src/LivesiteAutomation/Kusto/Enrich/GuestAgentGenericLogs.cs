@@ -44,14 +44,17 @@ namespace LivesiteAutomation.Kusto
         string _containerId;
         string _startTime;
 
-        public GuestAgentGenericLogs(int icm, string containerId, string dateTime = null) : base(icm)
+        public GuestAgentGenericLogs(int icm, string containerId, string dateTime = null, bool send = false) : base(icm, send)
         {
             _startTime = dateTime != null ? dateTime : ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField);
+            if (_startTime == null) { _startTime = DefaultStartTime; }
+
             _containerId = containerId;
+            Init();
         }
         override protected void GenerateKustoQuery()
         {
-            KustoQuery = String.Format("where TIMESTAMP > datetime({0}) | where ContainerId ~= {1} | project PreciseTimeStamp=todatetime(Context2), EventName, Level=CapabilityUsed, Event=Context3, Message=Context1, Cluster, NodeId, ContainerId, RoleInstanceName, TenantName, GAVersion, Region, OSVersion, ExecutionMode, RAM, Processors | sort by PreciseTimeStamp desc", _startTime, _containerId);
+            KustoQuery = String.Format("where TIMESTAMP > datetime({0}) | where ContainerId =~ \"{1}\" | project PreciseTimeStamp=todatetime(Context2), EventName, Level=CapabilityUsed, Event=Context3, Message=Context1, Cluster, NodeId, ContainerId, RoleInstanceName, TenantName, GAVersion, Region, OSVersion, ExecutionMode, RAM, Processors | sort by PreciseTimeStamp desc", _startTime, _containerId);
         }
     }
 }

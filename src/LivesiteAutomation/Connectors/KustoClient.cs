@@ -49,6 +49,7 @@ namespace LivesiteAutomation.Connectors
             {
                 query = String.Format("{0} | {1} | limit {2}", table, query, Constants.KustoClientQueryLimit);
             }
+            SALsA.GetInstance(icm)?.Log.Verbose("Sending {0} query : {1}", client.DefaultDatabaseName, query);
             var clientRequestProperties = new ClientRequestProperties() { ClientRequestId = Guid.NewGuid().ToString() };
             using (var reader = client.ExecuteQuery(query, clientRequestProperties))
             {

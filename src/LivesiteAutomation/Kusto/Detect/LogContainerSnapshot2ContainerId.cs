@@ -23,9 +23,10 @@ namespace LivesiteAutomation.Kusto
 
         private string _vmId;
 
-        public LogContainerSnapshot2ContainerId(int icm, string vmId) : base(icm) 
+        public LogContainerSnapshot2ContainerId(int icm, string vmId, bool send = false) : base(icm, send)
         {
             _vmId = vmId;
+            Init();
         }
         protected override void GenerateKustoQuery()
         {

@@ -197,28 +197,15 @@ namespace LivesiteAutomation
             }
         }
 
-        static void ExecuteKustoEnrichment(int Id, string containerId)
+        public static void ExecuteKustoEnrichment(int Id, string containerId)
         {
             try
             {
-                var vmEGAnalysis = new VMEGAnalysis(Id, containerId);
-                SALsA.GetInstance(Id).Log.Send(vmEGAnalysis.HTMLResults, htmlfy: false);
-
-                var vma = new VMA(Id, containerId);
-                SALsA.GetInstance(Id).Log.Send(vma.HTMLResults, htmlfy: false);
-
-                var eg = new VMEGAnalysis(Id, containerId);
-                SALsA.GetInstance(Id).Log.Send(eg.HTMLResults, htmlfy: false);
-
-                var lchs = new LogContainerHealthSnapshot(Id, containerId);
-                SALsA.GetInstance(Id).Log.Send(lchs.HTMLResults, htmlfy: false);
-
-                var gagl = new GuestAgentGenericLogs(Id, containerId);
-                SALsA.GetInstance(Id).Log.Send(gagl.HTMLResults, htmlfy: false);
-
-                var gaee = new GuestAgentExtensionEvents(Id, containerId);
-                SALsA.GetInstance(Id).Log.Send(gaee.HTMLResults, htmlfy: false);
-
+                new VMEGAnalysis(Id, containerId, send : true);
+                new VMA(Id, containerId, send: true);
+                new LogContainerHealthSnapshot(Id, containerId, send: true);
+                new GuestAgentGenericLogs(Id, containerId, send: true);
+                new GuestAgentExtensionEvents(Id, containerId, send: true);
             }
             catch (Exception ex)
             {

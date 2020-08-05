@@ -13,10 +13,14 @@ namespace LivesiteAutomation.Kusto
     {
         public class MessageLine
         {
+            public DateTime PreciseTimeStamp { get; set; }
             public string Cluster { get; set; }
-            public string NodeId { get; set; }
-            public string ContainerId { get; set; }
             public string RoleInstanceName { get; set; }
+            public string ContainerId { get; set; }
+            public string NodeId { get; set; }
+            public string TenantName { get; set; }
+            public string TenantId { get; set; }
+            public string AvailabilityState { get; set; }
             public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
 
@@ -28,16 +32,17 @@ namespace LivesiteAutomation.Kusto
         private string _tenantName;
         private string _virtualMachinesName;
 
-        public CAD(int icm, string subscriptions, string tenantName, string virtualMachinesName) : base(icm)
+        public CAD(int icm, string subscriptions, string tenantName, string virtualMachinesName, bool send = false) : base(icm, send)
         {
             _subscriptions = subscriptions;
             _tenantName = tenantName;
             _virtualMachinesName = virtualMachinesName;
+            Init();
         }
 
         override protected void GenerateKustoQuery()
         {
-            KustoQuery = String.Format("where LastKnownSubscriptionId =~  \"{0}\" | where TenantName =~  \"{1}\" | where RoleInstanceName has  \"{2}\" | sort by PreciseTimeStamp desc | project PreciseTimeStamp, Cluster, RoleInstanceName, ContainerId, NodeId, TenantName, TenantId, AvailabilityState | summarize arg_max(PreciseTimeStamp, *) by RoleInstanceName",
+            KustoQuery = String.Format("where LastKnownSubscriptionId =~  \"{0}\" | where TenantName =~  \"{1}\" | where RoleInstanceName has  \"{2}\" | sort by PreciseTimeStamp desc | summarize arg_max(PreciseTimeStamp, *) by RoleInstanceName | project PreciseTimeStamp, Cluster, RoleInstanceName, ContainerId, NodeId, TenantName, TenantId, AvailabilityState",
                                                             _subscriptions, _tenantName, _virtualMachinesName);
         }
     }

@@ -117,6 +117,9 @@ namespace LivesiteAutomation
         public const string KustoLogContainerSnapshotDatabase = "AzureCM";
         public const string KustoLogContainerSnapshotTable = "LogContainerSnapshot";
 
+        // LogContainerHealthSnapshot.cs
+        public const string KustoLogContainerHealthSnapshotTable = "LogContainerHealthSnapshot";
+
         // VMEGAnalysis.cs
         public const string KustoExecutionGraphCluster = "Vmakpi";
         public const string KustoExecutionGraphDatabase = "CAD";

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,9 +13,9 @@ namespace LivesiteAutomation.Kusto
         public class MessageLine
         {
             public string ResourceId { get; set; }
-            public string DowntimeStartInUtc { get; set; }
-            public string DowntimeEndInUtc { get; set; }
-            public string DowntimeDurationInSec { get; set; }
+            public DateTime DowntimeStartInUtc { get; set; }
+            public DateTime DowntimeEndInUtc { get; set; }
+            public int DowntimeDurationInSec { get; set; }
             public string IncarnationId { get; set; }
             public string DowntimeCategory { get; set; }
             public string FailureCategory { get; set; }
@@ -30,9 +31,10 @@ namespace LivesiteAutomation.Kusto
 
         private string _containerId;
 
-        public VMEGAnalysis(int icm, string containerId) : base(icm)
+        public VMEGAnalysis(int icm, string containerId, bool send = false) : base(icm, send)
         {
             _containerId = containerId;
+            Init();
         }
 
         protected override void GenerateKustoQuery()

@@ -14,6 +14,7 @@ namespace LivesiteAutomation
         // For when compiling as an exe
         static void Main(string[] args)
         {
+            new VMEGAnalysis(-1, "96898367-1244-4428-ad56-de2013e4456b", send: true);
             // Test if input arguments were supplied:
             if (args.Length >= 1 && int.TryParse(args[0], out int num))
             {

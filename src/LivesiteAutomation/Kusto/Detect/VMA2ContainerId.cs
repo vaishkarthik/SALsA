@@ -11,7 +11,7 @@ namespace LivesiteAutomation.Kusto
     {
         public class MessageLine
         {
-            public string PreciseTimeStamp { get; set; }
+            public DateTime PreciseTimeStamp { get; set; }
             public string Cluster { get; set; }
             public string RoleInstanceName { get; set; }
             public string ContainerId { get; set; }
@@ -31,11 +31,12 @@ namespace LivesiteAutomation.Kusto
         private string _resourceGroupName;
         private string _virtualMachinesName;
 
-        public VMA2ContainerId(int icm, string subscriptions, string resourceGroupName, string virtualMachinesName) : base(icm)
+        public VMA2ContainerId(int icm, string subscriptions, string resourceGroupName, string virtualMachinesName, bool send = false) : base(icm, send)
         {
             _subscriptions = subscriptions;
             _resourceGroupName = resourceGroupName;
             _virtualMachinesName = virtualMachinesName;
+            Init();
         }
 
         protected override void GenerateKustoQuery()
