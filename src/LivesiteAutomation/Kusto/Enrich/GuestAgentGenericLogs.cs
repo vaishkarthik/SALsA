@@ -46,9 +46,7 @@ namespace LivesiteAutomation.Kusto
 
         public GuestAgentGenericLogs(int icm, string containerId, string dateTime = null, bool send = false) : base(icm, send)
         {
-            _startTime = dateTime != null ? dateTime : ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField);
-            if (_startTime == null) { _startTime = DefaultStartTime; }
-
+            _startTime = Utility.InitStartTime(icm, dateTime);
             _containerId = containerId;
             Init();
         }

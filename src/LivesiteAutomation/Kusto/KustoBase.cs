@@ -14,7 +14,7 @@ namespace LivesiteAutomation.Kusto
 {
     public abstract class KustoBase<MessageLine> where MessageLine : new()
     {
-        protected static string DefaultStartTime = DateTime.Today.AddDays(-7).ToUtcString();
+        public static string DefaultStartTime = DateTime.Today.AddDays(-7).ToUniversalTime().ToString("o");
         protected abstract string Cluster { get; }
         protected abstract string DataBase { get; }
         protected abstract string Table { get; }
@@ -92,7 +92,15 @@ namespace LivesiteAutomation.Kusto
                 for (int j = 0; j < _RawResults[i].Length; ++j)
                 {
                     System.Reflection.PropertyInfo pinfo = typeof(MessageLine).GetProperty(((DataColumn)_RawResults[0][j]).Caption);
-                    pinfo.SetValue(line, _RawResults[i][j]);
+                    try
+                    {
+                        pinfo.SetValue(line, _RawResults[i][j]);
+                    }
+                    catch(Exception ex)
+                    {
+                        SALsA.GetInstance(this.Icm).Log.Warning("While processing {0}.{1}.{2}, failed to assign value : \"{3}\") to field {4}. Exception : {5}"
+                            , Cluster, DataBase, Table, _RawResults[i][j], _RawResults[0][j], ex);
+                    }
                 }
                 messages[i - 1] = line;
             }

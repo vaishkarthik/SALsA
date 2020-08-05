@@ -210,7 +210,7 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Critical("Failed to query EG");
+                SALsA.GetInstance(Id)?.Log.Critical("Failed to Enrich Kusto ");
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
         }

@@ -89,6 +89,24 @@ namespace LivesiteAutomation
             }
         }
 
+        public static string InitStartTime(int Icm, string dateTime = null)
+        {
+            if(dateTime != null)
+            {
+                return dateTime;
+            }
+
+            var _startTime = ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField);
+            if (_startTime == null)
+            {
+                return Kusto.KustoBase<DateTime>.DefaultStartTime;
+            }
+            else
+            {
+                return DateTime.Parse(_startTime).AddDays(-1).ToUniversalTime().ToString("o");
+            }
+        }
+
         public static string ShortRandom
         {
             get
