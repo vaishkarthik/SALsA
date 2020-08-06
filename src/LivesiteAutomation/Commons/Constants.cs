@@ -102,7 +102,8 @@ namespace LivesiteAutomation
         public const string GetContainerSettingsOperatorName = "GetContainerSettings";
 
         // KustoClient.cs
-        public const int KustoClientQueryLimit = 1000;
+        public const int KustoClientQueryLimit = 50;
+        public const int MaxResultCount = 5;
 
         // GuestAgentGenericLogs.cs
         public const string KustoGuestAgentGenericLogsCluster = "rdos";

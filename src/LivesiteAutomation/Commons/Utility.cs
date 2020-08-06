@@ -307,11 +307,29 @@ namespace LivesiteAutomation
             }
         }
 
-        public static string List2DToHTML<T>(List<T[]> result, bool raw = false)
+        public static string List2DToHTML<T>(List<T[]> result, bool raw = false, bool fromKusto = false)
+        {
+            if(fromKusto)
+            {
+                return +result.Count > Constants.MaxResultCount ? "<details><summary>Results (click here for details)</summary>" : "" +
+                       "<table style=\"margin-right:auto;margin-left:auto;width:auto;overflow-x:scroll;overflow-y:scroll;height:500px;width:1000px;display:block;\">" +
+                       List2DToHTMLInternal(result, raw) +
+                       "</table>" + result.Count > Constants.MaxResultCount ? "</details>" : "";
+            }
+            else
+            {
+                return "<table style=\"margin-right:auto;margin-left:auto;width:25%;\">" +
+                       List2DToHTMLInternal(result, raw) +
+                       "</table>";
+            }
+        }
+
+
+        private static string List2DToHTMLInternal<T>(List<T[]> result, bool raw = false)
         {
             using (var sw = new StringWriter())
             {
-                sw.WriteLine("<table style=\"margin-right:auto;margin-left:auto;width:25%;\">");
+                sw.WriteLine("<tbody>");
                 for (int i = 0; i < result.Count; ++i)
                 {
                     if (i == 0)
@@ -337,6 +355,7 @@ namespace LivesiteAutomation
                     }
                     sw.WriteLine("</tr>");
                 }
+                sw.WriteLine("</tbody>");
                 return sw.ToString();
             }
         }

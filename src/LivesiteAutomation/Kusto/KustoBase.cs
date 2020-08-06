@@ -73,7 +73,7 @@ namespace LivesiteAutomation.Kusto
             }
             var query = KustoQuery.Replace("|", Environment.NewLine + "|");
             query = String.Format("cluster('{0}').database('{1}').{2}{3}", Cluster, DataBase, query, Environment.NewLine);
-            var htmlOut = Utility.List2DToHTML(_RawResults);
+            var htmlOut = Utility.List2DToHTML(_RawResults, fromKusto: true);
             var header = String.Format("<p>Execute: [<a href=\"https://dataexplorer.azure.com/clusters/{0}.kusto.windows.net/databases/{1}?query={2}\">Web</a>] [<a href=\"https://{0}.kusto.windows.net/{1}?query={2}&amp;web=0\">Desktop</a>] [<a href=\"https://lens.msftcloudes.com/v2/#/discover/query//results?datasource=(cluster:{0}.kusto.windows.net,database:{1},type:Kusto)&amp;query={2}&amp;runquery=1\">Web (Lens)</a>] [<a href=\"https://{0}.kusto.windows.net/{1}?query={2}&amp;saw=1\">Desktop (SAW)</a>] <a href=\"https://{0}.kusto.windows.net/{1}\">https://{0}.kusto.windows.net/{1}</a></p><pre><code>{3}</code></pre>",
                 this.Cluster, this.DataBase, Utility.Base64Encode(Utility.CompressString(query)), Utility.EncodeHtml(query));
             _HTMLResults = String.Format("{0}<br><br>{1}", header, htmlOut);
