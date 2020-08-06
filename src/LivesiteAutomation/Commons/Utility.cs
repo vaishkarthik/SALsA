@@ -311,10 +311,10 @@ namespace LivesiteAutomation
         {
             if(fromKusto)
             {
-                return +result.Count > Constants.MaxResultCount ? "<details><summary>Results (click here for details)</summary>" : "" +
+                return (result.Count > Constants.MaxResultCount ? "<details><summary>Results (click here for details)</summary>" : "") +
                        "<table style=\"margin-right:auto;margin-left:auto;width:auto;overflow-x:scroll;overflow-y:scroll;height:500px;width:1000px;display:block;\">" +
                        List2DToHTMLInternal(result, raw) +
-                       "</table>" + result.Count > Constants.MaxResultCount ? "</details>" : "";
+                       "</table>" + (result.Count > Constants.MaxResultCount ? "</details>" : "");
             }
             else
             {
