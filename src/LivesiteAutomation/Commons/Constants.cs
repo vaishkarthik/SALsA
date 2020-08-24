@@ -113,6 +113,9 @@ namespace LivesiteAutomation
         // GuestAgentExtensionEvents.cs
         public const string KustoGuestAgentExtensionEventsTable = "GuestAgentExtensionEvents";
 
+        // GuestAgentPerformanceCounterEvents.cs
+        public const string KustoGuestAgentPerformanceCounterEventsTable = "GuestAgentPerformanceCounterEvents";
+
         // AzureCMVMIdToContainerID.cs
         public const string KustoLogContainerSnapshotCluster = "AzureCM";
         public const string KustoLogContainerSnapshotDatabase = "AzureCM";

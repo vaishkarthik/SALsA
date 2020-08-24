@@ -19,16 +19,18 @@ namespace LivesiteAutomation.Kusto
         protected abstract string DataBase { get; }
         protected abstract string Table { get; }
 
-        private bool WriteToIcm;
+        virtual protected int KustoBaseLimit { get { return Constants.KustoClientQueryLimit; } }
+
+        protected bool WriteToIcm;
         protected int Icm;
         protected KustoClient kustoClient;
 
         protected List<object[]> RawResults { get { if (InitTask.IsCompleted == false) { InitTask.Wait(); } return _RawResults; } }
-        private List<object[]> _RawResults;
+        protected List<object[]> _RawResults;
         public MessageLine[] Results { get { if (InitTask.IsCompleted == false) { InitTask.Wait(); } return _Results; } }
-        private MessageLine[] _Results;
+        protected MessageLine[] _Results;
         public string HTMLResults { get { if (InitTask.IsCompleted == false) { InitTask.Wait(); } return _HTMLResults; } }
-        private string _HTMLResults;
+        protected string _HTMLResults;
 
         protected string KustoQuery;
         private Task InitTask;
@@ -49,7 +51,7 @@ namespace LivesiteAutomation.Kusto
                 {
                     kustoClient = new KustoClient(Cluster, DataBase, Icm);
                     GenerateKustoQuery();
-                    _RawResults = kustoClient.Query(Table, ref KustoQuery, this.Icm, null);
+                    _RawResults = kustoClient.Query(Table, ref KustoQuery, this.Icm, null, KustoBaseLimit);
                     BuildResult();
                     GenerateHTMLResult();
                 }
@@ -63,7 +65,7 @@ namespace LivesiteAutomation.Kusto
             SALsA.GetInstance(this.Icm)?.TaskManager.AddOneTask(this.InitTask);
         }
 
-        private void GenerateHTMLResult()
+        protected virtual void GenerateHTMLResult()
         {
             if (_Results.Length == 0)
             {

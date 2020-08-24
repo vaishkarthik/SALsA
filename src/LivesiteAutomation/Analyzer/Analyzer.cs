@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Net.Mail;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
@@ -207,6 +208,7 @@ namespace LivesiteAutomation
                 new LogContainerHealthSnapshot(Id, containerId, send: true);
                 new GuestAgentGenericLogs(Id, containerId, send: true);
                 new GuestAgentExtensionEvents(Id, containerId, send: true);
+                new GuestAgentPerformanceCounterEvents(Id, containerId, send: true);
             }
             catch (Exception ex)
             {

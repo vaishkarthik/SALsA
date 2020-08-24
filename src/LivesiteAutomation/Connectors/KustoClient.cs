@@ -31,7 +31,7 @@ namespace LivesiteAutomation.Connectors
             SALsA.GetInstance(icm)?.Log.Information("Finished creating Kusto connector : {0}", kcsb);
         }
 
-        public List<object[]> Query(string table, ref string query, int icm, string timestampField = "TIMESTAMP")
+        public List<object[]> Query(string table, ref string query, int icm, string timestampField = "TIMESTAMP", int limit = Constants.KustoClientQueryLimit)
         {
             if (timestampField != null)
             {
@@ -43,11 +43,11 @@ namespace LivesiteAutomation.Connectors
                 }
                 string start = startTime.ToString("u");
                 //string end = SALsA.GetInstance(icm).ICM.CurrentICM.CreateDate.ToString("u");
-                query = String.Format("{0} | where {1} > datetime({2}) | {3} | limit {4}", table, timestampField, start, /*end,*/ query, Constants.KustoClientQueryLimit);
+                query = String.Format("{0} | where {1} > datetime({2}) | {3} | limit {4}", table, timestampField, start, /*end,*/ query, limit);
             }
             else
             {
-                query = String.Format("{0} | {1} | limit {2}", table, query, Constants.KustoClientQueryLimit);
+                query = String.Format("{0} | {1} | limit {2}", table, query, limit);
             }
             SALsA.GetInstance(icm)?.Log.Verbose("Sending {0} query : {1}", client.DefaultDatabaseName, query);
             var clientRequestProperties = new ClientRequestProperties() { ClientRequestId = Guid.NewGuid().ToString() };

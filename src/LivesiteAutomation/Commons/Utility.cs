@@ -89,6 +89,17 @@ namespace LivesiteAutomation
             }
         }
 
+        public static string BitMapToHTML(Bitmap bitmap)
+        {
+            using (var ms = new MemoryStream())
+            {
+                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                var base64 = Convert.ToBase64String(ms.GetBuffer()); //Get Base64
+                return String.Format("<img src=\"data:image/bmp;base64,{0}\" width=\"{1}\" height=\"{2}\" />",
+                                            base64, bitmap.Width, bitmap.Height);
+            }
+        }
+
         public static string InitStartTime(int Icm, string dateTime = null)
         {
             if(dateTime != null)
