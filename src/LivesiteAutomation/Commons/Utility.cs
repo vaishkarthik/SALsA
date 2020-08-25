@@ -89,12 +89,16 @@ namespace LivesiteAutomation
             }
         }
 
-        public static string BitMapToHTML(Bitmap bitmap)
+        public static string BitMapToHTML(Bitmap bitmap, long quality = 80)
         {
             using (var ms = new MemoryStream())
             {
-                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-                var base64 = Convert.ToBase64String(ms.GetBuffer()); //Get Base64
+                EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+                ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
+                EncoderParameters parameters = new EncoderParameters(1);
+                parameters.Param[0] = qualityParam;
+                bitmap.Save(ms, imageCodec, parameters);
+                var base64 = Convert.ToBase64String(ms.ToArray()); //Get Base64
                 return String.Format("<img src=\"data:image/bmp;base64,{0}\" width=\"{1}\" height=\"{2}\" />",
                                             base64, bitmap.Width, bitmap.Height);
             }

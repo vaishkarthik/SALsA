@@ -37,8 +37,7 @@ namespace LivesiteAutomation.Kusto
         }
         override protected void GenerateKustoQuery()
         {
-            KustoQuery = String.Format("where TIMESTAMP > datetime({0}) | where ContainerId =~ \"{1}\" |" +
-                "| where Category == \"Memory\" or Category == \"Processor\" | where Counter == \"% Processor Time\" or Counter == \"% Committed Bytes in Use\" | project PreciseTimeStamp, Category, Instance, Value | sort by PreciseTimeStamp desc", _startTime, _containerId);
+            KustoQuery = String.Format("where TIMESTAMP > datetime({0}) | where ContainerId =~ \"{1}\" | where Category == \"Memory\" or Category == \"Processor\" | where Counter == \"% Processor Time\" or Counter == \"% Committed Bytes in Use\" | project PreciseTimeStamp, Category, Instance, Value | sort by PreciseTimeStamp desc", _startTime, _containerId);
         }
 
         override protected void GenerateHTMLResult()
@@ -64,10 +63,10 @@ namespace LivesiteAutomation.Kusto
         public Bitmap GenerateBitmap()
         {
             var instances = new Dictionary<string, List<KeyValuePair<DateTime, double>>>();
-            foreach(var line in Results)
+            foreach(var line in _Results)
             {
                 var name = String.Format("{0}:{1}", line.Category, string.IsNullOrWhiteSpace(line.Instance) ? "_Total" : line.Instance);
-                if(instances[name] == null)
+                if(instances.ContainsKey(name) == false)
                 {
                     instances[name] = new List<KeyValuePair<DateTime, double>>();
                 }

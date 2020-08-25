@@ -16,8 +16,8 @@ namespace LivesiteAutomation.Commons
             area.XAxis.MajorGrid.IsVisible = true;
             area.YAxis.MajorGrid.IsVisible = true;
             area.XAxis.Scale.Format = "yyyy-MM-dd hh:mm";
-            area.XAxis.Title.Text = string.Empty;
-            area.YAxis.Title.Text = string.Empty;
+            area.XAxis.Title.Text = "Time";
+            area.YAxis.Title.Text = "%";
         }
 
         public void AddArea(string name, List<KeyValuePair<DateTime, double>> kvps, Color color)
@@ -30,7 +30,7 @@ namespace LivesiteAutomation.Commons
             control.GraphPane.AddCurve(name, ppl, color);
         }
 
-        public Bitmap GenerateGraph(int width = 700, int heigth = 350, float dpi = 72.0F)
+        public Bitmap GenerateGraph(int width = 768, int heigth = 576, float dpi = 120F)
         {
             control.AxisChange();
             control.Invalidate();
