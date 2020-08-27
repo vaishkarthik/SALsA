@@ -264,8 +264,12 @@ namespace LivesiteAutomation
                     Fabric = rawInfo.Cluster,
                     NodeId = new Guid(rawInfo.NodeId)
                 };
+                var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
+                var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id),
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename,
+                        GenevaActions.GetNodeDiagnosticsFiles(Id, vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s")), Id)
                 );
                 ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
             }
@@ -317,8 +321,12 @@ namespace LivesiteAutomation
                     Fabric = rawInfo.Cluster,
                     NodeId = new Guid(rawInfo.NodeId)
                 };
+                var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
+                var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id),
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename, 
+                        GenevaActions.GetNodeDiagnosticsFiles(Id, vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s")), Id)
                 );
                 ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
             }
@@ -341,11 +349,15 @@ namespace LivesiteAutomation
             };
 
             Task<string> modelTask = null;
+            var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
+            var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
 
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, vmInfo), Id)
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, vmInfo), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename,
+                    GenevaActions.GetNodeDiagnosticsFiles(Id, vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s")), Id)
             );
 
             ExecuteKustoEnrichment(Id, instance.ID.ToString());

@@ -122,6 +122,21 @@ namespace LivesiteAutomation
             }
         }
 
+        public static DateTime ICMImpactStartTime(int Icm)
+        {
+            DateTime date;
+            DateTime.TryParse(ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField), out date);
+            if (date == null)
+            {
+                date = SALsA.GetInstance(Icm).ICM.CurrentICM.ImpactStartDate;
+            }
+            if (date == null)
+            {
+                date = DateTime.Today.AddDays(-7).ToUniversalTime();
+            }
+            return date;
+        }
+
         public static string ShortRandom
         {
             get
