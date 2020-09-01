@@ -90,10 +90,6 @@ namespace LivesiteAutomation
                 ExecuteKustoEnrichment(Id, rdfeInfo.ContainerID.ToString());
             }
 
-            // TODO : Kusto fun
-            //var a = new LivesiteAutomation.Kusto.GuestAgentGenericLogs(icm);
-            //a.BuildAndSendRequest();
-
             CallInternalComputeTypes(type, dep);
         }
 
@@ -349,22 +345,26 @@ namespace LivesiteAutomation
             };
 
             Task<string> modelTask = null;
-            var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
-            var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
-
             SALsA.GetInstance(Id).TaskManager.AddTask(
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
                 Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, vmInfo), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename,
-                    GenevaActions.GetNodeDiagnosticsFiles(Id, vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s")), Id)
-            );
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, vmInfo), Id)
+                );
 
             ExecuteKustoEnrichment(Id, instance.ID.ToString());
             try
             {
                 var model = Utility.JsonToObject<Json2Class.ContainerSettings>(modelTask.Result);
                 vmInfo.NodeId = new Guid(model.NodeId);
+
+                var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
+                var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
+
+                SALsA.GetInstance(Id).TaskManager.AddTask(
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename,
+                    GenevaActions.GetNodeDiagnosticsFiles(Id, vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s")), Id)
+                    );
+
             }
             catch (Exception ex)
             {

@@ -235,7 +235,7 @@ namespace LivesiteAutomation
             var output = (await task).Open();
             if (output == null)
             {
-                // TODO : ICM SEND COULD NOT FIND FILE
+                SALsA.GetInstance(Id)?.Log.Warning("Could not create File {0} because Task output was null", name);
                 return;
             }
             await BlobStorage.UploadStream(Id, name, output);
@@ -257,7 +257,7 @@ namespace LivesiteAutomation
             var output = await task;
             if (output == null)
             {
-                // TODO : ICM SEND COULD NOT FIND FILE
+                SALsA.GetInstance(Id)?.Log.Warning("Could not create File {0} because Task output was null", name);
                 return;
             }
             using (MemoryStream ms = new MemoryStream())
@@ -274,7 +274,7 @@ namespace LivesiteAutomation
             var output = await task;
             if (output == null)
             {
-                // TODO : ICM SEND COULD NOT FIND FILE
+                SALsA.GetInstance(Id)?.Log.Warning("Could not create File {0} because Task output was null", name);
                 return;
             }
             await BlobStorage.UploadStream(Id, name, output);
