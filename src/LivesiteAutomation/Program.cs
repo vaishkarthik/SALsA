@@ -38,10 +38,13 @@ namespace LivesiteAutomation
             {
                 SALsA.GetInstance(icm)?.Log.Critical("Main failed !");
                 SALsA.GetInstance(icm)?.Log.Exception(ex);
+
+                SALsA.GetInstance(icm)?.TaskManager.WaitAllTasks();
                 //throw ex;
             }
             finally
             {
+
                 Utility.UploadLog(icm);
 
                 // How do you feel about memory leak ?

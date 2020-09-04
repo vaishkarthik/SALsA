@@ -33,10 +33,17 @@ namespace LivesiteAutomation
             this.Id = Id;
             Nullable<Guid> sub;
             (sub, ResourceGroupName, VMName, StartTime) = AnalyzeICM();
+            /*
             var isHostIssue = AnalyzeHost();
             if (isHostIssue == true)
             {
                 return;
+            }
+            */
+            if(!sub.HasValue)
+            {
+                SALsA.GetInstance(Id).Log.Send("Could not detect any valid SubscriptionId (must be a valid GUID). Aborting analysis.");
+                throw new ArgumentNullException("SubscriptionId must not be null");
             }
             SubscriptionId = (Guid)sub;
             SALsA.GetInstance(Id)?.Log.Send("{0}", Utility.ObjectToJson(this, true));
@@ -212,7 +219,7 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
         }
-
+        /*
         private bool AnalyzeHost()
         {
             var currentICM = SALsA.GetInstance(Id).ICM;
@@ -237,9 +244,8 @@ namespace LivesiteAutomation
                 );
             }
             return isHostIssue;
-
         }
-
+        */
         private void ExecuteAllActionsForIaaS(ARMDeployment dep)
         {
             Task<string> modelTask = null;
