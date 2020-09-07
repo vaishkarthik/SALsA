@@ -52,7 +52,7 @@ namespace LivesiteAutomation.Kusto
         }
         override protected void GenerateKustoQuery()
         {
-            KustoQuery = String.Format("where TIMESTAMP > datetime({0}) | where ContainerId =~ \"{1}\" | extend OperationSuccess = MapOperationSuccessField(OperationSuccess) | project  PreciseTimeStamp, ExtensionName = Name, ExtensionVersion = Version, ExtensionOperation = Operation, Operation, Message, TaskName, Duration, IsInternal, ExtensionType, Cluster, NodeId, ContainerId, RoleInstanceName, TenantName, GAVersion, Region, OSVersion, ExecutionMode, RAM, Processors | sort by PreciseTimeStamp desc",
+            KustoQuery = String.Format("where TIMESTAMP > datetime({0}) | where ContainerId =~ \"{1}\" | extend OperationSuccess = MapOperationSuccessField(OperationSuccess) | project  PreciseTimeStamp, ExtensionName = Name, ExtensionVersion = Version, ExtensionOperation = Operation, OperationSuccess, Message, TaskName, Duration, IsInternal, ExtensionType, Cluster, NodeId, ContainerId, RoleInstanceName, TenantName, GAVersion, Region, OSVersion, ExecutionMode, RAM, Processors | sort by PreciseTimeStamp desc",
                                      _startTime, _containerId);
         }
     }
