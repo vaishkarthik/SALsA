@@ -336,10 +336,10 @@ namespace LivesiteAutomation
 
         private void ExecuteAllActionsForPaaS(RDFEDeployment dep)
         {
-            var instance = dep.RoleInstances.Where(x => x.RoleInstanceName == VMName).FirstOrDefault();
+            var instance = dep.RoleInstances.Where(x => x.RoleInstanceName.EqualsOrdinalIgnoreCase(VMName)).FirstOrDefault();
             if (instance?.RoleInstanceName == null)
             {
-                instance = dep.RoleInstances.Where(x => x.RoleName == TryConvertInstanceNameToVMName(this.VMName)).FirstOrDefault();
+                instance = dep.RoleInstances.Where(x => x.RoleName.EqualsOrdinalIgnoreCase(TryConvertInstanceNameToVMName(this.VMName))).FirstOrDefault();
             }
             var vmInfo = new ShortRDFERoleInstance
             {
