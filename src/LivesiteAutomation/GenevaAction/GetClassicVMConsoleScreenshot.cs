@@ -18,7 +18,7 @@ namespace LivesiteAutomation
             {
                 smefabrichostparam = instance.Fabric,
                 smescreenshotsizeparam = Constants.GetClassicVMClassicScreenshotSize,
-                smetenantnameparam = instance.DeploymentName,
+                smetenantnameparam = instance.DeploymentId,
                 smevmnameparam = instance.InstanceName
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));

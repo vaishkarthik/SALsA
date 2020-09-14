@@ -19,7 +19,7 @@ namespace LivesiteAutomation
             {
                 smefabrichostparam = instance.Fabric,
                 smenodediagnosticstagparam = Constants.GetNodeDiagnosticsParam,
-                smedeploymentidordeploymentparam = instance.DeploymentName,
+                smedeploymentidordeploymentparam = instance.DeploymentId,
                 smevmnameparam = instance.InstanceName
             };
             var actionParam = Utility.JsonToObject<Dictionary<string, string>>(Utility.ObjectToJson(param));

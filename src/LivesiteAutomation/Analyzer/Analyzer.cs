@@ -344,8 +344,8 @@ namespace LivesiteAutomation
             var vmInfo = new ShortRDFERoleInstance
             {
                 Fabric = dep.FabricGeoId,
-                DeploymentId = dep.Name,
-                DeploymentName = dep.Id,
+                DeploymentId = dep.Id,
+                DeploymentName = dep.Name,
                 ContainerID = instance.ID,
                 InstanceName = instance.RoleInstanceName
             };
