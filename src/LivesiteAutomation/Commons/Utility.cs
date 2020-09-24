@@ -113,7 +113,7 @@ namespace LivesiteAutomation
 
             sb.AppendLine("<h1>");
             sb.AppendLine(String.Format("ICM Log #{0}. {1}", Icm, SALsA.GetInstance(Icm)?.Log.StartTime));
-            sb.AppendLine("<h1>");
+            sb.AppendLine("</h1>");
 
             sb.AppendLine("<body>");
             foreach (string s in messages)
