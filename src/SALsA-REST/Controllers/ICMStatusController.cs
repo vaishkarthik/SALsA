@@ -20,9 +20,8 @@ namespace SALsA_REST.Controllers
         {
             // TODO remvoe this from the API and have it in the MVC part
             var icms = LivesiteAutomation.SALsA.ListInstances();
-            StringBuilder sb = new StringBuilder();
             var lst = new List<string[]>();
-            lst.Add(new string[] { "ICM", "Status" });
+            lst.Add(new string[] { "ICM", "Status", "Log" });
             foreach (var icm in icms)
             {
                 var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icm);
@@ -31,7 +30,10 @@ namespace SALsA_REST.Controllers
                 var status = String.Format("/api/icm/status/{0}", icm);
                 status = LivesiteAutomation.Utility.UrlToHml(ICMModel.Instance.IsRunning(icm) ? "Running" : "Done", status, 20);
 
-                lst.Add(new string[] { icmLink, status });
+                var log = LivesiteAutomation.SALsA.GetInstance(icm).ICM.SAS;
+                log = LivesiteAutomation.Utility.UrlToHml(log == null ? "N/A" : "HTML", log, 20);
+
+                lst.Add(new string[] { icmLink, status, log });
             }
             string result = LivesiteAutomation.Utility.List2DToHTML(lst, true);
             var response = new HttpResponseMessage(HttpStatusCode.OK);

@@ -21,9 +21,11 @@ namespace LivesiteAutomation
         public string LogFileName { get; private set; }
         public string LogFullPath { get; private set; }
         public string LogFolderPath { get; private set; }
+        public string StartTime { get; private set; }
         public Log(int Id = 0)
         {
             this.Id = Id;
+            StartTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
             UID = Utility.ShortRandom;
             LogFolderPath = System.IO.Path.Combine(System.IO.Path.GetPathRoot(Environment.SystemDirectory), "Log");
             LogFileName = String.Format("{0}-{1}{2}", Constants.LogFileNamePrefix, UID, Constants.LogFileNameExtension);

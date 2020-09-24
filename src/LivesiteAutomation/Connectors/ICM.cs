@@ -3,8 +3,10 @@ using Microsoft.Rest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -22,9 +24,11 @@ namespace LivesiteAutomation
     public class ICM
     {
         public int Id { get; private set; }
+        public string SAS { get; private set; }
         public Incident CurrentICM { get; private set; }
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
         private static HttpClient client = null;
+        private static ConcurrentBag<string> MessageQueue = new ConcurrentBag<string>();
 
         public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
         {
@@ -58,20 +62,40 @@ namespace LivesiteAutomation
             }
             try
             {
-                var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(entry)));
-                body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
-                var reason = response.Content.ReadAsStringAsync().Result;
-                response.EnsureSuccessStatusCode();
-                SALsA.GetInstance(Id)?.Log.Verbose("Got response for ICM {0}", this.Id);
+                MessageQueue.Add(entry);
                 return true;
-
             }
             catch (Exception ex)
             {
                 SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}", this.Id);
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
                 return false;
+            }
+        }
+
+        public void EmptyMessageQueue()
+        {
+            StringBuilder entry = new StringBuilder("");
+            string reason = null;
+            try
+            {
+                var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray());
+                MessageQueue = new ConcurrentBag<string>(); // Dispose of our current one
+                SAS = Utility.UploadICMRun(Id, message);
+                message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
+                    DateTime.ParseExact(SALsA.GetInstance(Id)?.Log.StartTime, "yyMMddTHHmmss", null)
+                        .ToString("yyyy-MM-ddTHH:mm:ssZ")), SAS);
+                var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(message)));
+                body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
+                reason = response.Content.ReadAsStringAsync().Result;
+                response.EnsureSuccessStatusCode();
+                SALsA.GetInstance(Id)?.Log.Verbose("Got response for ICM {0}", this.Id);
+            }
+            catch (Exception ex)
+            {
+                SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}. Reason : ", this.Id, reason);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
         }
 

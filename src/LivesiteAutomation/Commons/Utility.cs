@@ -104,6 +104,29 @@ namespace LivesiteAutomation
             }
         }
 
+        public static string GenerateICMHTMLPage(int Icm, string[] messages)
+        {
+            StringBuilder sb = new StringBuilder();
+            Array.Sort(messages, (x, y) => x.Length.CompareTo(y.Length));
+            sb.AppendLine("<!DOCTYPE html>");
+            sb.AppendLine("<html>");
+
+            sb.AppendLine("<h1>");
+            sb.AppendLine(String.Format("ICM Log #{0}. {1}", Icm, SALsA.GetInstance(Icm)?.Log.StartTime));
+            sb.AppendLine("<h1>");
+
+            sb.AppendLine("<body>");
+            foreach (string s in messages)
+            {
+                sb.AppendLine("<br></br><br></br>");
+                sb.AppendLine(s);
+            }
+            sb.AppendLine("</body>");
+
+            sb.AppendLine("</html>");
+            return sb.ToString();
+        }
+
         public static string InitStartTime(int Icm, string dateTime = null)
         {
             if(dateTime != null)
@@ -334,6 +357,28 @@ namespace LivesiteAutomation
             {
                 SALsA.GetInstance(Id)?.Log.Warning("Failed to upload log for this run");
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
+            }
+        }
+
+        public static string UploadICMRun(int Id, string html)
+        {
+            try
+            {
+                var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
+                var blobName = String.Format("{0}-{1}_{2}_{3}{4}", Constants.LogICMFileNamePrefix, SALsA.GetInstance(Id)?.Log.UID,
+                    currentTime, Id, Constants.LogICMExtension);
+                SALsA.GetInstance(Id)?.Log.FlushAndClose();
+                BlobStorage.UploadText(Id, blobName, html, "text/html").GetAwaiter().GetResult();
+                BlobStorage.UploadText(Id, Constants.LogICMQuick, html, "text/html").GetAwaiter().GetResult();
+                var sas = BlobStorage.GetSASToken(Id, blobName);
+                SALsA.GetInstance(Id)?.Log.Information("ICM log for this run are available here : {0}", sas);
+                return sas;
+            }
+            catch (Exception ex)
+            {
+                SALsA.GetInstance(Id)?.Log.Warning("Failed to upload ICM log for this run");
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                return null;
             }
         }
 
