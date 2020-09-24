@@ -47,7 +47,9 @@ namespace LivesiteAutomation
         public const string AnalyzerVMModelAndViewOutputFilename = "ModelAndView.json";
         public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zip";
         public const string AnalyzerNodeDiagnosticsFilename = "Logs.zip";
-        public const string AnalyzerHostGAPluginFilename = "HostGAPlugin.zip";
+        public const string AnalyzerHGAPFilename = "HostGuestAgentPluginLogs.zip";
+        public const string AnalyzerHAFilename = "HostAgentLogs.zip";
+        public const string AnalyzerWSFilename = "WireServerLogs.zip";
         public const string AnalyzerContainerSettings = "ContainerSettings.json";
 
         // GetARMSubscriptionRG.cs
@@ -90,7 +92,9 @@ namespace LivesiteAutomation
         public const string GetNodeDiagnosticsOperatorNameFiles = "GetNodeDiagnosticsFiles";
         public const string GetNodeDiagnosticsParam = "GuestAgentVMLogs";
         public const string GetNodeDiagnosticsAllFilesParam = "AllLogs";
-        public const string GetNodeDiagnosticsFilesTagsParam = "GuestAgentLogs";
+        public const string GetNodeDiagnosticsFilesTagsParamHGAP = "GuestAgentLogs";
+        public const string GetNodeDiagnosticsFilesTagsParamHA = "AgentLogs";
+        public const string GetNodeDiagnosticsFilesTagsParamWS = "WireServerLogs";
 
         // GetClassicVMConsoleScreenshot.cs
         public const string GetClassicVMClassicScreenshotExtensionName = "SupportabilityFabric";

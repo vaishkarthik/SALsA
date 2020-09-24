@@ -40,7 +40,7 @@ namespace LivesiteAutomation
                 return;
             }
             */
-            if(!sub.HasValue)
+            if (!sub.HasValue)
             {
                 SALsA.GetInstance(Id).Log.Send("Could not detect any valid SubscriptionId (must be a valid GUID). Aborting analysis.");
                 throw new ArgumentNullException("SubscriptionId must not be null");
@@ -269,10 +269,9 @@ namespace LivesiteAutomation
                 var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
                 var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id),
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename,
-                        GenevaActions.GetNodeDiagnosticsFiles(Id, vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s")), Id)
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
                 );
+                GetAllNodeDiagnosticsFiles(vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
                 ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
             }
         }
@@ -326,10 +325,9 @@ namespace LivesiteAutomation
                 var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
                 var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id),
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename, 
-                        GenevaActions.GetNodeDiagnosticsFiles(Id, vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s")), Id)
+                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
                 );
+                GetAllNodeDiagnosticsFiles(vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
                 ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
             }
         }
@@ -366,11 +364,7 @@ namespace LivesiteAutomation
                 var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
                 var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
 
-                SALsA.GetInstance(Id).TaskManager.AddTask(
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerHostGAPluginFilename,
-                    GenevaActions.GetNodeDiagnosticsFiles(Id, vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s")), Id)
-                    );
-
+                GetAllNodeDiagnosticsFiles(vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
             }
             catch (Exception ex)
             {
@@ -530,6 +524,18 @@ namespace LivesiteAutomation
         private string TryConvertInstanceNameToVMNamePaaS(string VMName)
         {
             return VMName.Split("_IN_".ToCharArray())[0];
+        }
+
+        private void GetAllNodeDiagnosticsFiles(string cluster, string nodeid, string startTime, string endTime)
+        {
+            SALsA.GetInstance(Id).TaskManager.AddTask(
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerHGAPFilename,
+                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamHGAP, startTime, endTime), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerHAFilename,
+                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamHA, startTime, endTime), Id),
+                Utility.SaveAndSendBlobTask(Constants.AnalyzerWSFilename,
+                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamWS, startTime, endTime), Id)
+            );
         }
     }
 }

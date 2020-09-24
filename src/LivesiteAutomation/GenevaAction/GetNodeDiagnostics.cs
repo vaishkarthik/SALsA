@@ -31,7 +31,7 @@ namespace LivesiteAutomation
                 ));
         }
 
-        public static Task<Stream> GetNodeDiagnosticsFiles(int icm, string cluster, string nodeid, string startTime, string endTime)
+        public static Task<Stream> GetNodeDiagnosticsFiles(int icm, string cluster, string nodeid, string logType, string startTime, string endTime)
         {
             SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetNodeDiagnostics (for host) with params cluster:{0} and nodeid:", cluster, nodeid);
             var param = new GenevaOperations.GetNodeDiagnosticsFiles
@@ -39,7 +39,7 @@ namespace LivesiteAutomation
                 smefabrichostparam = cluster,
                 smenodeidparam = nodeid,
                 smenodediagnosticstypeparam = "",
-                smenodediagnosticstagparam = Constants.GetNodeDiagnosticsFilesTagsParam,
+                smenodediagnosticstagparam = logType,
                 smestarttimeparam = startTime,
                 smeendtimeparam = endTime
             };
