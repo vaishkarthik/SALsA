@@ -239,7 +239,7 @@ namespace LivesiteAutomation
         {
             var sasToken = BlobStorage.GetSASToken(Id, name);
             // Since we build our own HTML, we directly call the AddICMDiscussion instead of callign SALsA.GetInstance(icm)?.Log.Online
-            if (!SALsA.GetInstance(Id).ICM.AddICMDiscussion(Utility.UrlToHml(name, sasToken), false, false))
+            if (!SALsA.GetInstance(Id).ICM.AddICMDiscussion(Utility.UrlToHml(name, sasToken), false))
             {
                 SALsA.GetInstance(Id)?.Log.Information("Did not add ICM discussion : {0} with sasToken {1}. Probably already exists", name, sasToken);
             }
@@ -387,7 +387,7 @@ namespace LivesiteAutomation
             if(fromKusto)
             {
                 return (result.Count > Constants.MaxResultCount ? "<details><summary>Results (click here for details)</summary>" : "") +
-                       "<table style=\"margin-right:auto;margin-left:auto;width:auto;overflow-x:scroll;overflow-y:scroll;height:500px;width:1000px;display:block;\">" +
+                       "<table style=\"margin-right:auto;margin-left:auto;width:95%;overflow-x:scroll;overflow-y:scroll;height:500px;display:block;\">" +
                        List2DToHTMLInternal(result, raw) +
                        "</table>" + (result.Count > Constants.MaxResultCount ? "</details>" : "");
             }

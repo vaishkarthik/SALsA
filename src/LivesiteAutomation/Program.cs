@@ -45,6 +45,10 @@ namespace LivesiteAutomation
             finally
             {
                 SALsA.GetInstance(icm)?.ICM.EmptyMessageQueue();
+                if(SALsA.GetInstance(icm)?.State == SALsA.State.Running)
+                {
+                    SALsA.GetInstance(icm).State = SALsA.State.Done;
+                }
                 Utility.UploadLog(icm);
 
                 // How do you feel about memory leak ?

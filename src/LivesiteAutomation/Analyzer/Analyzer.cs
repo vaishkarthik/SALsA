@@ -43,6 +43,7 @@ namespace LivesiteAutomation
             if (!sub.HasValue)
             {
                 SALsA.GetInstance(Id).Log.Send("Could not detect any valid SubscriptionId (must be a valid GUID). Aborting analysis.");
+                SALsA.GetInstance(Id).State = SALsA.State.MissingSubscriptionId;
                 throw new ArgumentNullException("SubscriptionId must not be null");
             }
             SubscriptionId = (Guid)sub;
@@ -88,6 +89,7 @@ namespace LivesiteAutomation
                     }
                     catch
                     {
+                        SALsA.GetInstance(Id).State = SALsA.State.NotFound;
                         throw new Exception("VM not found");
                     }
                 }

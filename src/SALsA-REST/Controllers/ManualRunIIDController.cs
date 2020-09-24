@@ -39,7 +39,7 @@ namespace SALsA_REST.Controllers
             int icm = int.Parse(dic["icmid"]);
             if (obj != null && LivesiteAutomation.ICM.CheckIfICMExists(icm))
             {
-                ICMModel.Instance.RunAutomation(icm, obj);
+                ICMModel.RunAutomation(icm, obj);
                 return true;
             }
             else

@@ -30,7 +30,7 @@ namespace LivesiteAutomation
         private static HttpClient client = null;
         private static ConcurrentBag<string> MessageQueue = new ConcurrentBag<string>();
 
-        public bool AddICMDiscussion(string entry, bool repeat = false, bool htmlfy = true)
+        public bool AddICMDiscussion(string entry, bool htmlfy = true)
         {
             SALsA.GetInstance(Id)?.Log.Verbose("Adding to ICM String {0}", entry);
             if (htmlfy)
@@ -45,6 +45,8 @@ namespace LivesiteAutomation
                     SALsA.GetInstance(Id)?.Log.Exception(ex);
                 }
             }
+            /*
+            // This is not used anymore since we uplaod to an HTML page instead
             if (repeat == false)
             {
                 if (DescriptionEntries == null)
@@ -60,6 +62,7 @@ namespace LivesiteAutomation
                     }
                 }
             }
+            */
             try
             {
                 MessageQueue.Add(entry);
@@ -85,6 +88,7 @@ namespace LivesiteAutomation
                 message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
                     DateTime.ParseExact(SALsA.GetInstance(Id)?.Log.StartTime, "yyMMddTHHmmss", null)
                         .ToString("yyyy-MM-ddTHH:mm:ssZ")), SAS);
+                if (message == null) throw new ArgumentNullException("Message is null, please verify run log");
                 var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(message)));
                 body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                 var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
@@ -94,6 +98,7 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
+                SALsA.GetInstance(Id).State = SALsA.State.UnknownException;
                 SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}. Reason : ", this.Id, reason);
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
@@ -226,7 +231,7 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(icm)?.Log.Verbose(currentICM);
 
                 return true;
-            }
+            } 
             catch (Exception ex)
             {
                 SALsA.GetInstance(icm)?.Log.Error("Failed to get ICM {0}", icm);

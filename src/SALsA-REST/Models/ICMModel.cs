@@ -9,28 +9,9 @@ using System.Web;
 
 namespace SALsA_REST.Models
 {
-    public class ICMModel
+    public static class ICMModel
     {
-        private ConcurrentDictionary<int, Task> RunningPool;
-        private static ICMModel instance = null;
-        public static ICMModel Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new ICMModel();
-                }
-                return instance;
-            }
-        }
-
-        private ICMModel()
-        {
-            RunningPool = new ConcurrentDictionary<int, Task>();
-        }
-
-        public bool RunAutomation(int id, object obj = null)
+        public static bool RunAutomation(int id, object obj = null)
         {
             if (IsRunning(id))
             {
@@ -43,22 +24,20 @@ namespace SALsA_REST.Models
             }
         }
 
-        public bool IsRunning(int id)
+        public static bool IsRunning(int id)
         {
-            return RunningPool.ContainsKey(id);
+            return SALsA.GetInstance(id).State == SALsA.State.Running;
         }
 
-        private void CreateAndRunInBackground(int id, object obj)
+        private static void CreateAndRunInBackground(int id, object obj)
         {
             Task task = new Task(() => RunTask(id, obj));
             task.Start();
-            RunningPool.TryAdd(id, task);
         }
 
-        private void RunTask(int id, object obj)
+        private static void RunTask(int id, object obj)
         {
             LivesiteAutomation.Program.Run(id, obj);
-            RunningPool.TryRemove(id, out _);
         }
 
     }

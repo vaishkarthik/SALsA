@@ -1,4 +1,5 @@
-﻿using SALsA_REST.Models;
+﻿using LivesiteAutomation;
+using SALsA_REST.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,13 +26,13 @@ namespace SALsA_REST.Controllers
             foreach (var icm in icms)
             {
                 var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icm);
-                icmLink = LivesiteAutomation.Utility.UrlToHml(icm.ToString(), icmLink, 20);
+                icmLink = Utility.UrlToHml(icm.ToString(), icmLink, 20);
 
                 var status = String.Format("/api/icm/status/{0}", icm);
-                status = LivesiteAutomation.Utility.UrlToHml(ICMModel.Instance.IsRunning(icm) ? "Running" : "Done", status, 20);
+                status = Utility.UrlToHml(SALsA.GetInstance(icm).State.ToString(), status, 20);
 
-                var log = LivesiteAutomation.SALsA.GetInstance(icm).ICM.SAS;
-                log = LivesiteAutomation.Utility.UrlToHml(log == null ? "N/A" : "HTML", log, 20);
+                var log = SALsA.GetInstance(icm).ICM.SAS;
+                log = SALsA.GetInstance(icm).State == SALsA.State.Running ? "Wait..." : LivesiteAutomation.Utility.UrlToHml("HTML", log, 20);
 
                 lst.Add(new string[] { icmLink, status, log });
             }

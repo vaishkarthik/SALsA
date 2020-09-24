@@ -13,7 +13,7 @@ namespace SALsA_REST.Controllers
         // GET: api/ICM/5
         public bool Get(int id)
         {
-            return ICMModel.Instance.RunAutomation(id);
+            return ICMModel.RunAutomation(id);
         }
 
         /*

@@ -203,9 +203,9 @@ namespace LivesiteAutomation
         }
 
 
-        private void SendOnline(string ss, bool force = false, bool htmlfy = true)
+        private void SendOnline(string ss, bool htmlfy = true)
         {
-            SALsA.GetInstance(Id)?.ICM.AddICMDiscussion(ss, force, htmlfy);
+            SALsA.GetInstance(Id)?.ICM.AddICMDiscussion(ss, htmlfy);
         }
 
         internal void FlushAndClose()

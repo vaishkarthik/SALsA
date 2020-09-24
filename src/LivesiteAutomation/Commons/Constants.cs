@@ -110,7 +110,7 @@ namespace LivesiteAutomation
 
         // KustoClient.cs
         public const int KustoClientQueryLimit = 50;
-        public const int MaxResultCount = 5;
+        public const int MaxResultCount = 1;
 
         // GuestAgentGenericLogs.cs
         public const string KustoGuestAgentGenericLogsCluster = "rdos";

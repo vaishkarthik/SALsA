@@ -8,16 +8,26 @@ namespace LivesiteAutomation
 {
     public class SALsA
     {
+        public enum State
+        {
+            Running,
+            Done,
+            NotFound,
+            UnknownException,
+            MissingSubscriptionId,
+        }
         public class SALsAInstance
         {
             public Log Log;
             public ICM ICM;
             public TaskManager TaskManager;
+            public State State;
             public SALsAInstance(int icm)
             {
                 this.Log = new Log(icm);
                 this.ICM = new ICM(icm);
                 this.TaskManager = new TaskManager(icm);
+                this.State = State.Running;
             }
         }
 
