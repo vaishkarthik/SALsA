@@ -26,7 +26,7 @@ namespace SALsA_REST.Models
 
         public static bool IsRunning(int id)
         {
-            return SALsA.GetInstance(id).State == SALsA.State.Running;
+            return SALsA.GetInstance(id)?.State == SALsA.State.Running;
         }
 
         private static void CreateAndRunInBackground(int id, object obj)
