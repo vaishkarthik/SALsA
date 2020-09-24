@@ -28,7 +28,7 @@ namespace LivesiteAutomation
         public Incident CurrentICM { get; private set; }
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
         private static HttpClient client = null;
-        private static ConcurrentBag<string> MessageQueue = new ConcurrentBag<string>();
+        private ConcurrentBag<string> MessageQueue = new ConcurrentBag<string>();
 
         public bool AddICMDiscussion(string entry, bool htmlfy = true)
         {
