@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kusto.Cloud.Platform.Utils;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ZedGraph;
@@ -18,14 +19,20 @@ namespace LivesiteAutomation.Commons
             area.XAxis.Scale.Format = "yyyy-MM-dd hh:mm";
             area.XAxis.Title.Text = "Time";
             area.YAxis.Title.Text = "%";
+            area.XAxis.Scale.MajorUnit = DateUnit.Day;
+            area.XAxis.Scale.MinorUnit = DateUnit.Hour;
+            area.YAxis.Scale.Max = 100;
+            area.YAxis.Scale.Min = 0;
         }
 
         public void AddArea(string name, List<KeyValuePair<DateTime, double>> kvps, Color color)
         {
+            kvps.Sort((x, y) => (x.Key.CompareTo(y.Key)));
             var ppl = new PointPairList();
             foreach (KeyValuePair<DateTime, double> kvp in kvps)
             {
-                ppl.Add(kvp.Key.ToOADate(), kvp.Value);
+                var date = (XDate)Convert.ToDateTime(kvp.Key);
+                ppl.Add(date, kvp.Value);
             }
             control.GraphPane.AddCurve(name, ppl, color);
         }

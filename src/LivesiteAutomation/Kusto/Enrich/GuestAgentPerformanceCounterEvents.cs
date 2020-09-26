@@ -1,6 +1,7 @@
 ﻿using LivesiteAutomation.Commons;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -62,7 +63,7 @@ namespace LivesiteAutomation.Kusto
 
         public Bitmap GenerateBitmap()
         {
-            var instances = new Dictionary<string, List<KeyValuePair<DateTime, double>>>();
+            var instances = new SortedDictionary<string, List<KeyValuePair<DateTime, double>>>();
             foreach(var line in _Results)
             {
                 var name = String.Format("{0}:{1}", line.Category, string.IsNullOrWhiteSpace(line.Instance) ? "_Total" : line.Instance);
@@ -72,6 +73,7 @@ namespace LivesiteAutomation.Kusto
                 }
                 instances[name].Add(new KeyValuePair<DateTime, double>(line.PreciseTimeStamp, line.Value));
             }
+            instances.ToImmutableSortedSet();
             var ru = new ResourceUsage();
             foreach (KeyValuePair<string, List<KeyValuePair<DateTime, double>>> entry in instances)
             {
