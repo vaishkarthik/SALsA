@@ -83,7 +83,7 @@ namespace LivesiteAutomation
         public void EmptyMessageQueue()
         {
             SALsA.GetInstance(Id)?.Log.Verbose("Empty Message Queue with {0} elements", MessageQueue.Count);
-            if (SALsA.GetInstance(Id).State == SALsA.State.Ignore) return; // Ignore the ICM
+            if (SALsA.GetInstance(Id).State == SALsA.State.Ignore || SALsA.GetInstance(Id).State == SALsA.State.MissingSubscriptionId) return; // Ignore the ICM
             string reason = null;
             try
             {
