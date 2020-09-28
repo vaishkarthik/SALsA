@@ -159,7 +159,7 @@ namespace LivesiteAutomation
         public bool IsNoise { get; set; }
         public bool IsOutage { get; set; }
         public bool IsSecurityRisk { get; set; }
-        public object Keywords { get; set; }
+        public string Keywords { get; set; }
         public object LastCorrelationDate { get; set; }
         public IncidentMitigationData MitigationData { get; set; }
         public DateTime ModifiedDate { get; set; }

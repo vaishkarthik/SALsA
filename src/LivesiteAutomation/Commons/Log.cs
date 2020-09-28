@@ -205,7 +205,10 @@ namespace LivesiteAutomation
 
         private void SendOnline(string ss, bool htmlfy = true)
         {
-            SALsA.GetInstance(Id)?.ICM.AddICMDiscussion(ss, htmlfy);
+            if(SALsA.GetInstance(Id)?.ICM.AddICMDiscussion(ss, htmlfy) == false)
+            {
+                this.Warning("SendOnline failed with parameter: {0}", ss);
+            }
         }
 
         internal void FlushAndClose()

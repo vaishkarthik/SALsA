@@ -32,6 +32,10 @@ namespace LivesiteAutomation
 
         public bool AddICMDiscussion(string entry, bool htmlfy = true)
         {
+            if(entry == null)
+            {
+                return false;
+            }
             SALsA.GetInstance(Id)?.Log.Verbose("Adding to ICM String {0}", entry);
             if (htmlfy)
             {
@@ -78,12 +82,12 @@ namespace LivesiteAutomation
 
         public void EmptyMessageQueue()
         {
-            StringBuilder entry = new StringBuilder("");
+            SALsA.GetInstance(Id)?.Log.Verbose("Empty Message Queue with {0} elements", MessageQueue.Count);
+            if (SALsA.GetInstance(Id).State == SALsA.State.Ignore) return; // Ignore the ICM
             string reason = null;
             try
             {
                 var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray());
-                MessageQueue = new ConcurrentBag<string>(); // Dispose of our current one
                 SAS = Utility.UploadICMRun(Id, message);
                 message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
                     DateTime.ParseExact(SALsA.GetInstance(Id)?.Log.StartTime, "yyMMddTHHmmss", null)
@@ -101,6 +105,10 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(Id).State = SALsA.State.UnknownException;
                 SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}. Reason : ", this.Id, reason);
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
+            }
+            finally 
+            {
+                MessageQueue = new ConcurrentBag<string>(); // Dispose of our current one
             }
         }
 

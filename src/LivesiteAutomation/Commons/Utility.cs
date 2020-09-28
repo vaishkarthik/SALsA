@@ -107,7 +107,10 @@ namespace LivesiteAutomation
         public static string GenerateICMHTMLPage(int Icm, string[] messages)
         {
             StringBuilder sb = new StringBuilder();
-            Array.Sort(messages, (x, y) => x.Length.CompareTo(y.Length));
+            if(messages.Count() > 1)
+            {
+                Array.Sort(messages, (x, y) => x.Length.CompareTo(y.Length));
+            }    
             sb.AppendLine("<!DOCTYPE html>");
             sb.AppendLine("<html>");
 
@@ -118,7 +121,7 @@ namespace LivesiteAutomation
             sb.AppendLine("<body>");
             foreach (string s in messages)
             {
-                sb.AppendLine("<br></br><br></br>");
+                sb.AppendLine("<br><br>");
                 sb.AppendLine(s);
             }
             sb.AppendLine("</body>");

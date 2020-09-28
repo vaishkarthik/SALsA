@@ -13,6 +13,7 @@ namespace LivesiteAutomation
             Running,
             Done,
             NotFound,
+            Ignore,
             UnknownException,
             MissingSubscriptionId,
         }

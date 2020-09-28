@@ -25,6 +25,7 @@ namespace SALsA_REST.Controllers
             lst.Add(new string[] { "ICM", "Status", "Log" });
             foreach (var icm in icms)
             {
+                if (SALsA.GetInstance(icm).State == SALsA.State.Ignore) continue;
                 var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icm);
                 icmLink = Utility.UrlToHml(icm.ToString(), icmLink, 20);
 

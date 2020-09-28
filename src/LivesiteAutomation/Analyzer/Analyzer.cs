@@ -42,8 +42,15 @@ namespace LivesiteAutomation
             */
             if (!sub.HasValue)
             {
+                if(SALsA.GetInstance(Id).ICM.CurrentICM.Keywords.Contains("AutomatedHGAP"))
+                {
+                    SALsA.GetInstance(Id).State = SALsA.State.Ignore;
+                }
+                else
+                {
+                    SALsA.GetInstance(Id).State = SALsA.State.MissingSubscriptionId;
+                }
                 SALsA.GetInstance(Id).Log.Send("Could not detect any valid SubscriptionId (must be a valid GUID). Aborting analysis.");
-                SALsA.GetInstance(Id).State = SALsA.State.MissingSubscriptionId;
                 throw new ArgumentNullException("SubscriptionId must not be null");
             }
             SubscriptionId = (Guid)sub;
