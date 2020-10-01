@@ -94,14 +94,17 @@ namespace LivesiteAutomation.Kusto
                 for (int j = 0; j < _RawResults[i].Length; ++j)
                 {
                     System.Reflection.PropertyInfo pinfo = typeof(MessageLine).GetProperty(((DataColumn)_RawResults[0][j]).Caption);
-                    try
+                    if (pinfo != null)
                     {
-                        pinfo.SetValue(line, _RawResults[i][j]);
-                    }
-                    catch(Exception ex)
-                    {
-                        SALsA.GetInstance(this.Icm).Log.Warning("While processing {0}.{1}.{2}, failed to assign value : \"{3}\") to field {4}. Exception : {5}"
-                            , Cluster, DataBase, Table, _RawResults[i][j], _RawResults[0][j], ex);
+                        try
+                        {
+                            pinfo.SetValue(line, _RawResults[i][j]);
+                        }
+                        catch (Exception ex)
+                        {
+                            SALsA.GetInstance(this.Icm).Log.Warning("While processing {0}.{1}.{2}, failed to assign value : \"{3}\") to field {4}. Exception : {5}"
+                                , Cluster, DataBase, Table, _RawResults[i][j], _RawResults[0][j], ex);
+                        }
                     }
                 }
                 messages[i - 1] = line;

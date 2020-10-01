@@ -73,7 +73,6 @@ namespace LivesiteAutomation.Kusto
                 }
                 instances[name].Add(new KeyValuePair<DateTime, double>(line.PreciseTimeStamp, line.Value));
             }
-            instances.ToImmutableSortedSet();
             var ru = new ResourceUsage();
             foreach (KeyValuePair<string, List<KeyValuePair<DateTime, double>>> entry in instances)
             {
