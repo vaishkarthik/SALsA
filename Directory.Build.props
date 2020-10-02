@@ -1,117 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  This root MSBuild file is automatically imported for all projects in the tree by MSBuild 15.0 and serves as the central entry point for CBT.
-  You can have a hierarchy of imports but make sure that this file is still imported.
+  This file is imported by any project that imports Microsoft.Common.props
 -->
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Label="Global locations">
+<Project>
+  <PropertyGroup>
     <!--
-      $(MSBuildAllProjects) is a list of files that determine if a project is up-to-date or not.  By including this
-      file in the list, it ensures that all projects will be rebuilt if it changes.
-    -->
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-
-    <!--
-      Enlistment root is based off of wherever this file is.  Be sure not to set this property anywhere else.
+      Use this property for convenience to build a path starting from the root of the repository.
     -->
     <EnlistmentRoot>$(MSBuildThisFileDirectory.TrimEnd('\\'))</EnlistmentRoot>
- 
-    <!-- 
-      Enable CBT.DotNetFx-net### build package to be used globally
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <O Condition=" '$(O)' == '' ">obj\$(Platform)\$(Configuration)</O>
+    <BuildArchitecture Condition=" '$(Platform)' == 'x64' ">amd64</BuildArchitecture>
+    <BuildArchitecture Condition=" '$(Platform)' == 'x86' ">i386</BuildArchitecture>
+    <BuildType Condition=" '$(Configuration)' == 'Release' ">retail</BuildType>
+    <BuildType Condition=" '$(Configuration)' == 'Debug' ">debug</BuildType>
+    <PlatformTarget Condition="'$(PlatformSpecificAssembly)' == 'true' And '$(BuildArchitecture)' == 'i386'">x86</PlatformTarget>
+    <PlatformTarget Condition="'$(PlatformSpecificAssembly)' == 'true' And '$(BuildArchitecture)' == 'amd64'">x64</PlatformTarget>
+    <BuildTarget>$(BuildArchitecture)</BuildTarget>
+    <PackagesRoot>$(EnlistmentRoot)\Packages</PackagesRoot>
+    <BaseDir>$(EnlistmentRoot)</BaseDir>
+    <SrcRoot>$(EnlistmentRoot)\src</SrcRoot>
+    <!--
+      New SDK-style projects include everything in the project directory by default.  This excludes the files left by QuickBuild local builds.
     -->
-    <EnableCBT_DotNetFx-net461>true</EnableCBT_DotNetFx-net461>
-    <EnableCBT_DotNetFx-net462>true</EnableCBT_DotNetFx-net462>
-    
+    <DefaultItemExcludes>$(DefaultItemExcludes);QTestLogs\**;Logs\**;QLogs\**</DefaultItemExcludes>
+
+    <!--
+      Enable restoring projects with packages.config
+    -->
+    <RestorePackagesConfig>true</RestorePackagesConfig>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
-  <!--
-   Versioning
-  -->
-  <Import Project="$(EnlistmentRoot)\build\versioning\versioning.props" />
-
-  <!--
-   Enable Azure SDK package for CloudBuild
-  -->
-  <PropertyGroup Condition=" '$(MSBuildProjectExtension)' == '.ccproj' ">
-    <!-- Enable the Azure SDK imports for projects that end in .ccproj -->
-    <EnableMicrosoft_Azure_Sdk>true</EnableMicrosoft_Azure_Sdk>
-  </PropertyGroup>
- 
-  <!--
-   https://docs.microsoft.com/en-us/cpp/build/reference/highentropyva-support-64-bit-aslr
-  -->
-  <PropertyGroup>
-    <HighEntropyVA>true</HighEntropyVA>
-  </PropertyGroup>
-
-  <!--
-   StyleCop settings
-  -->
-  <Import Project="$(EnlistmentRoot)\build\StyleCop\StyleCop.props" />
-
-  <!--
-    Enable the import of the NuProj.Common package if a project reference is being built by a .nuproj project.
-  -->
-  <PropertyGroup Condition=" '$(MSBuildProjectExtension)' != '.nuproj' And !Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.targets\ImportAfter\Microsoft.Common.NuProj.targets') " >
-    <EnableNuProj_Common Condition=" '$(EnableNuProj_Common)' == '' ">true</EnableNuProj_Common>
-  </PropertyGroup>
-
-  <!--
-    Importing the "global" CBT build.props is what activates CBT.Core to restore modules.  You will want to set
-    properties before or after it depending on what you're injecting.  The "global" build.props will also import
-    files located in the $(CBTLocalPath) folder at certain points.
-  -->
-  <!-- Import default Configuration and Platform settings if not defined
-       Set Unified output folder location and helper properties
-  -->
-
-  <!-- 
-       Define the following to redirect OutputPath and OutDir to a centralized location
-       If CBT_UnifiedOutputRootDir is not defined, EnableOneBranchBuildManifest needs to be false
-   -->
-  <PropertyGroup>
-    <CBT_UnifiedOutputRootDir Condition="'$(BuildingInsideVisualStudio)' != 'true'">$(MSBuildThisFileDirectory)Out</CBT_UnifiedOutputRootDir>
-    <EnableOneBranchBuildManifest>false</EnableOneBranchBuildManifest>
-    <EnableOneBranchBuildManifest Condition="'$(CBT_UnifiedOutputRootDir)' != ''">true</EnableOneBranchBuildManifest>
-  </PropertyGroup>
-  <Import Project="$(EnlistmentRoot)\build\DefaultBuildFlavor.props" />
-
-  <Import Project="$(EnlistmentRoot)\build\CBT\build.props" />
-
-  <!-- Import default definitions for repository paths if not defined
-  -->
-  <Import Project="$(EnlistmentRoot)\build\DefaultRepositoryVariables.props" />
-
-  <!-- Activate StagingOutput -->
-  <!-- $(StagingOutputRootPath) : The root folder to stage the outputs at, typically $(EnlistmentRoot)\out\$(Configuration)-$(Platform) -->
-  <!-- $(StagingOutputPath)     : Default is copying files to the $(MSBuildProjectName) folder under $(StagingOutputRootPath) 
-                                  Typical OutputPath for Unified Output feature is 
-                                  $(EnlistmentRoot)\out\$(Configuration)-$(Platform)\$(MSBuildProjectName) -->
-  <!-- 
-  <PropertyGroup>
-    <StagingOutputRootPath Condition="'$(StagingOutputRootPath)' == ''">$(EnlistmentRoot)\out\$(Configuration)-$(Platform)\</StagingOutputRootPath>
-    <StagingOutputPath>$(MSBuildProjectName)</StagingOutputPath>
-  </PropertyGroup>
-  -->
-  <Import Project="$(EnlistmentRoot)\build\StageOutput\StageOutput.targets" />
-
-  <!--
-    The NuProjPath property allows .nuproj projects to build without having NuProj installed.
-  -->
-  <PropertyGroup Condition=" '$(MSBuildProjectExtension)' == '.nuproj'" >
-    <NuProjPath Condition=" '$(CBTModule_NuProj)' != ''">$(CBTModule_NuProj)\tools</NuProjPath>
-    <NuGetToolPath>$(EnlistmentRoot)\build\Local\NuGet\</NuGetToolPath>
-  </PropertyGroup>
-
-  <!-- Import custom notargets settings on notarget projects -->
-  <PropertyGroup>
-    <CustomBeforeNoTargets>$(EnlistmentRoot)\build\local\Extensions\Before.NoTargets.props</CustomBeforeNoTargets>
-  </PropertyGroup>
-
-  <!-- Enable pdbonly symbols on Release builds. Switch to "full" for legacy compatibility, if needed. -->
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
+  <ItemGroup>
+    <SlnGenSolutionItem Include="$(MSBuildThisFileDirectory)CloudBuild.json;
+                        $(MSBuildThisFileDirectory)Directory.Build.props;
+                        $(MSBuildThisFileDirectory)Directory.Build.rsp;
+                        $(MSBuildThisFileDirectory)Directory.Build.targets;
+                        $(MSBuildThisFileDirectory)dirs.proj;
+                        $(MSBuildThisFileDirectory)global.json;
+                        $(MSBuildThisFileDirectory)NuGet.config;
+                        $(MSBuildThisFileDirectory)Packages.props;
+                        $(MSBuildThisFileDirectory)README.md" />
+  </ItemGroup>
 </Project>

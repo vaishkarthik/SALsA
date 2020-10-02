@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace SALsA_REST.Models
+namespace SALsA_Function.Models
 {
     public static class ICMModel
     {
@@ -33,7 +33,6 @@ namespace SALsA_REST.Models
         {
             Task task = new Task(() => RunTask(id, obj));
             task.Start();
-
         }
 
         private static void RunTask(int id, object obj)

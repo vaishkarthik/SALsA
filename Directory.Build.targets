@@ -1,42 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
-  This root MSBuild file is automatically imported for all projects in the tree by MSBuild 15.0 and serves as the central entry point for CBT.
-  You can have a hierarchy of imports but make sure that this file is still imported.
+  This file is imported by any project that imports Microsoft.Common.targets
 -->
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-  </PropertyGroup>
-
-  <!--
-    Add CloudBuild/QuickBuild required customizations that need to be loaded for all projects
-  -->
-  <Import Project="$(EnlistmentRoot)\build\DefaultCloudBuildModifiers.props" Condition="Exists('$(EnlistmentRoot)\build\DefaultCloudBuildModifiers.props')"/>
-  <Import Project="$(EnlistmentRoot)\build\NuProj\AfterNuProj.props" Condition="Exists('$(EnlistmentRoot)\build\NuProj\AfterNuProj.props')" />
-
-  <!-- 
-    *********************
-       Create and Load dirs.sln in VS 2017
-       From a Developer Command Prompt for VS 2017 CMD:
-       To generate dirs.sln only:
-            1. "msbuild /t:SlnGen"
-       To generate dirs.sln and load in VS 2017:
-            2. "msbuild /t:SlnGen /p:SlnGenLaunchVisualStudio=true"
-    *********************
-  -->
-  <PropertyGroup Condition="Exists('$(CBTModule_SlnGen)\build\SlnGen.targets')">
-    <SlnGenLaunchVisualStudio Condition="'$(SlnGenLaunchVisualStudio)' == ''">false</SlnGenLaunchVisualStudio>
-    <SlnGenSolutionFileFullPath>$(MSBuildProjectDirectory)\$(MSBuildProjectName).sln</SlnGenSolutionFileFullPath>
-    <SlnGenUseShellExecute>false</SlnGenUseShellExecute>
-    <SlnGenCollectStats>true</SlnGenCollectStats>
-    <SlnGenDevEnvFullPath>$(VSINSTALLDIR)Common7\IDE\devenv.exe</SlnGenDevEnvFullPath>
-  </PropertyGroup>
-
-  <Import Project="$(CBTModule_SlnGen)\build\SlnGen.targets" Condition="Exists('$(CBTModule_SlnGen)\build\SlnGen.targets')"/>
-
-  <Import Project="build\CloudServiceSchema.targets" Condition="'$(MSBuildProjectExtension)' == '.ccproj'" />
-  <Import Project="build\signing\CloudServiceSigning.targets" Condition="'$(MSBuildProjectExtension)' == '.ccproj'" />
-  <Import Project="$(EnlistmentRoot)\build\NuProj\UnifiedNugetDrop.targets" />
-
+<Project>
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" />
 </Project>

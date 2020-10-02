@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <h1>SALSA - Manual RDFE Fabric</h1>
+
+    <form name="manualRunForm" action="/api/manual/ManualRunRdfeFabric" method="post">
+        <!-- ICM ID -->
+        <label for="icmid"><b>ICM : </b></label><br>
+        <input type="number" id="icmid" name="icmid" min="0" placeholder="000000000" required><br><br>
+
+        <!-- Fabric -->
+        <label for="FabricCluster">Fabric Cluster</label><br>
+        <input type="text" id="FabricCluster" name="FabricCluster" placeholder="BY4PrdApp20" Title="Cluster name" required><br><br>
+
+        <!-- Node ID -->
+        <label for="NodeId">NodeId</label><br>
+        <input type="text" id="NodeId" name="NodeId" placeholder="00000000-0000-0000-0000-000000000000" pattern="[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}" title="Use a valid GUID format" required><br><br>
+
+        <!-- Container ID -->
+        <label for="ContainerID">ContainerID</label><br>
+        <input type="text" id="ContainerID" name="ContainerID" placeholder="00000000-0000-0000-0000-000000000000" pattern="[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}" title="Use a valid GUID format" required><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <h1>SALSA - Manual RDFE Tenant</h1>
+
+    <form name="manualRunForm" action="/api/manual/ManualRunRdfeFabric" method="post">
+        <!-- ICM ID -->
+        <label for="icmid"><b>ICM : </b></label><br>
+        <input type="number" id="icmid" name="icmid" min="0" placeholder="000000000" required><br><br>
+
+        <!-- Fabric -->
+        <label for="FabricCluster">Fabric Cluster</label><br>
+        <input type="text" id="FabricCluster" name="FabricCluster" placeholder="BY4PrdApp20" Title="Cluster name" required><br><br>
+
+        <!-- Deployment ID -->
+        <label for="DeploymentID">Tenant Name</label>
+        <input type="text" id="DeploymentID" name="DeploymentID" placeholder="00000000000000000000000000000000" Title="Also called DeploymentID" required><br><br>
+
+        <!-- VM Name -->
+        <label for="RoleInstanceName">RoleInstanceName</label><br>
+        <input type="text" id="RoleInstanceName" name="RoleInstanceName" placeholder="WebRole1_IN_1" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
