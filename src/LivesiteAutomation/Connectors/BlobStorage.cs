@@ -19,7 +19,7 @@ namespace LivesiteAutomation
         private static CloudBlockBlob GetCloudBlob(int icm, string blobName)
         {
             return new CloudBlockBlob(new Uri(String.Format("{0}/{1}/{2}", Constants.BlobStorageConnection, icm, blobName)),
-                                                            Authentication.Instance.StorageCredentials);
+                                                            Authentication.Instance.BlobStorageCredentials);
         }
 
         // TODO : Refactor to use Templates <T> instead

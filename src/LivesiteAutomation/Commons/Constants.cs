@@ -28,6 +28,12 @@ namespace LivesiteAutomation
         public const string BlobStorageAccount = "incidents";
         public readonly static string BlobStorageConnection = string.Format("{0}/{1}", BlobStorageVault, BlobStorageAccount);
 
+        // TableStorage.cs
+        public const string TableStorageVault = "https://genevaautomation.table.core.windows.net";
+        public const string TableStorageAccount = "SALsAStatus";
+        public readonly static string TableStorageConnection = string.Format("{0}/{1}", TableStorageVault, TableStorageAccount);
+        public const int TableStorageRecentDays = -1;
+
         // ICM.cs
         public const string ICMIdentityName = "CN=azurevmguestagentsandextensions-manual.geneva.keyvault.com";
         public const string ICMBaseUri = "https://prod.microsofticm.com/";

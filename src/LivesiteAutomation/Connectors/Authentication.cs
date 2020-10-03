@@ -1,27 +1,20 @@
 ﻿using LivesiteAutomation.Json2Class;
+using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Azure.Services.AppAuthentication;
-using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Auth;
-using Microsoft.Azure.Storage.Blob;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Microsoft.Rest;
-using Microsoft.Rest.Azure;
-using Microsoft.WindowsAzure.Security.CredentialsManagement.Client;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace LivesiteAutomation
 {
     class Authentication
     {
         private X509Certificate2 cert = null;
-        private StorageCredentials storageCredentials = null;
+        private Microsoft.Azure.Storage.Auth.StorageCredentials blobStorageCredentials = null;
+        private Microsoft.Azure.Cosmos.Table.CloudTable tableStorageClient = null;
         private AzureServiceTokenProvider azToken = null;
         private KeyVaultClient keyVaultClient = null;
         private ServicePrincipal servicePrincipal = null;
@@ -39,16 +32,32 @@ namespace LivesiteAutomation
                 return cert;
             }
         }
-        public StorageCredentials StorageCredentials
+
+        public Microsoft.Azure.Storage.Auth.StorageCredentials BlobStorageCredentials
         {
             get
             {
-                if (storageCredentials == null)
+                if (blobStorageCredentials == null)
                 {
-                    SALsA.GlobalLog?.Information("First time calling StorageCredentials, creating StorageCredentials...");
-                    storageCredentials = PopulateStorageCredentials();
+                    SALsA.GlobalLog?.Information("First time calling BlobStorageCredentials, creating StorageCredentials...");
+                    blobStorageCredentials = PopulateBlobStorageCredentials();
                 }
-                return storageCredentials;
+                return blobStorageCredentials;
+            }
+        }
+        public Microsoft.Azure.Cosmos.Table.CloudTable TableStorageClient
+        {
+            get
+            {
+                if (tableStorageClient == null)
+                {
+                    SALsA.GlobalLog?.Information("First time calling TableStorageCredentials, creating StorageCredentials...");
+                    var creds = PopulateTableStorageCredentials();
+                    var tableStorageAccount = new CloudStorageAccount(creds, new Uri(Constants.TableStorageVault));
+                    var client = tableStorageAccount.CreateCloudTableClient();
+                    tableStorageClient = client.GetTableReference(Constants.TableStorageAccount);
+                }
+                return tableStorageClient;
             }
         }
 
@@ -126,12 +135,27 @@ namespace LivesiteAutomation
 
         }
 
-        private StorageCredentials PopulateStorageCredentials()
+        private Microsoft.Azure.Storage.Auth.StorageCredentials PopulateBlobStorageCredentials()
         {
             try
             {
                 SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationBlobConnectionStringSecretURI).GetAwaiter().GetResult();
-                return GetStorageCredentials(ParseStringIntoSettings(secret.Value));
+                return GetBlobStorageCredentials(ParseStringIntoSettings(secret.Value));
+            }
+            catch (Exception ex)
+            {
+                SALsA.GlobalLog?.Error("Error getting Storage Credentials");
+                SALsA.GlobalLog?.Exception(ex);
+                return null;
+            }
+        }
+
+        private Microsoft.Azure.Cosmos.Table.StorageCredentials PopulateTableStorageCredentials()
+        {
+            try
+            {
+                SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationBlobConnectionStringSecretURI).GetAwaiter().GetResult();
+                return GetTableStorageCredentials(ParseStringIntoSettings(secret.Value));
             }
             catch (Exception ex)
             {
@@ -142,7 +166,7 @@ namespace LivesiteAutomation
         }
 
         // Inspired from : https://msazure.visualstudio.com/One/_git/AAPT-Antares-Websites?path=%2Fsrc%2FHosting%2FAzure%2Ftools%2Fsrc%2FSasHelper%2FSasHelper.cs&version=GBdev
-        private static StorageCredentials GetStorageCredentials(IDictionary<string, string> settings)
+        private static Microsoft.Azure.Storage.Auth.StorageCredentials GetBlobStorageCredentials(IDictionary<string, string> settings)
         {
             string accountName;
             settings.TryGetValue("AccountName", out accountName);
@@ -153,9 +177,25 @@ namespace LivesiteAutomation
             string sasToken;
             settings.TryGetValue("SharedAccessSignature", out sasToken);
             if (accountName != null && keyValue != null && sasToken == null)
-                return new StorageCredentials(accountName, keyValue, keyName);
+                return new Microsoft.Azure.Storage.Auth.StorageCredentials(accountName, keyValue, keyName);
             if (accountName == null && keyValue == null && (keyName == null && sasToken != null))
-                return new StorageCredentials(sasToken);
+                return new Microsoft.Azure.Storage.Auth.StorageCredentials(sasToken);
+            return null;
+        }
+        private static Microsoft.Azure.Cosmos.Table.StorageCredentials GetTableStorageCredentials(IDictionary<string, string> settings)
+        {
+            string accountName;
+            settings.TryGetValue("AccountName", out accountName);
+            string keyValue;
+            settings.TryGetValue("AccountKey", out keyValue);
+            string keyName;
+            settings.TryGetValue("AccountKeyName", out keyName);
+            string sasToken;
+            settings.TryGetValue("SharedAccessSignature", out sasToken);
+            if (accountName != null && keyValue != null && sasToken == null)
+                return new Microsoft.Azure.Cosmos.Table.StorageCredentials(accountName, keyValue, keyName);
+            if (accountName == null && keyValue == null && (keyName == null && sasToken != null))
+                return new Microsoft.Azure.Cosmos.Table.StorageCredentials(sasToken);
             return null;
         }
 

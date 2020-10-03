@@ -22,7 +22,8 @@ namespace LivesiteAutomation
             public Log Log;
             public ICM ICM;
             public TaskManager TaskManager;
-            public State State;
+            private State _state;
+            public State State { get { return _state; } set { _state = value; TableStorage.AppendEntity(ICM.Id, value, ICM.SAS); } }
             public SALsAInstance(int icm)
             {
                 this.Log = new Log(icm);
@@ -66,7 +67,8 @@ namespace LivesiteAutomation
             // Initialise singletons;
             _ = Authentication.Instance;
             _ = Authentication.Instance.Cert;
-            _ = Authentication.Instance.StorageCredentials;
+            _ = Authentication.Instance.BlobStorageCredentials;
+            _ = Authentication.Instance.TableStorageClient;
 
         }
     }
