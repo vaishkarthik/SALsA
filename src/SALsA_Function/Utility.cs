@@ -1,14 +1,17 @@
-﻿using LivesiteAutomation.ManualRun;
+﻿using LivesiteAutomation;
+using LivesiteAutomation.ManualRun;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace SALsA_Function
@@ -48,13 +51,28 @@ namespace SALsA_Function
         internal static IActionResult ManualRun<T>(HttpRequest req)
         {
             var dic = RequestStreamToDic(req);
-            var icmId = dic["icmid"];
+            var icmId = int.Parse(dic["icmid"]);
             var obj = LivesiteAutomation.Utility.JsonToObject<T>(
                 LivesiteAutomation.Utility.ObjectToJson(dic));
+            return RunIfReadySALsA(icmId, obj);
+        }
 
-            // TODO
+        internal static IActionResult RunIfReadySALsA(int icm, object manual = null)
+        {
+            var entity = LivesiteAutomation.TableStorage.GetEntity(icm);
+            if (entity != null && entity.RowKey == LivesiteAutomation.SALsA.State.Running.ToString())
+                return new ConflictObjectResult($"ICM#{icm} is already running. Please wait for the run to finish then try again.");
+            else
+            {
+                AddRunToSALsA(icm, manual);
+                return new RedirectResult("/api/status", true);
+            }
+        }
 
-            return new ConflictObjectResult($"ICM#{icmId} is already running. Please wait for the run to finish then try again.");
+        internal static void AddRunToSALsA(int icm, object manual = null)
+        {
+            // TODO use queue instead of thread ?
+            new Task(() => LivesiteAutomation.Program.Run(icm, manual)).Start();
         }
     }
 }
