@@ -1,13 +1,14 @@
-﻿using LivesiteAutomation.Json2Class;
-using LivesiteAutomation.Kusto;
+﻿using SALsA.LivesiteAutomation.Json2Class;
+using SALsA.LivesiteAutomation.Kusto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SALsA.General;
 
-namespace LivesiteAutomation
+namespace SALsA.LivesiteAutomation
 {
     public partial class Analyzer
     {
@@ -84,7 +85,7 @@ namespace LivesiteAutomation
                     "Kusto query for Deployment {0}//{1}//{2} returned empty results", subscriptions, resourceGroups, virtualMachines));
             }
 
-            SALsA.GetInstance(Id)?.Log.Send(vminfo.HTMLResults, htmlfy: false);
+            SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(vminfo.HTMLResults, htmlfy: false);
             SALsA.GetInstance(Id)?.Log.Information(vminfo.Results);
             return vminfo.Results;
         }

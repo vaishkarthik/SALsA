@@ -1,7 +1,7 @@
 ﻿using Kusto.Cloud.Platform.Utils;
-using LivesiteAutomation.Json2Class;
-using LivesiteAutomation.Kusto;
-using LivesiteAutomation.ManualRun;
+using SALsA.LivesiteAutomation.Json2Class;
+using SALsA.LivesiteAutomation.Kusto;
+using SALsA.LivesiteAutomation.ManualRun;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -16,8 +16,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.UI;
 using System.Xml.Linq;
+using SALsA.General;
 
-namespace LivesiteAutomation
+namespace SALsA.LivesiteAutomation
 {
     public partial class Analyzer
     {
@@ -50,11 +51,11 @@ namespace LivesiteAutomation
                 {
                     SALsA.GetInstance(Id).State = SALsA.State.MissingSubscriptionId;
                 }
-                SALsA.GetInstance(Id).Log.Send("Could not detect any valid SubscriptionId (must be a valid GUID). Aborting analysis.");
+                SALsA.GetInstance(Id).ICM.QueueICMDiscussion("Could not detect any valid SubscriptionId (must be a valid GUID). Aborting analysis.");
                 throw new ArgumentNullException("SubscriptionId must not be null");
             }
             SubscriptionId = (Guid)sub;
-            SALsA.GetInstance(Id)?.Log.Send("{0}", Utility.ObjectToJson(this, true));
+            SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(String.Format("{0}", Utility.ObjectToJson(this, true)));
             AnalyzerInternal();
         }
 
@@ -68,7 +69,8 @@ namespace LivesiteAutomation
 
             if (dep == null && IsCustomRun == false)
             {
-                SALsA.GetInstance(Id).Log.Send("Could not find VM: {0} in RG: {1}. This VM might have been already deleted or moved", this.VMName, this.ResourceGroupName);
+                SALsA.GetInstance(Id).ICM.QueueICMDiscussion(String.Format("Could not find VM: {0} in RG: {1}. This VM might have been already deleted or moved",
+                    this.VMName, this.ResourceGroupName));
                 // Lets try to check kusto data
 
                 ShortRDFERoleInstance rdfeInfo;
@@ -102,7 +104,7 @@ namespace LivesiteAutomation
                 }
 
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, rdfeInfo), Id));
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, rdfeInfo), Id));
                 ExecuteKustoEnrichment(Id, rdfeInfo.ContainerID.ToString());
             }
 
@@ -174,7 +176,7 @@ namespace LivesiteAutomation
                 {
                     SALsA.GetInstance(Id).Log.Information("No Instance ID detected. Assuming this is a normal single IaaS VM");
                     SALsA.GetInstance(Id).TaskManager.AddTask(
-                        Utility.SaveAndSendBlobTask(
+                        BlobStorageUtility.SaveAndSendBlobTask(
                             Constants.AnalyzerInspectIaaSDiskOutputFilename,
                                 GenevaActions.InspectIaaSDiskForARMVM(Id, dep), Id));
                 }
@@ -182,7 +184,7 @@ namespace LivesiteAutomation
                 {
                     SALsA.GetInstance(Id).Log.Information("No Instance ID detected. Assuming this is a normal single IaaS VM");
                     SALsA.GetInstance(Id).TaskManager.AddTask(
-                        Utility.SaveAndSendBlobTask(
+                        BlobStorageUtility.SaveAndSendBlobTask(
                             Constants.AnalyzerInspectIaaSDiskOutputFilename,
                                 GenevaActions.InspectIaaSDiskForARMVM(Id, dep, instanceId), Id));
                 }
@@ -196,7 +198,7 @@ namespace LivesiteAutomation
                     Fabric = rdfe.FabricCluster,
                     NodeId = new Guid(rdfe.NodeId)
                 };
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id).Wait();
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id).Wait();
             }
             else if (manualRun.GetType() == typeof(ManualRun_RDFE_Tenant))
             {
@@ -207,7 +209,7 @@ namespace LivesiteAutomation
                     DeploymentId = rdfe.DeploymentID,
                     InstanceName = rdfe.RoleInstanceName
                 };
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id).Wait();
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id).Wait();
             }
         }
 
@@ -258,12 +260,12 @@ namespace LivesiteAutomation
         private void ExecuteAllActionsForIaaS(ARMDeployment dep)
         {
             Task<string> modelTask = null;
-            SALsA.GetInstance(Id).Log.Send(dep);
+            SALsA.GetInstance(Id).ICM.QueueICMDiscussion(dep.ToString());
             SALsA.GetInstance(Id).TaskManager.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, modelTask = GenevaActions.GetVMModelAndInstanceView(Id, dep), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep), Id)
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, modelTask = GenevaActions.GetVMModelAndInstanceView(Id, dep), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep), Id)
             );
 
             var rawInfo = LogContainerId(modelTask, Id);
@@ -275,10 +277,10 @@ namespace LivesiteAutomation
                     Fabric = rawInfo.Cluster,
                     NodeId = new Guid(rawInfo.NodeId)
                 };
-                var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
+                var startTime = SALsA.GetInstance(Id).ICM.ICMImpactStartTime().AddHours(-12);
                 var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
+                    BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
                 );
                 GetAllNodeDiagnosticsFiles(vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
                 ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
@@ -295,7 +297,7 @@ namespace LivesiteAutomation
                     var model = Utility.JsonToObject<Dictionary<string, dynamic>>(modelTask.Result);
                     var vmid = (string)(model["VM Model"].properties.vmId);
                     var vmInfo = new LogContainerSnapshot2ContainerId(Id, vmid);
-                    SALsA.GetInstance(Id).Log.Send(vmInfo.HTMLResults, htmlfy: false);
+                    SALsA.GetInstance(Id).ICM.QueueICMDiscussion(vmInfo.HTMLResults, htmlfy: false);
 
                     return vmInfo.Results.Last();
                 }
@@ -315,12 +317,12 @@ namespace LivesiteAutomation
             instanceId = instanceId == -1 ? 0 : instanceId;
 
             Task<string> modelTask = null;
-            SALsA.GetInstance(Id).Log.Send(dep);
+            SALsA.GetInstance(Id).ICM.QueueICMDiscussion(dep.ToString());
             SALsA.GetInstance(Id).TaskManager.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep, instanceId), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep, instanceId), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, modelTask = GenevaActions.GetVMModelAndInstanceView(Id, dep, instanceId), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep, instanceId), Id)
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerConsoleSerialOutputFilename, GenevaActions.GetVMConsoleSerialLogs(Id, dep, instanceId), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetVMConsoleScreenshot(Id, dep, instanceId), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerVMModelAndViewOutputFilename, modelTask = GenevaActions.GetVMModelAndInstanceView(Id, dep, instanceId), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerInspectIaaSDiskOutputFilename, GenevaActions.InspectIaaSDiskForARMVM(Id, dep, instanceId), Id)
             );
             var rawInfo = LogContainerId(modelTask, Id);
             if (rawInfo != null)
@@ -331,10 +333,10 @@ namespace LivesiteAutomation
                     Fabric = rawInfo.Cluster,
                     NodeId = new Guid(rawInfo.NodeId)
                 };
-                var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
+                var startTime = SALsA.GetInstance(Id).ICM.ICMImpactStartTime().AddHours(-12);
                 var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                    Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
+                    BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
                 );
                 GetAllNodeDiagnosticsFiles(vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
                 ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
@@ -359,10 +361,10 @@ namespace LivesiteAutomation
 
             Task<string> modelTask = null;
             SALsA.GetInstance(Id).TaskManager.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, vmInfo), Id)
-                );
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, vmInfo), Id)
+            );
 
             ExecuteKustoEnrichment(Id, instance.ID.ToString());
             try
@@ -370,7 +372,7 @@ namespace LivesiteAutomation
                 var model = Utility.JsonToObject<Json2Class.ContainerSettings>(modelTask.Result);
                 vmInfo.NodeId = new Guid(model.NodeId);
 
-                var startTime = Utility.ICMImpactStartTime(this.Id).AddHours(-12);
+                var startTime = SALsA.GetInstance(Id).ICM.ICMImpactStartTime().AddHours(-12);
                 var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
 
                 GetAllNodeDiagnosticsFiles(vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
@@ -382,7 +384,7 @@ namespace LivesiteAutomation
             }
             finally
             {
-                SALsA.GetInstance(Id)?.Log.Send(vmInfo);
+                SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(vmInfo.ToString());
             }
         }
 
@@ -538,11 +540,11 @@ namespace LivesiteAutomation
         private void GetAllNodeDiagnosticsFiles(string cluster, string nodeid, string startTime, string endTime)
         {
             SALsA.GetInstance(Id).TaskManager.AddTask(
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerHGAPFilename,
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerHGAPFilename,
                             GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamHGAP, startTime, endTime), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerHAFilename,
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerHAFilename,
                             GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamHA, startTime, endTime), Id),
-                Utility.SaveAndSendBlobTask(Constants.AnalyzerWSFilename,
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerWSFilename,
                             GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamWS, startTime, endTime), Id)
             );
         }

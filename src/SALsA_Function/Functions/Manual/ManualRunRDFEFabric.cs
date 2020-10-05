@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http;
+using SALsA.General;
 
-namespace SALsA_Function
+namespace SALsA.Functions
 {
     public static class ManualRunRDFEFabricGet
     {
@@ -20,7 +21,7 @@ namespace SALsA_Function
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);
 
-            return Utility.ReturnTemplate(context);
+            return FunctionUtility.ReturnTemplate(context);
         }
     }
     public static class ManualRunRDFEFabricPost
@@ -32,7 +33,7 @@ namespace SALsA_Function
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);
 
-            return Utility.ManualRun<LivesiteAutomation.ManualRun.ManualRun_ICM>(req);
+            return FunctionUtility.ManualRun<SALsA.LivesiteAutomation.ManualRun.ManualRun_ICM>(req);
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace SALsA_Function
+namespace SALsA.Functions
 {
     public static class NewICMGet
     {

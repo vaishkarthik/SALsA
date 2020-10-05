@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
+using Microsoft.IdentityModel.Protocols.WSIdentity;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,8 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation
+namespace SALsA.LivesiteAutomation
 {
     public class BlobStorage
     {

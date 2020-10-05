@@ -1,4 +1,4 @@
-﻿using LivesiteAutomation.Commons;
+﻿using SALsA.LivesiteAutomation.Commons;
 using Microsoft.Rest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -18,8 +18,9 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation
+namespace SALsA.LivesiteAutomation
 {
     public class ICM
     {
@@ -30,7 +31,7 @@ namespace LivesiteAutomation
         private static HttpClient client = null;
         private ConcurrentBag<string> MessageQueue = new ConcurrentBag<string>();
 
-        public bool AddICMDiscussion(string entry, bool htmlfy = true)
+        public bool QueueICMDiscussion(string entry, bool htmlfy = true)
         {
             if(entry == null)
             {
@@ -49,27 +50,10 @@ namespace LivesiteAutomation
                     SALsA.GetInstance(Id)?.Log.Exception(ex);
                 }
             }
-            /*
-            // This is not used anymore since we uplaod to an HTML page instead
-            if (repeat == false)
-            {
-                if (DescriptionEntries == null)
-                {
-                    GetICMDiscussion();
-                }
-                foreach (var de in DescriptionEntries)
-                {
-                    if (de.SubmittedBy == Constants.ICMIdentityName && Utility.DecodeHtml(de.Text).CompareTo(Utility.DecodeHtml(entry)) == 0)
-                    {
-                        SALsA.GetInstance(Id)?.Log.Verbose("Did not add entry to ICM since already sent", this.Id);
-                        return false;
-                    }
-                }
-            }
-            */
+
             try
             {
-                MessageQueue.Add(entry);
+                MessageQueue.Add(entry.ToString());
                 return true;
             }
             catch (Exception ex)
@@ -87,8 +71,8 @@ namespace LivesiteAutomation
             string reason = null;
             try
             {
-                var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray());
-                SAS = Utility.UploadICMRun(Id, message);
+                var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray(), SALsA.GetInstance(Id)?.Log.StartTime);
+                SAS = BlobStorageUtility.UploadICMRun(Id, message);
                 message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
                     DateTime.ParseExact(SALsA.GetInstance(Id)?.Log.StartTime, "yyMMddTHHmmss", null)
                         .ToString("yyyy-MM-ddTHH:mm:ssZ")), SAS);
@@ -246,6 +230,22 @@ namespace LivesiteAutomation
                 SALsA.GetInstance(icm)?.Log.Exception(ex);
                 return false;
             }
+        }
+
+        // Tools
+        public DateTime ICMImpactStartTime()
+        {
+            DateTime date;
+            DateTime.TryParse(ICM.GetCustomField(this.Id, Constants.AnalyzerStartTimeField), out date);
+            if (date == null)
+            {
+                date = this.CurrentICM.ImpactStartDate;
+            }
+            if (date == null)
+            {
+                date = DateTime.Today.AddDays(-7).ToUniversalTime();
+            }
+            return date;
         }
     }
 }

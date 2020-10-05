@@ -1,6 +1,4 @@
-﻿using LivesiteAutomation;
-using LivesiteAutomation.ManualRun;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -13,10 +11,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using SALsA.General;
 
-namespace SALsA_Function
+namespace SALsA.General
 {
-    static class Utility
+    static class FunctionUtility
     {
         public static HttpResponseMessage ReturnTemplate(ExecutionContext context)
         {
@@ -52,15 +51,15 @@ namespace SALsA_Function
         {
             var dic = RequestStreamToDic(req);
             var icmId = int.Parse(dic["icmid"]);
-            var obj = LivesiteAutomation.Utility.JsonToObject<T>(
-                LivesiteAutomation.Utility.ObjectToJson(dic));
+            var obj = Utility.JsonToObject<T>(
+                Utility.ObjectToJson(dic));
             return RunIfReadySALsA(icmId, obj);
         }
 
         internal static IActionResult RunIfReadySALsA(int icm, object manual = null)
         {
-            var entity = LivesiteAutomation.TableStorage.GetEntity(icm);
-            if (entity != null && entity.RowKey == LivesiteAutomation.SALsA.State.Running.ToString())
+            var entity = SALsA.LivesiteAutomation.TableStorage.GetEntity(icm);
+            if (entity != null && entity.RowKey == SALsA.LivesiteAutomation.SALsA.State.Running.ToString())
                 return new ConflictObjectResult($"ICM#{icm} is already running. Please wait for the run to finish then try again.");
             else
             {
@@ -72,7 +71,7 @@ namespace SALsA_Function
         internal static void AddRunToSALsA(int icm, object manual = null)
         {
             // TODO use queue instead of thread ?
-            new Task(() => LivesiteAutomation.Program.Run(icm, manual)).Start();
+            new Task(() => SALsA.LivesiteAutomation.Program.Run(icm, manual)).Start();
         }
     }
 }

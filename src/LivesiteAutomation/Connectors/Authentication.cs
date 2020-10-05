@@ -1,4 +1,4 @@
-﻿using LivesiteAutomation.Json2Class;
+﻿using SALsA.LivesiteAutomation.Json2Class;
 using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 
-namespace LivesiteAutomation
+namespace SALsA.General
 {
     class Authentication
     {
@@ -19,6 +19,7 @@ namespace LivesiteAutomation
         private KeyVaultClient keyVaultClient = null;
         private ServicePrincipal servicePrincipal = null;
         private static Authentication instance = null;
+        public static Log GlobalLog = null;
 
         public X509Certificate2 Cert
         {
@@ -26,7 +27,7 @@ namespace LivesiteAutomation
             {
                 if (cert == null)
                 {
-                    SALsA.GlobalLog?.Information("First time calling Cert, creating cert...");
+                    GlobalLog?.Information("First time calling Cert, creating cert...");
                     cert = PopulateCertificate();
                 }
                 return cert;
@@ -39,7 +40,7 @@ namespace LivesiteAutomation
             {
                 if (blobStorageCredentials == null)
                 {
-                    SALsA.GlobalLog?.Information("First time calling BlobStorageCredentials, creating StorageCredentials...");
+                    GlobalLog?.Information("First time calling BlobStorageCredentials, creating StorageCredentials...");
                     blobStorageCredentials = PopulateBlobStorageCredentials();
                 }
                 return blobStorageCredentials;
@@ -51,7 +52,7 @@ namespace LivesiteAutomation
             {
                 if (tableStorageClient == null)
                 {
-                    SALsA.GlobalLog?.Information("First time calling TableStorageCredentials, creating StorageCredentials...");
+                    GlobalLog?.Information("First time calling TableStorageCredentials, creating StorageCredentials...");
                     var creds = PopulateTableStorageCredentials();
                     var tableStorageAccount = new CloudStorageAccount(creds, new Uri(Constants.TableStorageVault));
                     var client = tableStorageAccount.CreateCloudTableClient();
@@ -67,7 +68,7 @@ namespace LivesiteAutomation
             {
                 if (servicePrincipal == null)
                 {
-                    SALsA.GlobalLog?.Information("First time calling servicePrincipal, creating servicePrincipal...");
+                    GlobalLog?.Information("First time calling servicePrincipal, creating servicePrincipal...");
                     servicePrincipal = PopulateServicePrincipal();
                 }
                 return servicePrincipal;
@@ -97,8 +98,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GlobalLog?.Critical("Failed to get token from AzureServiceTokenProvider", Constants.AuthenticationCertSecretURI);
-                SALsA.GlobalLog?.Exception(ex);
+                GlobalLog?.Critical("Failed to get token from AzureServiceTokenProvider", Constants.AuthenticationCertSecretURI);
+                GlobalLog?.Exception(ex);
                 throw ex;
             }
         }
@@ -115,14 +116,14 @@ namespace LivesiteAutomation
                     X509KeyStorageFlags.DefaultKeySet |
                     X509KeyStorageFlags.MachineKeySet |
                     X509KeyStorageFlags.PersistKeySet /*| X509KeyStorageFlags.Exportable*/);
-                SALsA.GlobalLog?.Verbose("Successfully got certificate : {0}", cert.SubjectName.Name);
+                GlobalLog?.Verbose("Successfully got certificate : {0}", cert.SubjectName.Name);
 
                 return cert;
             }
             catch (Exception ex)
             {
-                SALsA.GlobalLog?.Critical("Error getting Cerificate from {0} keyvault", Constants.AuthenticationCertSecretURI);
-                SALsA.GlobalLog?.Exception(ex);
+                GlobalLog?.Critical("Error getting Cerificate from {0} keyvault", Constants.AuthenticationCertSecretURI);
+                GlobalLog?.Exception(ex);
                 throw ex;
             }
         }
@@ -144,8 +145,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GlobalLog?.Error("Error getting Storage Credentials");
-                SALsA.GlobalLog?.Exception(ex);
+                GlobalLog?.Error("Error getting Storage Credentials");
+                GlobalLog?.Exception(ex);
                 return null;
             }
         }
@@ -159,8 +160,8 @@ namespace LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GlobalLog?.Error("Error getting Storage Credentials");
-                SALsA.GlobalLog?.Exception(ex);
+                GlobalLog?.Error("Error getting Storage Credentials");
+                GlobalLog?.Exception(ex);
                 return null;
             }
         }

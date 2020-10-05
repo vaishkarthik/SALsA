@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using ZedGraph;
 
-namespace LivesiteAutomation.Commons
+namespace SALsA.LivesiteAutomation.Commons
 {
     public class ResourceUsage
     {

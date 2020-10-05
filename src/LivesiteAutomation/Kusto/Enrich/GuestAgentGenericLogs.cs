@@ -1,7 +1,7 @@
 ﻿using Kusto.Cloud.Platform.IO;
 using Kusto.Cloud.Platform.Utils;
 using Kusto.Data.Linq;
-using LivesiteAutomation.Connectors;
+using SALsA.LivesiteAutomation.Connectors;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,8 +11,9 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SALsA.General;
 
-namespace LivesiteAutomation.Kusto
+namespace SALsA.LivesiteAutomation.Kusto
 {
     public class GuestAgentGenericLogs : KustoBase<GuestAgentGenericLogs.MessageLine>
     {
@@ -46,7 +47,7 @@ namespace LivesiteAutomation.Kusto
 
         public GuestAgentGenericLogs(int icm, string containerId, string dateTime = null, bool send = false) : base(icm, send)
         {
-            _startTime = Utility.InitStartTime(icm, dateTime);
+            _startTime = InitStartTime(dateTime);
             _containerId = containerId;
             Init();
         }

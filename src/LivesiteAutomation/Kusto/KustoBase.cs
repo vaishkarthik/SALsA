@@ -1,5 +1,5 @@
 ﻿using Kusto.Cloud.Platform.Utils;
-using LivesiteAutomation.Connectors;
+using SALsA.LivesiteAutomation.Connectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Drawing;
 using Microsoft.IdentityModel.Protocols.WSIdentity;
+using SALsA.General;
 
-namespace LivesiteAutomation.Kusto
+namespace SALsA.LivesiteAutomation.Kusto
 {
     public abstract class KustoBase<MessageLine> where MessageLine : new()
     {
@@ -81,7 +82,7 @@ namespace LivesiteAutomation.Kusto
             _HTMLResults = String.Format("{0}{1}", header, htmlOut);
             if (WriteToIcm == true)
             {
-                SALsA.GetInstance(this.Icm)?.Log.Send(_HTMLResults, htmlfy: false);
+                SALsA.GetInstance(this.Icm)?.ICM.QueueICMDiscussion(_HTMLResults, htmlfy: false);
             }
         }
 
@@ -110,6 +111,25 @@ namespace LivesiteAutomation.Kusto
                 messages[i - 1] = line;
             }
             _Results = messages;
+        }
+
+        // tools
+        public string InitStartTime(string dateTime = null)
+        {
+            if (dateTime != null)
+            {
+                return dateTime;
+            }
+
+            var _startTime = ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField);
+            if (_startTime == null)
+            {
+                return Kusto.KustoBase<DateTime>.DefaultStartTime;
+            }
+            else
+            {
+                return DateTime.Parse(_startTime).AddDays(-1).ToUniversalTime().ToString("o");
+            }
         }
     }
 }

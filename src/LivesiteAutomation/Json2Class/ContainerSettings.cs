@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LivesiteAutomation.Json2Class
+namespace SALsA.LivesiteAutomation.Json2Class
 {
     public class ContainerSettings
     {

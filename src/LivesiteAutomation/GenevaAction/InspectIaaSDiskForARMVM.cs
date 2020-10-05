@@ -1,12 +1,13 @@
-﻿using LivesiteAutomation.Json2Class;
+﻿using SALsA.LivesiteAutomation.Json2Class;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation
+namespace SALsA.LivesiteAutomation
 {
     public partial class GenevaActions
     {

@@ -383,6 +383,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Compile Include="Commons\BlobStorage.Utility.cs" />
     <None Include="Extensions\Microsoft.WindowsAzure.Security.Authentication.Events.man" />
     <None Include="packages.config" />
   </ItemGroup>

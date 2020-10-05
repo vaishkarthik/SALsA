@@ -10,8 +10,9 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net;
 using System.Collections.Generic;
+using SALsA.General;
 
-namespace SALsA_Function
+namespace SALsA.Functions
 {
     public static class SALsAStatus
     {
@@ -21,24 +22,24 @@ namespace SALsA_Function
             ILogger log)
         {
             // TODO remvoe this from the API and have it in the MVC part
-            var icms = LivesiteAutomation.TableStorage.GetRecentEntity();
+            var icms = SALsA.LivesiteAutomation.TableStorage.GetRecentEntity();
             var lst = new List<string[]>();
             lst.Add(new string[] { "ICM", "Status", "Log" });
             foreach (var icm in icms)
             {
-                if (icm.RowKey == LivesiteAutomation.SALsA.State.Ignore.ToString()) continue;
+                if (icm.RowKey == SALsA.LivesiteAutomation.SALsA.State.Ignore.ToString()) continue;
                 var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icm);
-                icmLink = LivesiteAutomation.Utility.UrlToHml(icm.ToString(), icmLink, 20);
+                icmLink = Utility.UrlToHml(icm.ToString(), icmLink, 20);
 
                 var status = String.Format("/api/icm/status/{0}", icm);
-                status = LivesiteAutomation.Utility.UrlToHml(icm.RowKey.ToString(), status, 20);
+                status = Utility.UrlToHml(icm.RowKey.ToString(), status, 20);
 
                 var logPath = icm.Log;
-                logPath = icm.RowKey == LivesiteAutomation.SALsA.State.Running.ToString() ? "Wait..." : LivesiteAutomation.Utility.UrlToHml("HTML", logPath, 20);
+                logPath = icm.RowKey == SALsA.LivesiteAutomation.SALsA.State.Running.ToString() ? "Wait..." : Utility.UrlToHml("HTML", logPath, 20);
 
                 lst.Add(new string[] { icmLink, status, logPath });
             }
-            string result = LivesiteAutomation.Utility.List2DToHTML(lst, true);
+            string result = Utility.List2DToHTML(lst, true);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/html");
 
@@ -56,7 +57,7 @@ namespace SALsA_Function
             string content;
             try
             {
-                var filePath = LivesiteAutomation.SALsA.GetInstance(id)?.Log?.LogFullPath;
+                var filePath = SALsA.LivesiteAutomation.SALsA.GetInstance(id)?.Log?.LogFullPath;
                 log.LogInformation($"SALsAStatusIcm LogFullPath: {filePath}");
                 using (FileStream fileStream = new FileStream(
                         filePath,

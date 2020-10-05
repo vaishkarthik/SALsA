@@ -1,5 +1,5 @@
-﻿using LivesiteAutomation.Json2Class;
-using LivesiteAutomation.Kusto;
+﻿using SALsA.LivesiteAutomation.Json2Class;
+using SALsA.LivesiteAutomation.Kusto;
 using Microsoft.IdentityModel.Protocols.WSFederation.Metadata;
 using Newtonsoft.Json;
 using System;
@@ -14,8 +14,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
+using SALsA.General;
 
-namespace LivesiteAutomation
+namespace SALsA.LivesiteAutomation
 {
     public partial class Analyzer
     {
@@ -153,7 +154,7 @@ namespace LivesiteAutomation
                     "Kusto query for Deployment {0}//{1}//{2} returned empty results", subscriptions, tenantName, virtualMachines));
             }
 
-            SALsA.GetInstance(Id)?.Log.Send(vminfo.HTMLResults, htmlfy: false);
+            SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(vminfo.HTMLResults, htmlfy: false);
             SALsA.GetInstance(Id)?.Log.Information(vminfo.Results);
             return vminfo.Results;
         }

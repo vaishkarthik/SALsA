@@ -4,8 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation.Kusto
+namespace SALsA.LivesiteAutomation.Kusto
 {
     public class LogContainerHealthSnapshot : KustoBase<LogContainerHealthSnapshot.MessageLine>
     {
@@ -29,7 +30,7 @@ namespace LivesiteAutomation.Kusto
 
         public LogContainerHealthSnapshot(int icm, string containerId, string dateTime = null, bool send = false) : base(icm, send)
         {
-            _startTime = Utility.InitStartTime(icm, dateTime);
+            _startTime = InitStartTime(dateTime);
             _containerId = containerId;
             Init();
         }

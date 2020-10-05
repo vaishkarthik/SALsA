@@ -1,12 +1,13 @@
-﻿using LivesiteAutomation.Json2Class.RDFESubscriptionWrapper;
+﻿using SALsA.LivesiteAutomation.Json2Class.RDFESubscriptionWrapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation.Kusto
+namespace SALsA.LivesiteAutomation.Kusto
 {
     // For RDFE PaaS
     public class CAD : KustoBase<CAD.MessageLine>

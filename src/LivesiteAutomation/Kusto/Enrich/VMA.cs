@@ -4,8 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation.Kusto
+namespace SALsA.LivesiteAutomation.Kusto
 {
     public class VMA : KustoBase<VMA.MessageLine>
     {

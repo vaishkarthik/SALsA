@@ -11,8 +11,9 @@ using Kusto.Data.Common;
 using Kusto.Data.Net.Client;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using SALsA.General;
 
-namespace LivesiteAutomation.Connectors
+namespace SALsA.LivesiteAutomation.Connectors
 {
     public class KustoClient
     {

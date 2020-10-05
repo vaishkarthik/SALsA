@@ -10,7 +10,7 @@ using System.Runtime.Remoting.Activation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LivesiteAutomation
+namespace SALsA.General
 {
 
     public sealed class Log
@@ -24,6 +24,8 @@ namespace LivesiteAutomation
         public string StartTime { get; private set; }
         public Log(int Id = 0)
         {
+            Utility.GlobalLog = this;
+            Authentication.GlobalLog = this;
             this.Id = Id;
             StartTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
             UID = Utility.ShortRandom;
@@ -54,45 +56,6 @@ namespace LivesiteAutomation
 
         // https://msdn.microsoft.com/en-us/magazine/ff714589.aspx
         private enum LogLevel { Online = 0x0020, Verbose = 0x0010, Information = 0x0008, Warning = 0x0004, Error = 0x002, Critical = 0x001 };
-
-        public void Send(object obj)
-        {
-            Send("{0}", (string)(obj.ToString()));
-        }
-
-        public void Send(string ss, params object[] arg)
-        {
-            if (ss == null)
-            {
-                InternalLog("Got null string to Send to ICM !", LogLevel.Error);
-            }
-            string toSend = arg.Length > 0 ? String.Format(CultureInfo.InvariantCulture, ss, arg) : ss;
-            InternalLog(toSend, LogLevel.Online);
-            SendOnline(toSend);
-        }
-        public void Send(string ss, bool htmlfy, params object[] arg)
-        {
-            if (ss == null)
-            {
-                InternalLog("Got null string to Send to ICM !", LogLevel.Error);
-            }
-            string toSend = arg.Length > 0 ? String.Format(CultureInfo.InvariantCulture, ss, arg) : ss;
-            InternalLog(toSend, LogLevel.Online);
-            SendOnline(toSend, htmlfy: htmlfy);
-        }
-
-        // SendForce will force write the log entry, even if it already exists.
-        public void SendForce(object obj)
-        {
-            SendForce("{0}", (string)(obj.ToString()));
-        }
-
-        public void SendForce(string ss, params object[] arg)
-        {
-            string toSend = String.Format(CultureInfo.InvariantCulture, ss, arg);
-            InternalLog(toSend, LogLevel.Online);
-            SendOnline(toSend, true);
-        }
 
         // Forcing toString on simple objects
         public void Verbose(object obj)
@@ -200,15 +163,6 @@ namespace LivesiteAutomation
                 caller = "Unkwown function";
             }
             return caller;
-        }
-
-
-        private void SendOnline(string ss, bool htmlfy = true)
-        {
-            if(SALsA.GetInstance(Id)?.ICM.AddICMDiscussion(ss, htmlfy) == false)
-            {
-                this.Warning("SendOnline failed with parameter: {0}", ss);
-            }
         }
 
         internal void FlushAndClose()

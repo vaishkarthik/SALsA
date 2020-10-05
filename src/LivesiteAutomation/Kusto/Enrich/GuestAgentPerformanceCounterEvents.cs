@@ -1,4 +1,4 @@
-﻿using LivesiteAutomation.Commons;
+﻿using SALsA.LivesiteAutomation.Commons;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -6,8 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation.Kusto
+namespace SALsA.LivesiteAutomation.Kusto
 {
     class GuestAgentPerformanceCounterEvents : KustoBase<GuestAgentPerformanceCounterEvents.MessageLine>
     {
@@ -32,7 +33,7 @@ namespace LivesiteAutomation.Kusto
 
         public GuestAgentPerformanceCounterEvents(int icm, string containerId, string dateTime = null, bool send = false) : base(icm, send)
         {
-            _startTime = Utility.InitStartTime(icm, dateTime);
+            _startTime = InitStartTime(dateTime);
             _containerId = containerId;
             Init();
         }
@@ -57,7 +58,7 @@ namespace LivesiteAutomation.Kusto
             _HTMLResults = String.Format("{0}{1}", header, htmlOut);
             if (WriteToIcm == true)
             {
-                SALsA.GetInstance(this.Icm)?.Log.Send(_HTMLResults, htmlfy: false);
+                SALsA.GetInstance(this.Icm)?.ICM.QueueICMDiscussion(_HTMLResults, htmlfy: false);
             }
         }
 

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation.Json2Class
+namespace SALsA.LivesiteAutomation.Json2Class
 {
 
     public class RDFERoleInstance

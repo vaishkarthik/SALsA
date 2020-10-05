@@ -9,8 +9,9 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net;
+using SALsA.General;
 
-namespace SALsA_Function
+namespace SALsA.Functions
 {
     public static class Tools
     {
@@ -22,7 +23,7 @@ namespace SALsA_Function
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);
 
-            return Utility.ReturnTemplate(context);
+            return FunctionUtility.ReturnTemplate(context);
         }
     }
 }

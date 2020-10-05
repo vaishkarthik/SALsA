@@ -5,8 +5,9 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation.Kusto
+namespace SALsA.LivesiteAutomation.Kusto
 {
     public class VMEGAnalysis : KustoBase<VMEGAnalysis.MessageLine>
     {

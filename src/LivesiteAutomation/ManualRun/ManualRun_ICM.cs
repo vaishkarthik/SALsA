@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LivesiteAutomation.ManualRun
+namespace SALsA.LivesiteAutomation.ManualRun
 {
     public class ManualRun_ICM
     {

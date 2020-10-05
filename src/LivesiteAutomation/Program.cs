@@ -1,13 +1,14 @@
-﻿using LivesiteAutomation.Json2Class;
-using LivesiteAutomation.Kusto;
+﻿using SALsA.LivesiteAutomation.Json2Class;
+using SALsA.LivesiteAutomation.Kusto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SALsA.General;
 
-namespace LivesiteAutomation
+namespace SALsA.LivesiteAutomation
 {
     public class Program
     {
@@ -49,7 +50,7 @@ namespace LivesiteAutomation
                 {
                     SALsA.GetInstance(icm).State = SALsA.State.Done;
                 }
-                Utility.UploadLog(icm);
+                BlobStorageUtility.UploadLog(icm);
 
                 // How do you feel about memory leak ?
                 // We keep all instances so they can be accessed online if need be...

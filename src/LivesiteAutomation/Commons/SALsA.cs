@@ -1,10 +1,11 @@
-﻿using LivesiteAutomation.Json2Class.RDFESubscriptionWrapper;
+﻿using SALsA.LivesiteAutomation.Json2Class.RDFESubscriptionWrapper;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using static LivesiteAutomation.Utility;
+using SALsA.General;
+using static SALsA.General.Utility;
 
-namespace LivesiteAutomation
+namespace SALsA.LivesiteAutomation
 {
     public class SALsA
     {
