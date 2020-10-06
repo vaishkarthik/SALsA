@@ -50,10 +50,13 @@ namespace SALsA.LivesiteAutomation
             }
         }
 
+    }
+    public static class QueueICM
+    {
         [FunctionName("QueueICM")]
         public static void Run([QueueTrigger("salsaqueue")] string myQueueItem, TraceWriter log)
         {
-            Run(int.Parse(myQueueItem));
+            Program.Run(int.Parse(myQueueItem));
         }
     }
 }

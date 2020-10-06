@@ -2,20 +2,11 @@
 using SALsA.LivesiteAutomation.Json2Class;
 using SALsA.LivesiteAutomation.Kusto;
 using SALsA.LivesiteAutomation.ManualRun;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
-using System.Net.Mail;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web.UI;
-using System.Xml.Linq;
 using SALsA.General;
 
 namespace SALsA.LivesiteAutomation
