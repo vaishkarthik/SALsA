@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <AzureFunctionsVersion>v1</AzureFunctionsVersion>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="GenevaActionsLibrary" Version="4.0.4.1310" />
@@ -11,6 +11,9 @@
     <PackageReference Include="Microsoft.Azure.Kusto.Data" Version="8.1.5" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.0" />
     <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
+    <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.22" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="4.0.2" />
     <PackageReference Include="ZedGraph" version="5.1.7" />
   </ItemGroup>
   <ItemGroup>
