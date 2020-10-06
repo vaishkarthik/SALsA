@@ -1,12 +1,7 @@
-﻿using SALsA.LivesiteAutomation.Json2Class;
-using SALsA.LivesiteAutomation.Kusto;
+﻿using SALsA.General;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using SALsA.General;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
 
 namespace SALsA.LivesiteAutomation
 {
@@ -53,6 +48,12 @@ namespace SALsA.LivesiteAutomation
                 BlobStorageUtility.UploadLog(icm);
                 SALsA.GetInstance(icm)?.RefreshTable();
             }
+        }
+
+        [FunctionName("QueueICM")]
+        public static void Run([QueueTrigger("salsaqueue")] string myQueueItem, TraceWriter log)
+        {
+            Run(int.Parse(myQueueItem));
         }
     }
 }

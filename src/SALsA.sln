@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29021.104
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivesiteAutomation", "LivesiteAutomation\LivesiteAutomation.csproj", "{8F1A0325-B90E-4FEC-B79A-C7EC8DF063B1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SALsA_Function", "SALsA_Function\SALsA_Function.csproj", "{DAC78764-CC39-4CCB-B03A-7261C63F90C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SALsA_Queue", "SALsA_Queue\SALsA_Queue.csproj", "{76B94438-B41F-42B9-B99A-5082A2C76289}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SALsA_Queue", "SALsA_Queue\SALsA_Queue.csproj", "{76B94438-B41F-42B9-B99A-5082A2C76289}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8F1A0325-B90E-4FEC-B79A-C7EC8DF063B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F1A0325-B90E-4FEC-B79A-C7EC8DF063B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F1A0325-B90E-4FEC-B79A-C7EC8DF063B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F1A0325-B90E-4FEC-B79A-C7EC8DF063B1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DAC78764-CC39-4CCB-B03A-7261C63F90C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DAC78764-CC39-4CCB-B03A-7261C63F90C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAC78764-CC39-4CCB-B03A-7261C63F90C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
