@@ -89,7 +89,7 @@ namespace SALsA.LivesiteAutomation
         {
             try
             {
-                TableQuery<SALsAEntity> query = new TableQuery<SALsAEntity>().Where($"PartitionKey eq {icm}").Take(1);
+                TableQuery<SALsAEntity> query = new TableQuery<SALsAEntity>().Where($"PartitionKey eq '{icm}'").Take(1);
                 return Authentication.Instance.TableStorageClient.ExecuteQuery(query).FirstOrDefault();
             }
             catch (Exception ex)

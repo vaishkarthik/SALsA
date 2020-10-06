@@ -71,10 +71,17 @@ namespace SALsA.General
 
         internal static void AddRunToSALsA(int icm, object manual = null)
         {
-            // TODO use queue instead of thread ?
-            //new Task(() => SALsA.LivesiteAutomation.Program.Run(icm, manual)).Start();
             var client = new QueueClient(Authentication.Instance.GenevaAutomationConnectionString, Constants.QueueName);
-            client.SendMessage(icm.ToString());
+            string queueMessage;
+            if (manual != null)
+            {
+                queueMessage = String.Format("{0} {1} {2}", icm, manual.GetType(), Utility.Base64Encode(Utility.ObjectToJson(manual)));
+            }
+            else
+            {
+                queueMessage = icm.ToString();
+            }
+            client.SendMessage(queueMessage);
         }
     }
 }
