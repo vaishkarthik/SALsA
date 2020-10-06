@@ -1,5 +1,4 @@
-﻿using Kusto.Cloud.Platform.Utils;
-using SALsA.LivesiteAutomation.Json2Class;
+﻿using SALsA.LivesiteAutomation.Json2Class;
 using SALsA.LivesiteAutomation.Kusto;
 using SALsA.LivesiteAutomation.ManualRun;
 using System;
@@ -336,10 +335,10 @@ namespace SALsA.LivesiteAutomation
 
         private void ExecuteAllActionsForPaaS(RDFEDeployment dep)
         {
-            var instance = dep.RoleInstances.Where(x => x.RoleInstanceName.EqualsOrdinalIgnoreCase(VMName)).FirstOrDefault();
+            var instance = dep.RoleInstances.Where(x => String.Equals(x.RoleInstanceName, VMName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             if (instance?.RoleInstanceName == null)
             {
-                instance = dep.RoleInstances.Where(x => x.RoleName.EqualsOrdinalIgnoreCase(TryConvertInstanceNameToVMName(this.VMName))).FirstOrDefault();
+                instance = dep.RoleInstances.Where(x => String.Equals(x.RoleInstanceName, TryConvertInstanceNameToVMName(this.VMName), StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             }
             var vmInfo = new ShortRDFERoleInstance
             {

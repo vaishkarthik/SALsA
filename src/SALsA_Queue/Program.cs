@@ -51,6 +51,7 @@ namespace SALsA.LivesiteAutomation
         }
 
     }
+    
     public static class QueueICM
     {
         [FunctionName("QueueICM")]
@@ -59,4 +60,5 @@ namespace SALsA.LivesiteAutomation
             Program.Run(int.Parse(myQueueItem));
         }
     }
+    
 }
