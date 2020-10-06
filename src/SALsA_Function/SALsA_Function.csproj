@@ -62,4 +62,7 @@
   <ItemGroup>
     <Folder Include="ExternalLink\" />
   </ItemGroup>
+  <PropertyGroup>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
 </Project>
