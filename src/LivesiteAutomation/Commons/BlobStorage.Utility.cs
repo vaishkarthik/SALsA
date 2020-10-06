@@ -62,8 +62,14 @@ namespace SALsA.LivesiteAutomation
                 await BlobStorage.UploadBytes(Id, name, ms.ToArray(), "image/png");
             }
             SendSASToICM(name, Id);
-            Utility.SaveToFile(name, output, Id);
+            BlobStorageUtility.SaveToFile(name, output, Id);
         }
+
+        private static void SaveToFile(string name, Image output, int Id)
+        {
+            output.Save(Utility.CreateICMFolderInLogDirAndReturnFullPath(name, Id));
+        }
+
         public static async Task SaveAndSendBlobTask(string name, Task<Stream> task, int Id)
         {
             name = Utility.FormatFileName(Id, name);
@@ -87,6 +93,7 @@ namespace SALsA.LivesiteAutomation
                 SALsA.GetInstance(Id)?.Log.FlushAndClose();
                 BlobStorage.UploadFile(Id, blobName, SALsA.GetInstance(Id)?.Log.LogFullPath, "text/plain").GetAwaiter().GetResult();
                 var sas = BlobStorage.GetSASToken(Id, blobName);
+                SALsA.GetInstance(Id)?.Log.SetSAS(sas);
                 SALsA.GetInstance(Id)?.Log.Information("Log for this automatic run are available here : {0}", sas);
             }
             catch (Exception ex)

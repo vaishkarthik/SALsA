@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SALsA.General;
 
 namespace SALsA.Functions
 {
@@ -19,9 +20,7 @@ namespace SALsA.Functions
         {
             log.LogInformation("C# HTTP trigger function processed for NewICM Get: {0}", id);
 
-            // return ICMModel.RunAutomation(id);
-
-            return new OkObjectResult(id);
+            return FunctionUtility.RunIfReadySALsA(id);
         }
     }
 }

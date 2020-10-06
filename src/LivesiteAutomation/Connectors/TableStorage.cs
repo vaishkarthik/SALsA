@@ -21,8 +21,11 @@ namespace SALsA.LivesiteAutomation
             }
 
             public SALsAEntity() { }
+            public string SALsALog { get; set; }
             public string Log { get; set; }
         }
+
+        public static Log GlobalLog = new Log();
 
         private static List<SALsAEntity> ListAllEntity()
         {
@@ -36,20 +39,20 @@ namespace SALsA.LivesiteAutomation
                 return null;
             }
         }
-        public static void AppendEntity(int icm, SALsA.State state, string log = "")
+        public static void AppendEntity(int icm, SALsAState state, string salsaLog = "", string log = "")
         {
             try
             {
                 SALsAEntity incident = new SALsAEntity(icm.ToString(), state.ToString());
+                incident.SALsALog = salsaLog;
                 incident.Log = log;
-                incident.Log = Guid.NewGuid().ToString();
                 TableOperation insertOperation = TableOperation.InsertOrReplace(incident);
                 Authentication.Instance.TableStorageClient.Execute(insertOperation);
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to get all Table entity.");
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                GlobalLog?.Error("Failed to get all Table entity.");
+                GlobalLog?.Exception(ex);
             }
         }
 
@@ -91,8 +94,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to get Entity.");
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                GlobalLog?.Error("Failed to get Entity.");
+                GlobalLog?.Exception(ex);
                 return null;
             }
         }

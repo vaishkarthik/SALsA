@@ -46,15 +46,12 @@ namespace SALsA.LivesiteAutomation
             finally
             {
                 SALsA.GetInstance(icm)?.ICM.EmptyMessageQueue();
-                if(SALsA.GetInstance(icm)?.State == SALsA.State.Running)
+                if(SALsA.GetInstance(icm)?.State == SALsAState.Running)
                 {
-                    SALsA.GetInstance(icm).State = SALsA.State.Done;
+                    SALsA.GetInstance(icm).State = SALsAState.Done;
                 }
                 BlobStorageUtility.UploadLog(icm);
-
-                // How do you feel about memory leak ?
-                // We keep all instances so they can be accessed online if need be...
-                // SALsA.RemoveInstance(icm);
+                SALsA.GetInstance(icm)?.RefreshTable();
             }
         }
     }

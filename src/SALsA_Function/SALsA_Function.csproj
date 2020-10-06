@@ -29,11 +29,26 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Storage.Queues" Version="12.4.2" />
+    <PackageReference Include="Microsoft.AspNetCore.AzureKeyVault.HostingStartup" Version="2.0.4" />
     <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
+    <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.5" />
+    <PackageReference Include="Microsoft.Azure.KeyVault.Core" Version="3.0.5" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.5.0" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\LivesiteAutomation\LivesiteAutomation.csproj" />
+    <Compile Include="..\\LivesiteAutomation\ManualRun\ManualRun_ICM.cs" Link="ExternalLink\ManualRun_ICM.cs" />
+    <Compile Include="..\\LivesiteAutomation\ManualRun\ManualRun_IID.cs" Link="ExternalLink\ManualRun_IID.cs" />
+    <Compile Include="..\\LivesiteAutomation\ManualRun\ManualRun_RDFE.cs" Link="ExternalLink\ManualRun_RDFE.cs" />
+    <Compile Include="..\\LivesiteAutomation\Commons\Constants.cs" />
+    <Compile Include="..\\LivesiteAutomation\Commons\Log.cs" Link="ExternalLink\Log.cs" />
+    <Compile Include="..\\LivesiteAutomation\Commons\Utility.cs" Link="ExternalLink\Utility.cs" />
+    <Compile Include="..\\LivesiteAutomation\Connectors\Authentication.cs" />
+    <Compile Include="..\\LivesiteAutomation\Connectors\TableStorage.cs" Link="ExternalLink\TableStorage.cs" />
+    <Compile Include="..\\LivesiteAutomation\Json2Class\ServicePrincipal.cs" Link="ExternalLink\ServicePrincipal.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -43,5 +58,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ExternalLink\" />
   </ItemGroup>
 </Project>

@@ -45,11 +45,11 @@ namespace SALsA.LivesiteAutomation
             {
                 if(SALsA.GetInstance(Id).ICM.CurrentICM.Keywords.Contains("AutomatedHGAP"))
                 {
-                    SALsA.GetInstance(Id).State = SALsA.State.Ignore;
+                    SALsA.GetInstance(Id).State = SALsAState.Ignore;
                 }
                 else
                 {
-                    SALsA.GetInstance(Id).State = SALsA.State.MissingSubscriptionId;
+                    SALsA.GetInstance(Id).State = SALsAState.MissingSubscriptionId;
                 }
                 SALsA.GetInstance(Id).ICM.QueueICMDiscussion("Could not detect any valid SubscriptionId (must be a valid GUID). Aborting analysis.");
                 throw new ArgumentNullException("SubscriptionId must not be null");
@@ -98,7 +98,7 @@ namespace SALsA.LivesiteAutomation
                     }
                     catch
                     {
-                        SALsA.GetInstance(Id).State = SALsA.State.NotFound;
+                        SALsA.GetInstance(Id).State = SALsAState.NotFound;
                         throw new Exception("VM not found");
                     }
                 }

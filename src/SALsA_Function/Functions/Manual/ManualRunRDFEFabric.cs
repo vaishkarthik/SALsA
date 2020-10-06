@@ -14,7 +14,7 @@ namespace SALsA.Functions
 {
     public static class ManualRunRDFEFabricGet
     {
-        [FunctionName("ManualRunRDFEFabric)Get")]
+        [FunctionName("ManualRunRDFEFabric_Get")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "manual/ManualRunRDFEFabric")] HttpRequest req, ExecutionContext context,
             ILogger log)

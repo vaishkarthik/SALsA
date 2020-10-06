@@ -9,28 +9,24 @@ namespace SALsA.LivesiteAutomation
 {
     public class SALsA
     {
-        public enum State
-        {
-            Running,
-            Done,
-            NotFound,
-            Ignore,
-            UnknownException,
-            MissingSubscriptionId,
-        }
         public class SALsAInstance
         {
             public Log Log;
             public ICM ICM;
             public TaskManager TaskManager;
-            private State _state;
-            public State State { get { return _state; } set { _state = value; TableStorage.AppendEntity(ICM.Id, value, ICM.SAS); } }
+            private SALsAState _state;
+            public SALsAState State { get { return _state; } set { _state = value; TableStorage.AppendEntity(ICM.Id, value, Log.SAS, ICM.SAS); } }
             public SALsAInstance(int icm)
             {
                 this.Log = new Log(icm);
                 this.ICM = new ICM(icm);
                 this.TaskManager = new TaskManager(icm);
-                this.State = State.Running;
+                this.State = SALsAState.Running;
+            }
+
+            public void RefreshTable()
+            {
+                TableStorage.AppendEntity(ICM.Id, State, Log.SAS, ICM.SAS);
             }
         }
 

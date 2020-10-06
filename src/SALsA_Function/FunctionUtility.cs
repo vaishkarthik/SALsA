@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using SALsA.Functions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,7 +12,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using SALsA.General;
+using Azure.Storage.Queues;
 
 namespace SALsA.General
 {
@@ -59,7 +60,7 @@ namespace SALsA.General
         internal static IActionResult RunIfReadySALsA(int icm, object manual = null)
         {
             var entity = SALsA.LivesiteAutomation.TableStorage.GetEntity(icm);
-            if (entity != null && entity.RowKey == SALsA.LivesiteAutomation.SALsA.State.Running.ToString())
+            if (entity != null && entity.RowKey == SALsAState.Running.ToString())
                 return new ConflictObjectResult($"ICM#{icm} is already running. Please wait for the run to finish then try again.");
             else
             {
@@ -71,7 +72,9 @@ namespace SALsA.General
         internal static void AddRunToSALsA(int icm, object manual = null)
         {
             // TODO use queue instead of thread ?
-            new Task(() => SALsA.LivesiteAutomation.Program.Run(icm, manual)).Start();
+            //new Task(() => SALsA.LivesiteAutomation.Program.Run(icm, manual)).Start();
+            var client = new QueueClient(Authentication.Instance.GenevaAutomationConnectionString, Constants.QueueName);
+            client.SendMessage(icm.ToString());
         }
     }
 }

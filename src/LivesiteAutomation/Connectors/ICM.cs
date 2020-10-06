@@ -67,7 +67,7 @@ namespace SALsA.LivesiteAutomation
         public void EmptyMessageQueue()
         {
             SALsA.GetInstance(Id)?.Log.Verbose("Empty Message Queue with {0} elements", MessageQueue.Count);
-            if (SALsA.GetInstance(Id).State == SALsA.State.Ignore || SALsA.GetInstance(Id).State == SALsA.State.MissingSubscriptionId) return; // Ignore the ICM
+            if (SALsA.GetInstance(Id).State == SALsAState.Ignore || SALsA.GetInstance(Id).State == SALsAState.MissingSubscriptionId) return; // Ignore the ICM
             string reason = null;
             try
             {
@@ -86,7 +86,7 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id).State = SALsA.State.UnknownException;
+                SALsA.GetInstance(Id).State = SALsAState.UnknownException;
                 SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}. Reason : ", this.Id, reason);
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
             }

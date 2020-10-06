@@ -1,14 +1,11 @@
-﻿using Microsoft.Azure.KeyVault.Models;
+﻿using SALsA.LivesiteAutomation;
 using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Activation;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SALsA.General
 {
@@ -18,6 +15,7 @@ namespace SALsA.General
         public string UID { get; private set; }
         private StreamWriter sw = null;
         private int Id;
+        public string SAS { get; private set; }
         public string LogFileName { get; private set; }
         public string LogFullPath { get; private set; }
         public string LogFolderPath { get; private set; }
@@ -25,6 +23,7 @@ namespace SALsA.General
         public Log(int Id = 0)
         {
             Utility.GlobalLog = this;
+            TableStorage.GlobalLog = this;
             Authentication.GlobalLog = this;
             this.Id = Id;
             StartTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
@@ -52,6 +51,11 @@ namespace SALsA.General
             {
                 sw = File.AppendText(LogFullPath);
             }
+        }
+
+        public void SetSAS(string sas)
+        {
+            this.SAS = sas;
         }
 
         // https://msdn.microsoft.com/en-us/magazine/ff714589.aspx

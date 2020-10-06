@@ -19,7 +19,8 @@ namespace SALsA.General
         private KeyVaultClient keyVaultClient = null;
         private ServicePrincipal servicePrincipal = null;
         private static Authentication instance = null;
-        public static Log GlobalLog = null;
+        private static string genevaAutomationConnectionString = null;
+        public static Log GlobalLog = new Log();
 
         public X509Certificate2 Cert
         {
@@ -33,7 +34,24 @@ namespace SALsA.General
                 return cert;
             }
         }
-
+        public string GenevaAutomationConnectionString
+        {
+            get
+            {
+                try
+                {
+                    SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationBlobConnectionStringSecretURI).GetAwaiter().GetResult();
+                    genevaAutomationConnectionString = secret.Value;
+                }
+                catch (Exception ex)
+                {
+                    GlobalLog?.Error("Error getting Storage Credentials");
+                    GlobalLog?.Exception(ex);
+                    return null;
+                }
+                return genevaAutomationConnectionString;
+            }
+        }
         public Microsoft.Azure.Storage.Auth.StorageCredentials BlobStorageCredentials
         {
             get
@@ -82,6 +100,9 @@ namespace SALsA.General
                 if (instance == null)
                 {
                     instance = new Authentication();
+                    _ = Authentication.Instance.Cert;
+                    _ = Authentication.Instance.BlobStorageCredentials;
+                    _ = Authentication.Instance.TableStorageClient;
                 }
                 return instance;
             }
@@ -140,8 +161,7 @@ namespace SALsA.General
         {
             try
             {
-                SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationBlobConnectionStringSecretURI).GetAwaiter().GetResult();
-                return GetBlobStorageCredentials(ParseStringIntoSettings(secret.Value));
+                return GetBlobStorageCredentials(ParseStringIntoSettings(GenevaAutomationConnectionString));
             }
             catch (Exception ex)
             {
@@ -155,8 +175,7 @@ namespace SALsA.General
         {
             try
             {
-                SecretBundle secret = keyVaultClient.GetSecretAsync(Constants.AuthenticationBlobConnectionStringSecretURI).GetAwaiter().GetResult();
-                return GetTableStorageCredentials(ParseStringIntoSettings(secret.Value));
+                return GetTableStorageCredentials(ParseStringIntoSettings(GenevaAutomationConnectionString));
             }
             catch (Exception ex)
             {

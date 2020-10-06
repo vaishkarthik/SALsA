@@ -1,27 +1,31 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web.UI.HtmlControls;
 
 namespace SALsA.General
 {
+    public enum SALsAState
+    {
+        Running,
+        Done,
+        NotFound,
+        Ignore,
+        UnknownException,
+        MissingSubscriptionId
+    }
+
     public static class Utility
     {
-        public static Log GlobalLog = null;
+        public static Log GlobalLog = new Log();
         public class TaskManager
         {
 
@@ -88,21 +92,6 @@ namespace SALsA.General
                     // Should be empty, but just making sure...
                     Tasks = new List<Task>();
                 }
-            }
-        }
-
-        public static string BitMapToHTML(Bitmap bitmap, long quality = 80)
-        {
-            using (var ms = new MemoryStream())
-            {
-                EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
-                ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
-                EncoderParameters parameters = new EncoderParameters(1);
-                parameters.Param[0] = qualityParam;
-                bitmap.Save(ms, imageCodec, parameters);
-                var base64 = Convert.ToBase64String(ms.ToArray()); //Get Base64
-                return String.Format("<img src=\"data:image/bmp;base64,{0}\" width=\"{1}\" height=\"{2}\" />",
-                                            base64, bitmap.Width, bitmap.Height);
             }
         }
 
@@ -226,10 +215,6 @@ namespace SALsA.General
         internal static void SaveToFile(string name, string output, int Id)
         {
             File.WriteAllText(CreateICMFolderInLogDirAndReturnFullPath(name, Id), output);
-        }
-        internal static void SaveToFile(string name, Image output, int Id)
-        {
-            output.Save(CreateICMFolderInLogDirAndReturnFullPath(name, Id));
         }
         internal static void SaveToFile(string name, Stream output, int Id)
         {

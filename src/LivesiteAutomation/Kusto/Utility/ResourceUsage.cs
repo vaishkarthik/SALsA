@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
 using ZedGraph;
 
 namespace SALsA.LivesiteAutomation.Commons
@@ -42,6 +45,21 @@ namespace SALsA.LivesiteAutomation.Commons
             control.AxisChange();
             control.Invalidate();
             return control.GraphPane.GetImage(width, heigth, dpi, true);
+        }
+
+        public static string BitMapToHTML(Bitmap bitmap, long quality = 80)
+        {
+            using (var ms = new MemoryStream())
+            {
+                EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+                ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
+                EncoderParameters parameters = new EncoderParameters(1);
+                parameters.Param[0] = qualityParam;
+                bitmap.Save(ms, imageCodec, parameters);
+                var base64 = Convert.ToBase64String(ms.ToArray()); //Get Base64
+                return String.Format("<img src=\"data:image/bmp;base64,{0}\" width=\"{1}\" height=\"{2}\" />",
+                                            base64, bitmap.Width, bitmap.Height);
+            }
         }
     }
 }
