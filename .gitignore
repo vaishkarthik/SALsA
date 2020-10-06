@@ -395,3 +395,4 @@ __pycache__/
 
 # VSCode
 .vscode/
+src/SALsA_Queue/local.settings.json
