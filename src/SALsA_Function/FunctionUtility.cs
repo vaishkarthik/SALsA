@@ -81,7 +81,7 @@ namespace SALsA.General
             {
                 queueMessage = icm.ToString();
             }
-            client.SendMessage(queueMessage);
+            client.SendMessage(Utility.Base64Encode(queueMessage));
         }
     }
 }

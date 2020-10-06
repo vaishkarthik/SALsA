@@ -13,7 +13,7 @@ namespace SALsA.Functions
 {
     public static class NewICMGet
     {
-        [FunctionName("NewICM")]
+        [FunctionName("NewICMQueue")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "icm/{id:int}")] HttpRequest req, int id,
             ILogger log)

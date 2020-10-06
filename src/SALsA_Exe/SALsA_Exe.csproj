@@ -4,9 +4,6 @@
     <AzureFunctionsVersion>v1</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="GenevaActionsLibrary" Version="4.0.4.1310" />
     <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />

@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SALsA_Function", "SALsA_Fun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SALsA_Exe", "SALsA_Exe\SALsA_Exe.csproj", "{76B94438-B41F-42B9-B99A-5082A2C76289}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SALsA_Queue", "SALSA_Queue\SALsA_Queue.csproj", "{4177C254-76D3-4A54-95EC-69BB0C58DF2B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{76B94438-B41F-42B9-B99A-5082A2C76289} = {76B94438-B41F-42B9-B99A-5082A2C76289}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +26,10 @@ Global
 		{76B94438-B41F-42B9-B99A-5082A2C76289}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76B94438-B41F-42B9-B99A-5082A2C76289}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76B94438-B41F-42B9-B99A-5082A2C76289}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4177C254-76D3-4A54-95EC-69BB0C58DF2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4177C254-76D3-4A54-95EC-69BB0C58DF2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4177C254-76D3-4A54-95EC-69BB0C58DF2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4177C254-76D3-4A54-95EC-69BB0C58DF2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
