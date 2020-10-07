@@ -10,7 +10,6 @@ namespace SALSA_Queue
 {
     public static class NewICMDequeue
     {
-        static TraceWriter Log;
         [FunctionName("NewICMDequeue")]
         public static void Run([QueueTrigger("salsaqueue", Connection = "AzureWebJobsStorage")]string myQueueItem, TraceWriter log)
         {

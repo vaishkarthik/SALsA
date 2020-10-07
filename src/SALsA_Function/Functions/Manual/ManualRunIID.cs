@@ -27,7 +27,7 @@ namespace SALsA.Functions
     public static class ManualRunIIDPost
     {
         [FunctionName("ManualRunIID_Post")]
-        public static async Task<IActionResult> Run(
+        public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "manual/ManualRunIID")] HttpRequest req, ExecutionContext context,
             ILogger log)
         {

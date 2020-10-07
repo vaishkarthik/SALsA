@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Net;
 using System.Collections.Generic;
 using SALsA.General;
+using System.Net.Http.Headers;
 
 namespace SALsA.Functions
 {
@@ -27,19 +28,25 @@ namespace SALsA.Functions
             lst.Add(new string[] { "ICM", "Status", "Log" });
             foreach (var icm in icms)
             {
-                if (icm.RowKey == SALsA.General.SALsAState.Ignore.ToString()) continue;
+                if (icm.SALsAState == SALsA.General.SALsAState.Ignore.ToString()) continue;
                 var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icm.PartitionKey);
                 icmLink = Utility.UrlToHml(icm.PartitionKey.ToString(), icmLink, 20);
 
-                var status = Utility.UrlToHml(icm.RowKey.ToString(), icm.SALsALog, 20);
+                var status = Utility.UrlToHml(icm.SALsAState, icm.SALsALog, 20);
 
                 var logPath = icm.Log;
-                logPath = icm.RowKey == SALsAState.Running.ToString() ? "Wait..." : Utility.UrlToHml("HTML", logPath, 20);
+                logPath = icm.SALsAState == SALsAState.Running.ToString() ? "Wait..." : Utility.UrlToHml("HTML", logPath, 20);
 
                 lst.Add(new string[] { icmLink, status, logPath });
             }
             string result = Utility.List2DToHTML(lst, true);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Headers.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true,
+                NoStore = true,
+                MustRevalidate = true
+            };
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/html");
 
             return response;

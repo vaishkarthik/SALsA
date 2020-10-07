@@ -27,7 +27,7 @@ namespace SALsA.Functions
     public static class ManualRunICMPost
     {
         [FunctionName("ManualRunICM_Post")]
-        public static async Task<IActionResult> Run(
+        public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "manual/ManualRunICM")] HttpRequest req, ExecutionContext context,
             ILogger log)
         {

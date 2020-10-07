@@ -14,15 +14,16 @@ namespace SALsA.LivesiteAutomation
     {
         public class SALsAEntity : TableEntity
         {
-            public SALsAEntity(string icm, string state)
+            public SALsAEntity(string icm)
             {
                 this.PartitionKey = icm;
-                this.RowKey = state;
+                this.RowKey = icm;
             }
 
             public SALsAEntity() { }
             public string SALsALog { get; set; }
             public string Log { get; set; }
+            public string SALsAState { get; set; }
         }
 
         public static Log GlobalLog = new Log();
@@ -43,9 +44,10 @@ namespace SALsA.LivesiteAutomation
         {
             try
             {
-                SALsAEntity incident = new SALsAEntity(icm.ToString(), state.ToString());
+                SALsAEntity incident = new SALsAEntity(icm.ToString());
                 incident.SALsALog = salsaLog;
                 incident.Log = log;
+                incident.SALsAState = state.ToString();
                 TableOperation insertOperation = TableOperation.InsertOrReplace(incident);
                 Authentication.Instance.TableStorageClient.Execute(insertOperation);
             }

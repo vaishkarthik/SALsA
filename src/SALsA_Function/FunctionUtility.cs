@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Azure.Storage.Queues;
+using SALsA.LivesiteAutomation;
 
 namespace SALsA.General
 {
@@ -48,7 +49,7 @@ namespace SALsA.General
             return dic;
         }
 
-        internal static IActionResult ManualRun<T>(HttpRequest req)
+        internal static HttpResponseMessage ManualRun<T>(HttpRequest req)
         {
             var dic = RequestStreamToDic(req);
             var icmId = int.Parse(dic["icmid"]);
@@ -57,15 +58,22 @@ namespace SALsA.General
             return RunIfReadySALsA(icmId, obj);
         }
 
-        internal static IActionResult RunIfReadySALsA(int icm, object manual = null)
+        internal static HttpResponseMessage RunIfReadySALsA(int icm, object manual = null)
         {
             var entity = SALsA.LivesiteAutomation.TableStorage.GetEntity(icm);
             if (entity != null && entity.RowKey == SALsAState.Running.ToString())
-                return new ConflictObjectResult($"ICM#{icm} is already running. Please wait for the run to finish then try again.");
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.Conflict);
+                response.Content = new StringContent($"ICM#{icm} is already running. Please wait for the run to finish then try again.",
+                    System.Text.Encoding.UTF8, "text/html");
+                return response;
+            }
             else
             {
                 AddRunToSALsA(icm, manual);
-                return new RedirectResult("/api/status", true);
+                var response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Headers.Location = new Uri("/api/status");
+                return response;
             }
         }
 
@@ -81,6 +89,7 @@ namespace SALsA.General
             {
                 queueMessage = icm.ToString();
             }
+            TableStorage.AppendEntity(icm, SALsAState.Queued);
             client.SendMessage(Utility.Base64Encode(queueMessage));
         }
     }
