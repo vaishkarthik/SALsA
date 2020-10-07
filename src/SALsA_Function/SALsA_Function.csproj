@@ -76,5 +76,6 @@
   </ItemGroup>
   <PropertyGroup>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <UserSecretsId>55f8e8f8-8654-4177-be49-7c2e89efcbeb</UserSecretsId>
   </PropertyGroup>
 </Project>
