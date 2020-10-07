@@ -17,12 +17,12 @@ namespace SALsA.Functions
     {
         [FunctionName("NewICMQueue")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "icm/{id:int}")] HttpRequest req, int id,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "icm/{id:int}")] HttpRequestMessage req, int id,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed for NewICM Get: {0}", id);
 
-            var response = FunctionUtility.RunIfReadySALsA(id);
+            var response = FunctionUtility.RunIfReadySALsA(req, id);
             response.Headers.CacheControl = new CacheControlHeaderValue
             {
                 NoCache = true,

@@ -18,12 +18,12 @@ namespace SALsA.Functions
 
         [FunctionName("Tools")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "manual/Tools")] HttpRequest req, ExecutionContext context,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "manual/Tools")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);
 
-            return FunctionUtility.ReturnTemplate(context);
+            return FunctionUtility.ReturnTemplate(req, context);
         }
     }
 }

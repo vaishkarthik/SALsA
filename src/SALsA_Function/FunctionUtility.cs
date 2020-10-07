@@ -19,7 +19,7 @@ namespace SALsA.General
 {
     static class FunctionUtility
     {
-        public static HttpResponseMessage ReturnTemplate(ExecutionContext context)
+        public static HttpResponseMessage ReturnTemplate(HttpRequestMessage req, ExecutionContext context)
         {
             // Filename is expected to be ex: ManualRunICM.html, but function name is ManualRunICM_Get,
             // so we need to remove those.
@@ -33,7 +33,7 @@ namespace SALsA.General
                 fileName = fileName.Substring(0, fileName.Length - 5);
             }
 
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            var response = req.CreateResponse(HttpStatusCode.OK);
             response.Content = new StringContent(System.IO.File.ReadAllText(
                         System.IO.Path.Combine(context.FunctionDirectory,
                         String.Format("../HTMLTemplate/{0}.html", fileName))),
@@ -41,29 +41,30 @@ namespace SALsA.General
             return response;
         }
 
-        internal static Dictionary<string, string> RequestStreamToDic(HttpRequest req)
+        internal static Dictionary<string, string> RequestStreamToDic(HttpRequestMessage req)
         {
-            string ret = req.ReadAsStringAsync().Result;
+            string ret = req.Content.ReadAsStringAsync().Result;
             var parsed = HttpUtility.ParseQueryString(ret);
             var dic = parsed.AllKeys.ToDictionary(k => k, k => parsed[k]);
             return dic;
         }
 
-        internal static HttpResponseMessage ManualRun<T>(HttpRequest req)
+        internal static HttpResponseMessage ManualRun<T>(HttpRequestMessage req)
         {
             var dic = RequestStreamToDic(req);
             var icmId = int.Parse(dic["icmid"]);
             var obj = Utility.JsonToObject<T>(
                 Utility.ObjectToJson(dic));
-            return RunIfReadySALsA(icmId, obj);
+            return RunIfReadySALsA(req, icmId, obj);
         }
 
-        internal static HttpResponseMessage RunIfReadySALsA(int icm, object manual = null)
+        internal static HttpResponseMessage RunIfReadySALsA(HttpRequestMessage req, int icm, object manual = null)
         {
             var entity = SALsA.LivesiteAutomation.TableStorage.GetEntity(icm);
             if (entity != null && entity.RowKey == SALsAState.Running.ToString())
             {
-                var response = new HttpResponseMessage(HttpStatusCode.Conflict);
+
+                var response = req.CreateResponse(HttpStatusCode.Conflict);
                 response.Content = new StringContent($"ICM#{icm} is already running. Please wait for the run to finish then try again.",
                     System.Text.Encoding.UTF8, "text/html");
                 return response;
@@ -71,8 +72,8 @@ namespace SALsA.General
             else
             {
                 AddRunToSALsA(icm, manual);
-                var response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Headers.Location = new Uri("/api/status");
+                var response = req.CreateResponse(HttpStatusCode.TemporaryRedirect);
+                response.Headers.Location = new Uri("/api/status", UriKind.Relative);
                 return response;
             }
         }

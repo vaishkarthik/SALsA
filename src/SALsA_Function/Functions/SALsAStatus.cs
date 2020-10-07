@@ -19,7 +19,7 @@ namespace SALsA.Functions
     {
         [FunctionName("SALsAStatus")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "status")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "status")] HttpRequestMessage req,
             ILogger log)
         {
             // TODO remvoe this from the API and have it in the MVC part
@@ -32,10 +32,15 @@ namespace SALsA.Functions
                 var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", icm.PartitionKey);
                 icmLink = Utility.UrlToHml(icm.PartitionKey.ToString(), icmLink, 20);
 
-                var status = Utility.UrlToHml(icm.SALsAState, icm.SALsALog, 20);
+                var status = icm.SALsAState;
 
                 var logPath = icm.Log;
-                logPath = icm.SALsAState == SALsAState.Running.ToString() ? "Wait..." : Utility.UrlToHml("HTML", logPath, 20);
+                logPath = icm.SALsAState == SALsAState.Running.ToString() || icm.SALsAState == SALsAState.Queued.ToString() ? "Wait..." : "Unavailable";
+                if (icm.Log.StartsWith("http"))
+                {
+                    status = Utility.UrlToHml(icm.SALsAState, icm.SALsALog, 20);
+                    logPath = Utility.UrlToHml("HTML", logPath, 20);
+                }
 
                 lst.Add(new string[] { icmLink, status, logPath });
             }

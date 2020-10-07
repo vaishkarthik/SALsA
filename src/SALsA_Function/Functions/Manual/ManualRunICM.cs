@@ -16,19 +16,19 @@ namespace SALsA.Functions
     {
         [FunctionName("ManualRunICM_Get")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "manual/ManualRunICM")] HttpRequest req, ExecutionContext context,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "manual/ManualRunICM")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);
 
-            return FunctionUtility.ReturnTemplate(context);
+            return FunctionUtility.ReturnTemplate(req, context);
         }
     }
     public static class ManualRunICMPost
     {
         [FunctionName("ManualRunICM_Post")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "manual/ManualRunICM")] HttpRequest req, ExecutionContext context,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "manual/ManualRunICM")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);
