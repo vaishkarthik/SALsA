@@ -16,7 +16,7 @@ namespace SALsA.Functions
     {
         [FunctionName("ManualRunRDFETenant_Get")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "manual/ManualRunRDFETenant")] HttpRequestMessage req, ExecutionContext context,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "manual/ManualRunRDFETenant")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);
@@ -28,7 +28,7 @@ namespace SALsA.Functions
     {
         [FunctionName("ManualRunRDFETenant_Post")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "manual/ManualRunRDFETenant")] HttpRequestMessage req, ExecutionContext context,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "manual/ManualRunRDFETenant")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);

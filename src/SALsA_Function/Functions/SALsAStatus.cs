@@ -19,7 +19,7 @@ namespace SALsA.Functions
     {
         [FunctionName("SALsAStatus")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "status")] HttpRequestMessage req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "status")] HttpRequestMessage req,
             ILogger log)
         {
             // TODO remvoe this from the API and have it in the MVC part
