@@ -1,17 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 
-namespace SALSA_Queue
+namespace SALsA_Function.Functions
 {
     public static class NewICMDequeue
     {
         [FunctionName("NewICMDequeue")]
-        public static void Run([QueueTrigger("salsaqueue", Connection = "AzureWebJobsStorage")]string myQueueItem, TraceWriter log)
+        public static void Run([QueueTrigger("salsaqueue", Connection = "AzureWebJobsStorage")] string myQueueItem, ILogger log)
         {
             var currentDir = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var salsaPath = Path.Combine(Directory.GetParent(currentDir).FullName, @"SALsA_Exe\SALsA_Exe.exe");
@@ -32,19 +32,19 @@ namespace SALSA_Queue
             process.WaitForExit();
         }
         public class LogManager
-        { 
-            public LogManager(TraceWriter _log)
+        {
+            public LogManager(ILogger _log)
             {
                 this.Log = _log;
             }
-            TraceWriter Log;
+            ILogger Log;
             public void p_OutputDataReceived(object sender, DataReceivedEventArgs e)
             {
-                Log.Info(e.Data);
+                Log.LogInformation(e.Data);
             }
             public void p_ErrorDataReceived(object sender, DataReceivedEventArgs e)
             {
-                Log.Error(e.Data);
+                Log.LogError(e.Data);
             }
         }
     }

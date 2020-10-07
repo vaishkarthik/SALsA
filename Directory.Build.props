@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  This file is imported by any project that imports Microsoft.Common.props
+-->
+<Project>
+  <PropertyGroup>
+    <!--
+      Use this property for convenience to build a path starting from the root of the repository.
+    -->
+    <EnlistmentRoot>$(MSBuildThisFileDirectory.TrimEnd('\\'))</EnlistmentRoot>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <O Condition=" '$(O)' == '' ">obj\$(Platform)\$(Configuration)</O>
+    <BuildType Condition=" '$(Configuration)' == 'Release' ">retail</BuildType>
+    <BuildType Condition=" '$(Configuration)' == 'Debug' ">debug</BuildType>
+    <PackagesRoot>$(EnlistmentRoot)\Packages</PackagesRoot>
+    <BaseDir>$(EnlistmentRoot)</BaseDir>
+    <SrcRoot>$(EnlistmentRoot)\src</SrcRoot>
+    <NuProjPath>$(EnlistmentRoot)\build\nuproj</NuProjPath>
+    <OutDirPath>$(EnlistmentRoot)\out</OutDirPath>
+    <BinariesOutputFolder>$(EnlistmentRoot)\out</BinariesOutputFolder>
+    <BinariesBuildTypeArchDirectory>$(BinariesOutputFolder)\$(BuildType)-$(Platform)</BinariesBuildTypeArchDirectory>
+    <OutDir>$(BinariesBuildTypeArchDirectory)\$(MSBuildProjectName)\</OutDir>
+    <OutputPath Condition=" '$(OutputPath)' == '' ">$(OutDir)</OutputPath>
+    <NugetOut>$(BinariesOutputFolder)\packages\$(Configuration)</NugetOut>
+
+    <!--
+      New SDK-style projects include everything in the project directory by default.  This excludes the files left by QuickBuild local builds.
+    -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);QTestLogs\**;Logs\**;QLogs\**</DefaultItemExcludes>
+
+    <!--
+      Enable restoring projects with packages.config
+    -->
+    <RestorePackagesConfig>true</RestorePackagesConfig>
+    <DebugType>Full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SlnGenSolutionItem Include="$(MSBuildThisFileDirectory)CloudBuild.json;
+                        $(MSBuildThisFileDirectory)Directory.Build.props;
+                        $(MSBuildThisFileDirectory)Directory.Build.rsp;
+                        $(MSBuildThisFileDirectory)Directory.Build.targets;
+                        $(MSBuildThisFileDirectory)dirs.proj;
+                        $(MSBuildThisFileDirectory)global.json;
+                        $(MSBuildThisFileDirectory)NuGet.config;
+                        $(MSBuildThisFileDirectory)Packages.props;
+                        $(MSBuildThisFileDirectory)README.md" />
+  </ItemGroup>
+</Project>
