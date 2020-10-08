@@ -67,27 +67,30 @@ namespace SALsA.LivesiteAutomation
         public void EmptyMessageQueue()
         {
             SALsA.GetInstance(Id)?.Log.Verbose("Empty Message Queue with {0} elements", MessageQueue.Count);
-            if (SALsA.GetInstance(Id).State == SALsAState.Ignore || SALsA.GetInstance(Id).State == SALsAState.MissingSubscriptionId) return; // Ignore the ICM
+            if (MessageQueue.IsEmpty || SALsA.GetInstance(Id).State == SALsAState.Ignore || SALsA.GetInstance(Id).State == SALsAState.MissingSubscriptionId) return; // Ignore the ICM
             string reason = null;
             try
             {
                 var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray(), SALsA.GetInstance(Id)?.Log.StartTime);
                 SAS = BlobStorageUtility.UploadICMRun(Id, message);
-                message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
-                    DateTime.ParseExact(SALsA.GetInstance(Id)?.Log.StartTime, "yyMMddTHHmmss", null)
-                        .ToString("yyyy-MM-ddTHH:mm:ssZ")), SAS);
-                if (message == null) throw new ArgumentNullException("Message is null, please verify run log");
-                var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(message)));
-                body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
-                reason = response.Content.ReadAsStringAsync().Result;
-                response.EnsureSuccessStatusCode();
-                SALsA.GetInstance(Id)?.Log.Verbose("Got response for ICM {0}", this.Id);
+                if(Constants.ShouldPostToICM)
+                { 
+                    message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
+                        DateTime.ParseExact(SALsA.GetInstance(Id)?.Log.StartTime, "yyMMddTHHmmss", null)
+                            .ToString("yyyy-MM-ddTHH:mm:ssZ")), SAS);
+                    if (message == null) throw new ArgumentNullException("Message is null, please verify run log");
+                    var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(message)));
+                    body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
+                    reason = response.Content.ReadAsStringAsync().Result;
+                    response.EnsureSuccessStatusCode();
+                    SALsA.GetInstance(Id)?.Log.Verbose("Got response for ICM {0}", this.Id);
+                }
             }
             catch (Exception ex)
             {
                 SALsA.GetInstance(Id).State = SALsAState.UnknownException;
-                SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}. Reason : ", this.Id, reason);
+                SALsA.GetInstance(Id)?.Log.Error("Failed to add message element to ICM {0}. Reason : {1}", this.Id, reason);
                 SALsA.GetInstance(Id)?.Log.Exception(ex);
             }
             finally 

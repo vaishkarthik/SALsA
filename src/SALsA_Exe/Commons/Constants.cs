@@ -41,6 +41,7 @@ namespace SALsA.General
         public const string ICMRelativeBaseAPIUri = "api/cert/incidents";
         public const string ICMTrnasferIncidentSuffix = "/TransferIncident";
         public const string ICMDescriptionEntriesSuffix = "/DescriptionEntries?$inlinecount=allpages";
+        public const bool   ShouldPostToICM = false;
 
         // Analyser.cs
         public const string AnalyzerSubscriptionIdField = "SubscriptionId";

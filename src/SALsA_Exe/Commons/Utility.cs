@@ -19,7 +19,7 @@ namespace SALsA.General
         Done, // SALsA finished running
         NotFound, // VM not found
         Ignore, // Skipping, probably due to uncompatibility (ex: HGAP dont provide usefull information)
-        UnknownException, // Error ! @aydjella needs
+        UnknownException, // Error ! @aydjella needs to take a look
         MissingSubscriptionId, // No subid given
         Queued // Not yet received by SALsA, but QUeued by the azure function
     }

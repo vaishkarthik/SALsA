@@ -62,6 +62,17 @@ namespace SALsA.LivesiteAutomation
                 SALsA.GetInstance(icm)?.Log.Exception(ex);
 
                 SALsA.GetInstance(icm)?.TaskManager.WaitAllTasks();
+
+                try
+                {
+                    SALsA.GetInstance(icm)?.Log.Information("ICM State : {0}", Utility.ObjectToJson(SALsA.GetInstance(icm).ICM));
+                }
+                catch { }
+                try
+                {
+                    SALsA.GetInstance(icm)?.Log.Information("ICM SALsA : {0}", Utility.ObjectToJson(SALsA.GetInstance(icm)));
+                }
+                catch { }
                 //throw ex;
             }
             finally
@@ -69,7 +80,14 @@ namespace SALsA.LivesiteAutomation
                 SALsA.GetInstance(icm)?.ICM.EmptyMessageQueue();
                 if(SALsA.GetInstance(icm)?.State == SALsAState.Running)
                 {
-                    SALsA.GetInstance(icm).State = SALsAState.Done;
+                    if(SALsA.GetInstance(icm)?.ICM?.SAS != null)
+                    { 
+                        SALsA.GetInstance(icm).State = SALsAState.Done;
+                    }
+                    else
+                    {
+                        SALsA.GetInstance(icm).State = SALsAState.UnknownException;
+                    }
                 }
                 BlobStorageUtility.UploadLog(icm);
                 SALsA.GetInstance(icm)?.RefreshTable();
