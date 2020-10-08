@@ -35,13 +35,15 @@ namespace SALsA.Functions
                 var status = icm.SALsAState;
 
                 var logPath = icm.Log;
-                logPath = icm.SALsAState == SALsAState.Running.ToString() || icm.SALsAState == SALsAState.Queued.ToString() ? "Wait..." : "Unavailable";
-                if (icm.Log.StartsWith("http"))
+                if (icm.Log != null && icm.Log.StartsWith("http"))
                 {
                     status = Utility.UrlToHml(icm.SALsAState, icm.SALsALog, 20);
                     logPath = Utility.UrlToHml("HTML", logPath, 20);
                 }
-
+                else
+                {
+                    logPath = icm.SALsAState == SALsAState.Running.ToString() || icm.SALsAState == SALsAState.Queued.ToString() ? "Wait..." : "Unavailable";
+                }
                 lst.Add(new string[] { icmLink, status, logPath });
             }
             string result = Utility.List2DToHTML(lst, true);
