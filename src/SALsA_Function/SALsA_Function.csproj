@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+    <NoWarn>1998</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SALsA_Exe\SALsA_Exe.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Content</OutputItemType>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="HTMLTemplate\ManualRunICM.html" />
+    <None Remove="HTMLTemplate\ManualRunIID.html" />
+    <None Remove="HTMLTemplate\ManualRunRdfeFabric.html" />
+    <None Remove="HTMLTemplate\ManualRunRdfeTenant.html" />
+    <None Remove="HTMLTemplate\Tools.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="HTMLTemplate\ManualRunICM.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTMLTemplate\ManualRunIID.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTMLTemplate\ManualRunRdfeFabric.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTMLTemplate\ManualRunRdfeTenant.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTMLTemplate\Tools.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Queues" Version="12.4.2" />
+    <PackageReference Include="Microsoft.AspNetCore.AzureKeyVault.HostingStartup" Version="2.0.4" />
+    <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
+    <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.5" />
+    <PackageReference Include="Microsoft.Azure.KeyVault.Core" Version="3.0.5" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.0" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\\SALsA_Exe\ManualRun\ManualRun_ICM.cs" Link="ExternalLink\ManualRun_ICM.cs" />
+    <Compile Include="..\\SALsA_Exe\ManualRun\ManualRun_IID.cs" Link="ExternalLink\ManualRun_IID.cs" />
+    <Compile Include="..\\SALsA_Exe\ManualRun\ManualRun_RDFE.cs" Link="ExternalLink\ManualRun_RDFE.cs" />
+    <Compile Include="..\\SALsA_Exe\Commons\Constants.cs" />
+    <Compile Include="..\\SALsA_Exe\Commons\Log.cs" Link="ExternalLink\Log.cs" />
+    <Compile Include="..\\SALsA_Exe\Commons\Utility.cs" Link="ExternalLink\Utility.cs" />
+    <Compile Include="..\\SALsA_Exe\Commons\HttpClientExtensions.cs" Link="ExternalLink\HttpClientExtensions.cs" />
+    <Compile Include="..\\SALsA_Exe\Connectors\Authentication.cs" Link="ExternalLink\Authentication.cs" />
+    <Compile Include="..\\SALsA_Exe\Connectors\TableStorage.cs" Link="ExternalLink\TableStorage.cs" />
+    <Compile Include="..\\SALsA_Exe\Connectors\ICM.cs" Link="ExternalLink\ICM.cs" />
+    <Compile Include="..\\SALsA_Exe\Json2Class\ServicePrincipal.cs" Link="ExternalLink\ServicePrincipal.cs" />
+    <Compile Include="..\\SALsA_Exe\Json2Class\Incident.cs" Link="ExternalLink\Incident.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(BinariesBuildTypeArchDirectory)\SALSA_Exe\**" Link="SALSA_Exe\%(RecursiveDir)%(Filename)%(Extension)" Visible="false">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ExternalLink\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <UserSecretsId>55f8e8f8-8654-4177-be49-7c2e89efcbeb</UserSecretsId>
+  </PropertyGroup>
+</Project>
