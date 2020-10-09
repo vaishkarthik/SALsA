@@ -32,7 +32,6 @@ namespace SALsA.Functions
             {
                 IcmId = _IcmId;
                 SalsaStatus = _SalsaStatus;
-                IcmStatus = "Transferred out";
 
 
                 if (_SalsALog.StartsWith("http"))
@@ -51,7 +50,7 @@ namespace SALsA.Functions
             public string IcmId;
             public string SalsaStatus = "N/A";
             public string SalsaLog = "N/A";
-            public string IcmStatus = "N/A";
+            public string IcmStatus = "Transferred out";
             public Nullable<DateTime> IcmCreation = null;
         }
 
@@ -87,7 +86,10 @@ namespace SALsA.Functions
                     {
                         var currentIcm = ICM.PopulateICMInfo(int.Parse(run.PartitionKey));
                         tuple = new StatusLine(currentIcm.Id, currentIcm.Status, currentIcm.CreateDate);
-                        tuple.IcmStatus = currentIcm.OwningTeamId;
+                        if(currentIcm.Status != "Resolved") // We do not care about the Owning team if it is closed / resolved
+                        { 
+                            tuple.IcmStatus = currentIcm.OwningTeamId;
+                        }
                     }
                     catch
                     {
