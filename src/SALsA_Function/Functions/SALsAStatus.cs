@@ -28,30 +28,31 @@ namespace SALsA.Functions
                 IcmStatus = _IcmStatus;
                 IcmCreation = _IcmCreation;
             }
-            public void Update(string _IcmId, string _SalsaStatus, string _SalsALog, Nullable<DateTime> _SalsaProcessed = null)
+            public void Update(string _IcmId, string _SalsaStatus, string _SalsALog, Nullable<DateTime> _SalsaLogIngestion = null)
             {
                 IcmId = _IcmId;
                 SalsaStatus = _SalsaStatus;
 
-
+                _SalsaInternalIngestion = _SalsaLogIngestion.Value;
                 if (_SalsALog.StartsWith("http"))
                 {
-                    SalsaLog = Utility.UrlToHml(_SalsaProcessed.HasValue ? _SalsaProcessed.Value.ToUniversalTime().ToString("s") : "HTML", _SalsALog, 20);
+                    SalsaLogIngestion = Utility.UrlToHml(_SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToUniversalTime().ToString("s") + "Z" : "HTML", _SalsALog, 20);
                 }
                 else
                 {
-                    SalsaLog = _SalsaProcessed.HasValue ? _SalsaProcessed.Value.ToString("s") : _SalsALog;
+                    SalsaLogIngestion = _SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToString("s") : _SalsALog;
                 }
             }
             public string[] ToArray()
             {
-                return new string[] { IcmId, SalsaStatus, SalsaLog, IcmStatus, IcmCreation.HasValue ? IcmCreation.Value.ToUniversalTime().ToString("s") : "N/A" };
+                return new string[] { IcmId, SalsaStatus, SalsaLogIngestion, IcmStatus, IcmCreation.HasValue ? IcmCreation.Value.ToUniversalTime().ToString("s") + "Z" : "N/A" };
             }
             public string IcmId;
             public string SalsaStatus = "N/A";
-            public string SalsaLog = "N/A";
+            public string SalsaLogIngestion = "N/A";
             public string IcmStatus = "Transferred out";
             public Nullable<DateTime> IcmCreation = null;
+            public Nullable<DateTime> _SalsaInternalIngestion = null;
         }
 
         [FunctionName("SALsAStatus")]
@@ -68,7 +69,7 @@ namespace SALsA.Functions
 
             var icms = SALsA.LivesiteAutomation.TableStorage.GetRecentEntity(allExistingIcms.value.Select(x => x.Id).ToArray());
             var lst = new List<string[]>();
-            lst.Add(new string[] { "ICM", "Status", "SALsA Ingested", "ICM State", "ICM Creation" });
+            lst.Add(new string[] { "ICM", "Status", "SALsA Ingested", "ICM State", "ICM Creation (UTC)" });
             foreach (var run in icms)
             {
                 if (run.SALsAState == SALsA.General.SALsAState.Ignore.ToString()) continue;
@@ -110,10 +111,16 @@ namespace SALsA.Functions
                 tuple.Update(icmLink, status, logPath, run.Timestamp.UtcDateTime);
                 icmsDic[int.Parse(run.PartitionKey)] = tuple;
             }
-            foreach(var tuple in icmsDic.Values.ToList())
-            {
-                lst.Add(tuple.ToArray());
-            }
+            var values = icmsDic.Values.ToList();
+            values.Sort((y, x) => {
+                int ret = DateTime.Compare(x._SalsaInternalIngestion.HasValue ? x._SalsaInternalIngestion.Value : new DateTime(0),
+                                           y._SalsaInternalIngestion.HasValue ? y._SalsaInternalIngestion.Value : new DateTime(0));
+                return ret != 0 ? ret : DateTime.Compare(x.IcmCreation.HasValue ? x.IcmCreation.Value : new DateTime(0),
+                                                         y.IcmCreation.HasValue ? y.IcmCreation.Value : new DateTime(0));
+            });
+
+            lst.AddRange(values.Select(x => x.ToArray()).ToList());
+
             string result = Utility.List2DToHTML(lst, true);
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Headers.CacheControl = new CacheControlHeaderValue
