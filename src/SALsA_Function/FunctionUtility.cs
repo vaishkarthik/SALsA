@@ -93,5 +93,10 @@ namespace SALsA.General
             TableStorage.AppendEntity(icm, SALsAState.Queued);
             client.SendMessage(Utility.Base64Encode(queueMessage));
         }
+
+        public static string ReRunButton(int icm)
+        {
+            return String.Format("<form action=\"/api/icm/{0}\"><input type=\"submit\" value=\"Run again\"/></form>", icm);
+        }
     }
 }

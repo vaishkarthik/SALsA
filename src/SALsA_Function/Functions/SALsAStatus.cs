@@ -24,13 +24,18 @@ namespace SALsA.Functions
             public StatusLine(){}
             public StatusLine(string _IcmId, string _IcmStatus, Nullable<DateTime> _IcmCreation = null)
             {
-                IcmId = _IcmId;
+                _icm = _IcmId;
+                var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", _IcmId);
+                IcmId = Utility.UrlToHml(_IcmId, icmLink, 20);
                 IcmStatus = _IcmStatus;
                 IcmCreation = _IcmCreation;
             }
             public void Update(string _IcmId, string _SalsaStatus, string _SalsALog, Nullable<DateTime> _SalsaLogIngestion = null)
             {
-                IcmId = _IcmId;
+                _icm = _IcmId;
+                var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", _IcmId);
+                IcmId = Utility.UrlToHml(_IcmId, icmLink, 20);
+
                 SalsaStatus = _SalsaStatus;
 
                 _SalsaInternalIngestion = _SalsaLogIngestion.Value;
@@ -40,13 +45,15 @@ namespace SALsA.Functions
                 }
                 else
                 {
-                    SalsaLogIngestion = _SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToString("s") : _SalsALog;
+                    SalsaLogIngestion = _SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToString("s") + "Z" : _SalsALog;
                 }
             }
             public string[] ToArray()
             {
-                return new string[] { IcmId, SalsaStatus, SalsaLogIngestion, IcmStatus, IcmCreation.HasValue ? IcmCreation.Value.ToUniversalTime().ToString("s") + "Z" : "N/A" };
+                return new string[] { IcmId, SalsaStatus, SalsaLogIngestion, FunctionUtility.ReRunButton(int.Parse(_icm)), 
+                    IcmStatus, IcmCreation.HasValue ? IcmCreation.Value.ToUniversalTime().ToString("s") + "Z" : "N/A" };
             }
+            public string _icm;
             public string IcmId;
             public string SalsaStatus = "N/A";
             public string SalsaLogIngestion = "N/A";
@@ -69,47 +76,48 @@ namespace SALsA.Functions
 
             var icms = SALsA.LivesiteAutomation.TableStorage.GetRecentEntity(allExistingIcms.value.Select(x => x.Id).ToArray());
             var lst = new List<string[]>();
-            lst.Add(new string[] { "ICM", "Status", "SALsA Ingested", "ICM State", "ICM Creation (UTC)" });
-            foreach (var run in icms)
+            lst.Add(new string[] { "ICM", "Status", "SALsA Ingested", "Rerun SALsA", "ICM State", "ICM Creation (UTC)" });
+            if(icms != null)
             {
-                if (run.SALsAState == SALsA.General.SALsAState.Ignore.ToString()) continue;
-                var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", run.PartitionKey);
-                icmLink = Utility.UrlToHml(run.PartitionKey.ToString(), icmLink, 20);
+                foreach (var run in icms)
+                {
+                    if (run.SALsAState == SALsA.General.SALsAState.Ignore.ToString()) continue;
 
-                StatusLine tuple;
-                if(icmsDic.ContainsKey(int.Parse(run.PartitionKey)))
-                {
-                    tuple = icmsDic[int.Parse(run.PartitionKey)];
-                }
-                else
-                {
-                    try
+                    StatusLine tuple;
+                    if (icmsDic.ContainsKey(int.Parse(run.PartitionKey)))
                     {
-                        var currentIcm = ICM.PopulateICMInfo(int.Parse(run.PartitionKey));
-                        tuple = new StatusLine(currentIcm.Id, currentIcm.Status, currentIcm.CreateDate);
-                        if(currentIcm.Status != "Resolved") // We do not care about the Owning team if it is closed / resolved
-                        { 
-                            tuple.IcmStatus = currentIcm.OwningTeamId;
+                        tuple = icmsDic[int.Parse(run.PartitionKey)];
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var currentIcm = ICM.PopulateICMInfo(int.Parse(run.PartitionKey));
+                            tuple = new StatusLine(currentIcm.Id, currentIcm.Status, currentIcm.CreateDate);
+                            if (currentIcm.Status != "Resolved") // We do not care about the Owning team if it is closed / resolved
+                            {
+                                tuple.IcmStatus = currentIcm.OwningTeamId;
+                            }
+                        }
+                        catch
+                        {
+                            tuple = new StatusLine();
                         }
                     }
-                    catch
-                    {
-                        tuple = new StatusLine();
-                    }
-                }
 
-                var status = run.SALsAState;
-                var logPath = run.Log;
-                if (run.Log != null && run.Log.StartsWith("http"))
-                {
-                    status = Utility.UrlToHml(run.SALsAState, run.SALsALog, 20);
+                    var status = run.SALsAState;
+                    var logPath = run.Log;
+                    if (run.Log != null && run.Log.StartsWith("http"))
+                    {
+                        status = Utility.UrlToHml(run.SALsAState, run.SALsALog, 20);
+                    }
+                    else
+                    {
+                        logPath = run.SALsAState == SALsAState.Running.ToString() || run.SALsAState == SALsAState.Queued.ToString() ? "Wait..." : "Unavailable";
+                    }
+                    tuple.Update(run.PartitionKey, status, logPath, run.Timestamp.UtcDateTime);
+                    icmsDic[int.Parse(run.PartitionKey)] = tuple;
                 }
-                else
-                {
-                    logPath = run.SALsAState == SALsAState.Running.ToString() || run.SALsAState == SALsAState.Queued.ToString() ? "Wait..." : "Unavailable";
-                }
-                tuple.Update(icmLink, status, logPath, run.Timestamp.UtcDateTime);
-                icmsDic[int.Parse(run.PartitionKey)] = tuple;
             }
             var values = icmsDic.Values.ToList();
             values.Sort((y, x) => {
@@ -118,7 +126,17 @@ namespace SALsA.Functions
                 return ret != 0 ? ret : DateTime.Compare(x.IcmCreation.HasValue ? x.IcmCreation.Value : new DateTime(0),
                                                          y.IcmCreation.HasValue ? y.IcmCreation.Value : new DateTime(0));
             });
-
+            foreach(var value in values)
+            {
+                if(value.SalsaLogIngestion == "N/A")
+                {
+                    try
+                    {
+                        FunctionUtility.AddRunToSALsA(int.Parse(value._icm));
+                    }
+                    catch { };
+                }
+            }
             lst.AddRange(values.Select(x => x.ToArray()).ToList());
 
             string result = Utility.List2DToHTML(lst, true);

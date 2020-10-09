@@ -66,20 +66,16 @@ namespace SALsA.LivesiteAutomation
 
             try
             {
-                TableBatchOperation op = new TableBatchOperation();
                 foreach (SALsAEntity entity in allEntity)
                 {
                     if(!icms.Contains(entity.PartitionKey) && DateTime.Now.AddDays(Constants.TableStorageRecentDays) > entity.Timestamp)
                     {
-                        op.Delete(entity);
+                        TableOperation deleteOperation = TableOperation.Delete(entity);
+                        Authentication.Instance.TableStorageClient.Execute(deleteOperation);
                     }
                 }
                 allEntity.RemoveAll(x => DateTime.Now.AddDays(Constants.TableStorageRecentDays) > x.Timestamp);
 
-                if (op.Count > 0)
-                {
-                    Authentication.Instance.TableStorageClient.ExecuteBatchAsync(op);
-                }
             }
             catch /*(Exception ex)*/
             {
