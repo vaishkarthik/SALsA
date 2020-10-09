@@ -22,146 +22,61 @@ using SALsA.General;
 
 namespace SALsA.LivesiteAutomation
 {
-    public class ICM
+    public partial class ICM
     {
-        public int Id { get; private set; }
-        public string SAS { get; private set; }
-        public Incident CurrentICM { get; private set; }
+
         public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
         private static HttpClient client = null;
-        private ConcurrentBag<string> MessageQueue = new ConcurrentBag<string>();
 
-        public bool QueueICMDiscussion(string entry, bool htmlfy = true)
+        public static AllIncidents GetAllICM()
         {
-            if(entry == null)
-            {
-                return false;
-            }
-            SALsA.GetInstance(Id)?.Log.Verbose("Adding to ICM String {0}", entry);
-            if (htmlfy)
-            {
-                try
-                {
-                    entry = Utility.EncodeHtml(entry);
-                }
-                catch (Exception ex)
-                {
-                    SALsA.GetInstance(Id)?.Log.Warning("Failed to html encode {0}, will use raw input", entry);
-                    SALsA.GetInstance(Id)?.Log.Exception(ex);
-                }
-            }
-
+            String tenantQuery = String.Join(" or ",
+                Constants.ICMTeamToTenantLookupTable.Keys.ToList().ConvertAll(
+                    e => String.Format("OwningTeamId eq '{0}'", e.ToUpperInvariant())));
             try
             {
-                MessageQueue.Add(entry.ToString());
-                return true;
-            }
-            catch (Exception ex)
-            {
-                SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}", this.Id);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
-                return false;
-            }
-        }
+                var query = new Uri(String.Format("{0}?$filter=({1}) and (Status eq 'ACTIVE' or Status eq 'MITIGATED')", Constants.ICMRelativeBaseAPIUri, tenantQuery), UriKind.Relative);
 
-        public void EmptyMessageQueue()
-        {
-            SALsA.GetInstance(Id)?.Log.Verbose("Empty Message Queue with {0} elements", MessageQueue.Count);
-            if (MessageQueue.IsEmpty || SALsA.GetInstance(Id).State == SALsAState.Ignore || SALsA.GetInstance(Id).State == SALsAState.MissingSubscriptionId) return; // Ignore the ICM
-            string reason = null;
-            try
-            {
-                var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray(), SALsA.GetInstance(Id)?.Log.StartTime);
-                SAS = BlobStorageUtility.UploadICMRun(Id, message);
-                if(Constants.ShouldPostToICM)
-                { 
-                    message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
-                        DateTime.ParseExact(SALsA.GetInstance(Id)?.Log.StartTime, "yyMMddTHHmmss", null)
-                            .ToString("yyyy-MM-ddTHH:mm:ssZ")), SAS);
-                    if (message == null) throw new ArgumentNullException("Message is null, please verify run log");
-                    var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(message)));
-                    body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
-                    reason = response.Content.ReadAsStringAsync().Result;
-                    response.EnsureSuccessStatusCode();
-                    SALsA.GetInstance(Id)?.Log.Verbose("Got response for ICM {0}", this.Id);
-                }
-            }
-            catch (Exception ex)
-            {
-                SALsA.GetInstance(Id).State = SALsAState.UnknownException;
-                SALsA.GetInstance(Id)?.Log.Error("Failed to add message element to ICM {0}. Reason : {1}", this.Id, reason);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
-            }
-            finally 
-            {
-                MessageQueue = new ConcurrentBag<string>(); // Dispose of our current one
-            }
-        }
-
-        public ICM(int icmId)
-        {
-            this.Id = icmId;
-            PopulateICMInfo();
-        }
-
-        private void PopulateICMInfo()
-        {
-            try
-            {
-                var response = Client.GetAsync(BuildUri(this.Id)).Result;
+                var response = Client.GetAsync(query).Result;
                 response.EnsureSuccessStatusCode();
-                SALsA.GetInstance(Id)?.Log.Verbose("Got response for IMC {0}", this.Id);
+                var result = ReadResponseBody(response);
+                var allIncidents = Utility.JsonToObject<AllIncidents>(result);
+                return allIncidents;
 
-                CurrentICM = Utility.JsonToObject<Incident>(ReadResponseBody(response));
-                SALsA.GetInstance(Id)?.Log.Verbose(CurrentICM);
             }
-            catch (Exception ex)
-            {
-                SALsA.GetInstance(Id)?.Log.Error("Failed to get ICM {0}", this.Id);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
-            }
+            catch { return null; }
         }
 
-        public void TransferICM(string owningTeam)
+        public static Incident PopulateICMInfo(int icmId)
         {
-            try
-            {
-                var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(owningTeam)));
-                body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = Client.PostAsync(BuildUri(this.Id, Constants.ICMTrnasferIncidentSuffix), body).Result;
+                var response = Client.GetAsync(BuildUri(icmId)).Result;
                 response.EnsureSuccessStatusCode();
-            }
-            catch (Exception ex)
-            {
-                SALsA.GetInstance(Id)?.Log.Error("Failed to transfer ICM {0}", Id);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
-            }
+
+                return Utility.JsonToObject<Incident>(ReadResponseBody(response));
         }
 
-        private void GetICMDiscussion()
+        public static void TransferICM(string owningTeam, int icmId)
         {
-            try
-            {
-                var response = Client.GetAsync(BuildUri(this.Id, Constants.ICMDescriptionEntriesSuffix)).Result;
-                response.EnsureSuccessStatusCode();
-                Dictionary<string, object> de = Utility.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
+            var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(owningTeam)));
+            body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var response = Client.PostAsync(BuildUri(icmId, Constants.ICMTrnasferIncidentSuffix), body).Result;
+            response.EnsureSuccessStatusCode();
+        }
 
-                DescriptionEntries = ((JArray)de["value"]).Select(x => new Incident.DescriptionEntry
-                {
-                    DescriptionEntryId = (string)x["DescriptionEntryId"],
-                    SubmittedBy = (string)x["SubmittedBy"],
-                    Cause = (string)x["Cause"],
-                    SubmitDate = Convert.ToDateTime((string)x["SubmitDate"]),
-                    Text = (string)x["Text"]
-                }).ToList();
+        private void GetICMDiscussion(int icmId)
+        {
+            var response = Client.GetAsync(BuildUri(icmId, Constants.ICMDescriptionEntriesSuffix)).Result;
+            response.EnsureSuccessStatusCode();
+            Dictionary<string, object> de = Utility.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
 
-            }
-            catch (Exception ex)
+            DescriptionEntries = ((JArray)de["value"]).Select(x => new Incident.DescriptionEntry
             {
-                SALsA.GetInstance(Id)?.Log.Error("Failed to get discussion entries for ICM {0}", Id);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
-            }
+                DescriptionEntryId = (string)x["DescriptionEntryId"],
+                SubmittedBy = (string)x["SubmittedBy"],
+                Cause = (string)x["Cause"],
+                SubmitDate = Convert.ToDateTime((string)x["SubmitDate"]),
+                Text = (string)x["Text"]
+            }).ToList();
         }
 
         private static Uri BuildUri(int id, string suffix = "")
@@ -193,62 +108,31 @@ namespace SALsA.LivesiteAutomation
             return response.Content.ReadAsStringAsync().Result;
         }
 
-        public static string GetCustomField(int icm, string lookup)
+        public static string GetCustomFieldInternal(List<Incident.CustomFieldGroup> allFields, string lookup)
         {
-            try
+            foreach (var fields in allFields)
             {
-                foreach (var fields in SALsA.GetInstance(icm).ICM.CurrentICM.CustomFieldGroups)
+                var sid = fields.CustomFields.Find(x => x.Name == lookup);
+                if (sid != null && sid.Value != "")
                 {
-                    var sid = fields.CustomFields.Find(x => x.Name == lookup);
-                    if (sid != null && sid.Value != "")
-                    {
-                        return sid.Value;
-                    }
+                    return sid.Value;
                 }
-            }
-            catch (Exception ex)
-            {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to find a valid value for <{0}> in ICM : {1}", lookup, icm);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
             }
             return null;
         }
 
-        public static bool CheckIfICMExists(int icm)
+        public static bool CheckIfICMAccessible(int icm)
         {
             try
             {
                 var response = Client.GetAsync(BuildUri(icm)).Result;
                 response.EnsureSuccessStatusCode();
-                SALsA.GetInstance(icm)?.Log.Verbose("Got response for IMC {0}", icm);
-
-                var currentICM = Utility.JsonToObject<Incident>(ReadResponseBody(response));
-                SALsA.GetInstance(icm)?.Log.Verbose(currentICM);
-
                 return true;
             } 
-            catch (Exception ex)
+            catch
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to get ICM {0}", icm);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
                 return false;
             }
-        }
-
-        // Tools
-        public DateTime ICMImpactStartTime()
-        {
-            DateTime date;
-            DateTime.TryParse(ICM.GetCustomField(this.Id, Constants.AnalyzerStartTimeField), out date);
-            if (date == null)
-            {
-                date = this.CurrentICM.ImpactStartDate;
-            }
-            if (date == null)
-            {
-                date = DateTime.Today.AddDays(-7).ToUniversalTime();
-            }
-            return date;
         }
     }
 }

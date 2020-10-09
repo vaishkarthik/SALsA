@@ -7,6 +7,10 @@ using SALsA.General;
 
 namespace SALsA.LivesiteAutomation
 {
+    public class AllIncidents
+    {
+        public Incident[] value;
+    }
     public class Incident
     {
         public class NewDiscussionEntry

@@ -54,9 +54,12 @@
     <Compile Include="..\\SALsA_Exe\Commons\Constants.cs" />
     <Compile Include="..\\SALsA_Exe\Commons\Log.cs" Link="ExternalLink\Log.cs" />
     <Compile Include="..\\SALsA_Exe\Commons\Utility.cs" Link="ExternalLink\Utility.cs" />
+    <Compile Include="..\\SALsA_Exe\Commons\HttpClientExtensions.cs" Link="ExternalLink\HttpClientExtensions.cs" />
     <Compile Include="..\\SALsA_Exe\Connectors\Authentication.cs" Link="ExternalLink\Authentication.cs" />
     <Compile Include="..\\SALsA_Exe\Connectors\TableStorage.cs" Link="ExternalLink\TableStorage.cs" />
+    <Compile Include="..\\SALsA_Exe\Connectors\ICM.cs" Link="ExternalLink\ICM.cs" />
     <Compile Include="..\\SALsA_Exe\Json2Class\ServicePrincipal.cs" Link="ExternalLink\ServicePrincipal.cs" />
+    <Compile Include="..\\SALsA_Exe\Json2Class\Incident.cs" Link="ExternalLink\Incident.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(BinariesBuildTypeArchDirectory)\SALSA_Exe\**" Link="SALSA_Exe\%(RecursiveDir)%(Filename)%(Extension)" Visible="false">

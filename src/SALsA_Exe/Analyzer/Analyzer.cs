@@ -21,6 +21,11 @@ namespace SALsA.LivesiteAutomation
         private bool IsCustomRun = false;
         public Analyzer(int Id)
         {
+            if (SALsA.GetInstance(Id).ICM.CurrentICM.Keywords.Contains("AutomatedHGAP"))
+            {
+                SALsA.GetInstance(Id).State = SALsAState.Ignore;
+                return;
+            }
             this.Id = Id;
             Nullable<Guid> sub;
             (sub, ResourceGroupName, VMName, StartTime) = AnalyzeICM();
@@ -31,18 +36,11 @@ namespace SALsA.LivesiteAutomation
                 return;
             }
             */
-            if (!sub.HasValue)
+            if (!sub.HasValue || VMName == null)
             {
-                if(SALsA.GetInstance(Id).ICM.CurrentICM.Keywords.Contains("AutomatedHGAP"))
-                {
-                    SALsA.GetInstance(Id).State = SALsAState.Ignore;
-                }
-                else
-                {
-                    SALsA.GetInstance(Id).State = SALsAState.MissingSubscriptionId;
-                }
-                SALsA.GetInstance(Id).ICM.QueueICMDiscussion("Could not detect any valid SubscriptionId (must be a valid GUID). Aborting analysis.");
-                throw new ArgumentNullException("SubscriptionId must not be null");
+                SALsA.GetInstance(Id).State = SALsAState.MissingInfo;
+                SALsA.GetInstance(Id).ICM.QueueICMDiscussion("Could not detect any valid SubscriptionId (must be a valid GUID). or VMName (!= null) Aborting analysis.");
+                throw new ArgumentNullException("SubscriptionId and VMName must not be null");
             }
             SubscriptionId = (Guid)sub;
             SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(String.Format("{0}", Utility.ObjectToJson(this, true)));

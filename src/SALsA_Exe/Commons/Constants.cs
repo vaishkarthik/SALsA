@@ -154,9 +154,12 @@ namespace SALsA.General
 
         // TODO : Replace this by a Kusto lookup ;)
         /* IncidentHistory | where OwningTeamName  == "NAME" | distinct OwningTenantPublicId | where isnotempty(OwningTenantPublicId) */
-        public readonly static Dictionary<string, Guid> ICMTeamToTenantLookupTable = new Dictionary<string, Guid>
+        public readonly static Dictionary<string, int> ICMTeamToTenantLookupTable = new Dictionary<string, int>
                 {
-                    { @"AZUREVMGUESTAGENTSANDEXTENSIONS\Triage", new Guid("b785142b-3f60-4a7f-a3fe-11ef0941ac1a") }
+                    { @"AZURERT\GuestAgent", 58608 },
+                    { @"AZURERT\Extensions", 58613 },
+                    //{ @"AZURERT\HostGAPlugin", 61782 },
+                    { @"AZURERT\GAExtRotation", 58607 }
                 };
     }
 }

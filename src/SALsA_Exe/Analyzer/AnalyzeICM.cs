@@ -14,10 +14,10 @@ namespace SALsA.LivesiteAutomation
         {
             var currentICM = SALsA.GetInstance(Id).ICM;
             var subscriptionId = GetSubscriptionId(currentICM);
-            var resourceGroupName = ICM.GetCustomField(Id, Constants.AnalyzerResourceGroupField);
-            var VMName = ICM.GetCustomField(Id, Constants.AnalyzerVMNameField);
+            var resourceGroupName = currentICM.GetCustomField(Constants.AnalyzerResourceGroupField);
+            var VMName = currentICM.GetCustomField(Constants.AnalyzerVMNameField);
             DateTime startTime;
-            if (!DateTime.TryParse(ICM.GetCustomField(Id, Constants.AnalyzerStartTimeField), out startTime))
+            if (!DateTime.TryParse(currentICM.GetCustomField(Constants.AnalyzerStartTimeField), out startTime))
             {
                 SALsA.GetInstance(Id)?.Log.Warning("Failed to parse DateTime");
             }
@@ -29,7 +29,7 @@ namespace SALsA.LivesiteAutomation
             try
             {
                 // Look for the custom field "subscription"
-                String subscriptionId = ICM.GetCustomField(Id, Constants.AnalyzerSubscriptionIdField);
+                String subscriptionId = SALsA.GetInstance(Id).ICM.GetCustomField(Constants.AnalyzerSubscriptionIdField);
 
                 // Look in the ICM field for the subscriptionId
                 if (!CheckIfSubscriptionIdIsValid(subscriptionId))

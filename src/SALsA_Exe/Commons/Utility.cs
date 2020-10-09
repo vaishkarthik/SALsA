@@ -20,7 +20,7 @@ namespace SALsA.General
         NotFound, // VM not found
         Ignore, // Skipping, probably due to uncompatibility (ex: HGAP dont provide usefull information)
         UnknownException, // Error ! @aydjella needs to take a look
-        MissingSubscriptionId, // No subid given
+        MissingInfo, // No subid or vmname given
         Queued // Not yet received by SALsA, but QUeued by the azure function
     }
 
@@ -165,7 +165,7 @@ namespace SALsA.General
 
         public static string EncodeHtml(object obj)
         {
-            string ss = WebUtility.HtmlEncode(obj.ToString());
+            string ss = WebUtility.HtmlEncode(obj == null ? "N/A" : obj.ToString());
             var lines = ss.Split(
                             new[] { Environment.NewLine },
                             StringSplitOptions.None
@@ -242,13 +242,13 @@ namespace SALsA.General
             if(fromKusto)
             {
                 return (result.Count > Constants.MaxResultCount ? "<details><summary>Results (click here for details)</summary>" : "") +
-                       "<table style=\"margin-right:auto;margin-left:auto;width:95%;overflow-x:scroll;overflow-y:scroll;height:500px;display:block;\">" +
+                       "<table style=\"margin-right:auto;margin-left:auto;width:80%;overflow-x:scroll;overflow-y:scroll;height:500px;display:block;\">" +
                        List2DToHTMLInternal(result, raw) +
                        "</table>" + (result.Count > Constants.MaxResultCount ? "</details>" : "");
             }
             else
             {
-                return "<table style=\"margin-right:auto;margin-left:auto;width:25%;\">" +
+                return "<table style=\"margin-right:auto;margin-left:auto;width:90%;border-collapse:separate;border-spacing:0 1em;border-style: hidden;\">" +
                        List2DToHTMLInternal(result, raw) +
                        "</table>";
             }
@@ -262,20 +262,20 @@ namespace SALsA.General
                 sw.WriteLine("<tbody>");
                 for (int i = 0; i < result.Count; ++i)
                 {
-                    if (i == 0)
-                    {
-                        sw.WriteLine("<tr style=\"text-align:left;padding-top:0.5em;padding-bottom:0.5em;font-weight:bold;font-size:22;\" bgcolor=\"#d3d3d3\">");
-                    }
-                    else
-                    {
-                        sw.WriteLine("<tr style=\"text-align:left;padding-top:0.5em;padding-bottom:0.5em;\">");
-                    }
+                    sw.WriteLine(String.Format("<tr style=\"text-align:left;font-size:20;{0}\" {1}>",
+                        i == 0 ? "font-weight:bold;" : "", i == 0 ? "bgcolor=\"#d3d3d3\"" : ""));
                     for (int j = 0; j < result[i].Length; ++j)
                     {
-                        sw.Write("<td>");
+                        sw.Write("<td style=\"padding-right: 10px;padding-left: 10px\">");
                         if (raw == true)
                         {
-                            sw.Write(result[i][j]);
+                            if(result[i][j] == null)
+                            {
+                                sw.Write("N/A");
+                            }
+                            else {
+                                sw.Write(result[i][j]);
+                            }
                         }
                         else
                         {

@@ -121,7 +121,7 @@ namespace SALsA.LivesiteAutomation.Kusto
                 return dateTime;
             }
 
-            var _startTime = ICM.GetCustomField(Icm, Constants.AnalyzerStartTimeField);
+            var _startTime = SALsA.GetInstance(Icm).ICM.GetCustomField(Constants.AnalyzerStartTimeField);
             if (_startTime == null)
             {
                 return Kusto.KustoBase<DateTime>.DefaultStartTime;

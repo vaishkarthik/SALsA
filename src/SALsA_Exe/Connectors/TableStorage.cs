@@ -59,22 +59,24 @@ namespace SALsA.LivesiteAutomation
         }
 
         // Get all entity and remvoe older ones.
-        public static List<SALsAEntity> GetRecentEntity()
+        public static List<SALsAEntity> GetRecentEntity(string[] icms = null)
         {
+            if (icms == null) icms = new string[] { };
             var allEntity = ListAllEntity();
 
             try
-            { 
+            {
                 TableBatchOperation op = new TableBatchOperation();
                 foreach (SALsAEntity entity in allEntity)
                 {
-                    if(DateTime.Now.AddDays(Constants.TableStorageRecentDays) > entity.Timestamp)
+                    if(!icms.Contains(entity.PartitionKey) && DateTime.Now.AddDays(Constants.TableStorageRecentDays) > entity.Timestamp)
                     {
                         op.Delete(entity);
-                        allEntity.Remove(entity);
                     }
                 }
-                if(op.Count > 0)
+                allEntity.RemoveAll(x => DateTime.Now.AddDays(Constants.TableStorageRecentDays) > x.Timestamp);
+
+                if (op.Count > 0)
                 {
                     Authentication.Instance.TableStorageClient.ExecuteBatchAsync(op);
                 }

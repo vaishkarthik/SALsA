@@ -38,7 +38,7 @@ namespace SALsA.LivesiteAutomation.Connectors
             {
                 // TODO : If ICM AnalyzerStartTimeField was changed, it might be newer than the ICM creation date
                 DateTime startTime;
-                if (!DateTime.TryParse(ICM.GetCustomField(icm, Constants.AnalyzerStartTimeField), out startTime))
+                if (!DateTime.TryParse(SALsA.GetInstance(icm).ICM.GetCustomField(Constants.AnalyzerStartTimeField), out startTime))
                 {
                     startTime = SALsA.GetInstance(icm).ICM.CurrentICM.CreateDate.AddDays(-1);
                 }
