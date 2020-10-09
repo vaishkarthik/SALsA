@@ -36,7 +36,7 @@ namespace SALsA.Functions
 
                 if (_SalsALog.StartsWith("http"))
                 {
-                    SalsaLog = Utility.UrlToHml(_SalsaProcessed.HasValue ? _SalsaProcessed.Value.ToString("s") : "HTML", _SalsALog, 20);
+                    SalsaLog = Utility.UrlToHml(_SalsaProcessed.HasValue ? _SalsaProcessed.Value.ToUniversalTime().ToString("s") : "HTML", _SalsALog, 20);
                 }
                 else
                 {
@@ -45,7 +45,7 @@ namespace SALsA.Functions
             }
             public string[] ToArray()
             {
-                return new string[] { IcmId, SalsaStatus, SalsaLog, IcmStatus, IcmCreation.HasValue ? IcmCreation.Value.ToString("s") : "N/A" };
+                return new string[] { IcmId, SalsaStatus, SalsaLog, IcmStatus, IcmCreation.HasValue ? IcmCreation.Value.ToUniversalTime().ToString("s") : "N/A" };
             }
             public string IcmId;
             public string SalsaStatus = "N/A";
