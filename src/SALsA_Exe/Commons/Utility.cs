@@ -21,7 +21,8 @@ namespace SALsA.General
         Ignore, // Skipping, probably due to uncompatibility (ex: HGAP dont provide usefull information)
         UnknownException, // Error ! @aydjella needs to take a look
         MissingInfo, // No subid or vmname given
-        Queued // Not yet received by SALsA, but QUeued by the azure function
+        Queued, // Not yet received by SALsA, but QUeued by the azure function
+        ICMNotAccessible // ICM id outside of AzureRT, not accessible
     }
 
     public static class Utility

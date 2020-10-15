@@ -40,6 +40,15 @@ namespace SALsA.LivesiteAutomation
                 return null;
             }
         }
+
+        public static void AppendEntity(string icm, SALsAState state, string salsaLog = "", string log = "")
+        {
+            int icmId;
+            if (int.TryParse(icm, out icmId))
+            {
+                AppendEntity(icmId, state, salsaLog, log);
+            }
+        }
         public static void AppendEntity(int icm, SALsAState state, string salsaLog = "", string log = "")
         {
             try

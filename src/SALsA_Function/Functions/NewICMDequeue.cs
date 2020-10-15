@@ -41,7 +41,7 @@ namespace SALsA_Function.Functions
             }
             catch (Exception ex)
             {
-                TableStorage.AppendEntity(int.Parse(myQueueItem.Split(" ").First()), SALsA.General.SALsAState.UnknownException, "Not available", ex.Message);
+                TableStorage.AppendEntity(myQueueItem.Split(" ").First(), SALsA.General.SALsAState.UnknownException, "Not available", ex.Message);
             }
         }
         public class LogManager

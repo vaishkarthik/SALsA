@@ -136,6 +136,11 @@ namespace SALsA.Functions
                     }
                     catch { };
                 }
+                else if(value.SalsaStatus == "Queued" && value.IcmStatus == "Transferred out" && value.IcmCreation.HasValue == false)
+                {
+                    value.SalsaStatus = SALsAState.ICMNotAccessible.ToString();
+                    TableStorage.AppendEntity(value.IcmId, SALsAState.ICMNotAccessible);
+                }    
             }
             lst.AddRange(values.Select(x => x.ToArray()).ToList());
 

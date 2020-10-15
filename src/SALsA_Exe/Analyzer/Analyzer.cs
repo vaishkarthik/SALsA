@@ -21,7 +21,7 @@ namespace SALsA.LivesiteAutomation
         private bool IsCustomRun = false;
         public Analyzer(int Id)
         {
-            if (SALsA.GetInstance(Id).ICM.CurrentICM.Keywords.Contains("AutomatedHGAP"))
+            if (SALsA.GetInstance(Id).ICM.CurrentICM.Keywords?.Contains("AutomatedHGAP") == true)
             {
                 SALsA.GetInstance(Id).State = SALsAState.Ignore;
                 return;
