@@ -338,6 +338,10 @@ namespace SALsA.LivesiteAutomation
             {
                 instance = dep.RoleInstances.Where(x => String.Equals(x.RoleInstanceName, TryConvertInstanceNameToVMName(this.VMName), StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             }
+            if (instance?.RoleInstanceName == null)
+            {
+                instance = dep.RoleInstances.Where(x => String.Equals(x.ID.ToString(), VMName)).FirstOrDefault();
+            }
             var vmInfo = new ShortRDFERoleInstance
             {
                 Fabric = dep.FabricGeoId,
@@ -471,7 +475,10 @@ namespace SALsA.LivesiteAutomation
             {
                 // Best effort guess
                 var paasVMName = VMName == this.VMName ? String.Format("{0}_IN_0", VMName) : this.VMName;
-                var ret = rdfeDeps.Where(x => x.RoleInstances.Where(y => y.RoleInstanceName.ToLowerInvariant().Trim() == paasVMName.ToLowerInvariant().Trim()).ToList().Count >= 1).ToList();
+                var ret = rdfeDeps.Where(x => x.RoleInstances.Where(
+                    y => y.RoleInstanceName.ToLowerInvariant().Trim() == paasVMName.ToLowerInvariant().Trim()
+                      || y.ID.ToString().ToLowerInvariant() == VMName.ToLowerInvariant().Trim()
+                    ).ToList().Count >= 1).ToList();
                 if (ret.Count() > 0)
                 {
                     return ret.First();

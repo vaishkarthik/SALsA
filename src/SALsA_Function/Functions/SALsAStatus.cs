@@ -144,7 +144,7 @@ namespace SALsA.Functions
             }
             lst.AddRange(values.Select(x => x.ToArray()).ToList());
 
-            string result = Utility.List2DToHTML(lst, true);
+            string result = Utility.List2DToHTML(lst, true) + String.Format("<p style=\"text - align: right\">Page generated at : {0}Z</p>", DateTime.UtcNow.ToString("s"));
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Headers.CacheControl = new CacheControlHeaderValue
             {
