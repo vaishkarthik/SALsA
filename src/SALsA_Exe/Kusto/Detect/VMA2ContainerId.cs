@@ -42,7 +42,7 @@ namespace SALsA.LivesiteAutomation.Kusto
 
         protected override void GenerateKustoQuery()
         {
-            KustoQuery = String.Format("where LastKnownSubscriptionId =~  \"{0}\" | where Usage_ResourceGroupName =~  \"{1}\" or isempty(Usage_ResourceGroupName) | where RoleInstanceName has  \"{2}\" | sort by PreciseTimeStamp desc | summarize arg_max(PreciseTimeStamp, *) by RoleInstanceName  | project PreciseTimeStamp, Cluster, RoleInstanceName, ContainerId, NodeId, Usage_ResourceGroupName, Usage_Region, GA_GAVersion, AvailabilityState ",
+            KustoQuery = String.Format("where ContainerId =~ \"{2}\" or ( LastKnownSubscriptionId =~  \"{0}\" and (Usage_ResourceGroupName =~ \"{1}\" or isempty(Usage_ResourceGroupName)) and RoleInstanceName has \"{2}\") | sort by PreciseTimeStamp desc | summarize arg_max(PreciseTimeStamp, *) by RoleInstanceName  | project PreciseTimeStamp, Cluster, RoleInstanceName, ContainerId, NodeId, Usage_ResourceGroupName, Usage_Region, GA_GAVersion, AvailabilityState ",
                                                 _subscriptions, _resourceGroupName, _virtualMachinesName);
         }
     }
