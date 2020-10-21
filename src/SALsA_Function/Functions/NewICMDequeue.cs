@@ -6,6 +6,7 @@ using System.Reflection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
+using SALsA.General;
 using SALsA.LivesiteAutomation;
 
 namespace SALsA_Function.Functions

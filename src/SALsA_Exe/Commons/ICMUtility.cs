@@ -52,6 +52,31 @@ namespace SALsA.LivesiteAutomation
             return null;
         }
 
+        public bool PostICMHeader(string head = Constants.ICMInfoHeaderHtml)
+        {
+            string entry = head + Utility.UrlToHml(Constants.ICMInfoReportName, Constants.ICMInfoReportEndpoint + this.Id.ToString(), 24);
+            SALsA.GetInstance(Id)?.Log.Verbose("Adding to ICM String {0}", entry);
+            var discussion = ICM.GetICMDiscussion(this.Id);
+            foreach (var de in discussion)
+            {
+                if (de.SubmittedBy == Constants.ICMIdentityName && Utility.DecodeHtml(de.Text).CompareTo(Utility.DecodeHtml(entry)) == 0)
+                {
+                    SALsA.GetInstance(Id)?.Log.Verbose("Did not add entry to ICM since already sent", this.Id);
+                    return false;
+                }
+            }
+            try
+            {
+                return ICM.PostDiscussion(this.Id, entry);
+            }
+            catch (Exception ex)
+            {
+                SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}", Id);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                return false;
+            }
+        }
+
         public bool QueueICMDiscussion(string entry, bool htmlfy = true)
         {
             if (entry == null)

@@ -22,6 +22,7 @@ namespace SALsA.LivesiteAutomation
                 this.ICM = new ICM(icm);
                 this.TaskManager = new TaskManager(icm);
                 this.State = SALsAState.Running;
+                this.ICM.PostICMHeader();
             }
 
             public void RefreshTable()

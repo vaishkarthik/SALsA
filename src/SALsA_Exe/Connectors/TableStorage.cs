@@ -28,7 +28,7 @@ namespace SALsA.LivesiteAutomation
 
         public static Log GlobalLog = new Log();
 
-        private static List<SALsAEntity> ListAllEntity()
+        public static List<SALsAEntity> ListAllEntity()
         {
             try
             {

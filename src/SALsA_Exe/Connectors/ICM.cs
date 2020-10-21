@@ -25,7 +25,6 @@ namespace SALsA.LivesiteAutomation
     public partial class ICM
     {
 
-        public List<Incident.DescriptionEntry> DescriptionEntries { get; private set; }
         private static HttpClient client = null;
 
         public static AllIncidents GetAllICM()
@@ -63,13 +62,13 @@ namespace SALsA.LivesiteAutomation
             response.EnsureSuccessStatusCode();
         }
 
-        private void GetICMDiscussion(int icmId)
+        public static List<Incident.DescriptionEntry> GetICMDiscussion(int icmId)
         {
             var response = Client.GetAsync(BuildUri(icmId, Constants.ICMDescriptionEntriesSuffix)).Result;
             response.EnsureSuccessStatusCode();
             Dictionary<string, object> de = Utility.JsonToObject<Dictionary<string, object>>(ReadResponseBody(response));
 
-            DescriptionEntries = ((JArray)de["value"]).Select(x => new Incident.DescriptionEntry
+            return ((JArray)de["value"]).Select(x => new Incident.DescriptionEntry
             {
                 DescriptionEntryId = (string)x["DescriptionEntryId"],
                 SubmittedBy = (string)x["SubmittedBy"],
@@ -78,6 +77,16 @@ namespace SALsA.LivesiteAutomation
                 Text = (string)x["Text"]
             }).ToList();
         }
+
+        private static bool PostDiscussion(int Id, string entry)
+        {
+            var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(entry)));
+            body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var response = Client.PatchAsync(BuildUri(Id), body).Result;
+            response.EnsureSuccessStatusCode();
+            return true;
+        }
+
 
         private static Uri BuildUri(int id, string suffix = "")
         {

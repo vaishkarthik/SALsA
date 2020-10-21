@@ -14,9 +14,55 @@ using System.Threading.Tasks;
 using System.Web;
 using Azure.Storage.Queues;
 using SALsA.LivesiteAutomation;
+using Microsoft.AspNetCore.Http.Internal;
 
 namespace SALsA.General
 {
+    internal class StatusLine
+    {
+        public StatusLine() { }
+        public StatusLine(string _IcmId, string _IcmStatus, Nullable<DateTime> _IcmCreation = null)
+        {
+            _icm = _IcmId;
+            var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", _IcmId);
+            IcmId = Utility.UrlToHml(_IcmId, icmLink, 20);
+            IcmStatus = _IcmStatus;
+            IcmCreation = _IcmCreation;
+        }
+        public void Update(string _IcmId, string _SalsaStatus, string _SalsALog, Nullable<DateTime> _SalsaLogIngestion = null)
+        {
+            _icm = _IcmId;
+            var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", _IcmId);
+            IcmId = Utility.UrlToHml(_IcmId, icmLink, 20);
+
+            SalsaStatus = _SalsaStatus;
+
+            _SalsaInternalIngestion = _SalsaLogIngestion.Value;
+            if (_SalsALog.StartsWith("http"))
+            {
+                SalsaLogIngestion = Utility.UrlToHml(_SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToUniversalTime().ToString("s") + "Z" : "HTML", _SalsALog, 20);
+            }
+            else
+            {
+                SalsaLogIngestion = _SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToString("s") + "Z" : _SalsALog;
+            }
+        }
+        public string[] ToArray()
+        {
+            return new string[] { IcmId, SalsaStatus, SalsaLogIngestion, FunctionUtility.ReRunButton(int.Parse(_icm)),
+                    IcmStatus, IcmCreation.HasValue ? IcmCreation.Value.ToUniversalTime().ToString("s") + "Z" : "N/A" };
+        }
+        public string _icm;
+        public string IcmId;
+        public string SalsaStatus = "N/A";
+        public string SalsaLogIngestion = "N/A";
+        public string IcmStatus = "Transferred out";
+        public Nullable<DateTime> IcmCreation = null;
+        public Nullable<DateTime> _SalsaInternalIngestion = null;
+
+        public static string[] Headers = new string[] { "ICM", "Status", "SALsA Ingested", "Rerun SALsA", "ICM State", "ICM Creation (UTC)" };
+}
+
     static class FunctionUtility
     {
         public static HttpResponseMessage ReturnTemplate(HttpRequestMessage req, ExecutionContext context)
