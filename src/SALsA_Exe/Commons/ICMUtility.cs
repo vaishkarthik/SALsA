@@ -59,7 +59,7 @@ namespace SALsA.LivesiteAutomation
             var discussion = ICM.GetICMDiscussion(this.Id);
             foreach (var de in discussion)
             {
-                if (de.SubmittedBy == Constants.ICMIdentityName && Utility.DecodeHtml(de.Text).CompareTo(Utility.DecodeHtml(entry)) == 0)
+                if (de.SubmittedBy == Constants.ICMIdentityName || de.Text.Contains(Constants.ICMInfoHeaderHtml))
                 {
                     SALsA.GetInstance(Id)?.Log.Verbose("Did not add entry to ICM since already sent", this.Id);
                     return false;
