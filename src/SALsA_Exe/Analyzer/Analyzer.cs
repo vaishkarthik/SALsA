@@ -47,20 +47,23 @@ namespace SALsA.LivesiteAutomation
             AnalyzerInternal();
         }
 
-        private void AnalyzerInternal(bool checkARM = true, bool checkRDFE = true)
+        private (ARMSubscription arm, RDFESubscription rdfe) CallARMAndRDFE(bool checkARM = true, bool checkRDFE = true)
         {
+
             // TODO analyse ARM and REDFE in parallel
             ARMSubscription arm = checkARM ? AnalyzeARMSubscription(SubscriptionId, this.ResourceGroupName) : null;
             RDFESubscription rdfe = checkRDFE ? AnalyzeRDFESubscription(SubscriptionId) : null;
 
+            return (arm, rdfe);
+        }
+
+        private void AnalyzerInternal(bool checkARM = true, bool checkRDFE = true)
+        {
+            (var arm, var rdfe) = CallARMAndRDFE(checkARM, checkRDFE);
             (var type, var dep) = DetectVMType(arm, rdfe);
 
             if (dep == null && IsCustomRun == false)
             {
-                SALsA.GetInstance(Id).ICM.QueueICMDiscussion(String.Format("Could not find VM: {0} in RG: {1}. This VM might have been already deleted or moved",
-                    this.VMName, this.ResourceGroupName));
-                // Lets try to check kusto data
-
                 ShortRDFERoleInstance rdfeInfo;
                 try
                 {
@@ -71,6 +74,9 @@ namespace SALsA.LivesiteAutomation
                         NodeId = new Guid(instance.Last().NodeId),
                         Fabric = instance.Last().Cluster
                     };
+
+                    this.ResourceGroupName = instance.FirstOrDefault().Usage_ResourceGroupName;
+                    this.VMName = instance.FirstOrDefault().RoleInstanceName;
                 }
                 catch
                 {
@@ -83,6 +89,8 @@ namespace SALsA.LivesiteAutomation
                             NodeId = new Guid(instance.Last().NodeId),
                             Fabric = instance.Last().Cluster
                         };
+                        this.ResourceGroupName = instance.FirstOrDefault().TenantId;
+                        this.VMName = instance.FirstOrDefault().RoleInstanceName;
                     }
                     catch
                     {
@@ -91,9 +99,18 @@ namespace SALsA.LivesiteAutomation
                     }
                 }
 
-                SALsA.GetInstance(Id).TaskManager.AddTask(
-                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, rdfeInfo), Id));
-                ExecuteKustoEnrichment(Id, rdfeInfo.ContainerID.ToString());
+                (type, dep) = DetectVMType(arm, rdfe);
+
+                if (dep == null && IsCustomRun == false)
+                {
+                    SALsA.GetInstance(Id).ICM.QueueICMDiscussion(String.Format("Could not find VM: {0} in RG: {1}. This VM might have been already deleted or moved",
+                        this.VMName, this.ResourceGroupName));
+
+                    // Lets try to check kusto data
+                    SALsA.GetInstance(Id).TaskManager.AddTask(
+                        BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, rdfeInfo), Id));
+                    ExecuteKustoEnrichment(Id, rdfeInfo.ContainerID.ToString());
+                }
             }
 
             CallInternalComputeTypes(type, dep);
