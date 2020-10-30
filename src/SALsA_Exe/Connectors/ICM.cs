@@ -121,7 +121,7 @@ namespace SALsA.LivesiteAutomation
         {
             foreach (var fields in allFields)
             {
-                var sid = fields.CustomFields.Find(x => x.Name == lookup);
+                var sid = fields.CustomFields.Find(x => string.Equals(x.Name, lookup, StringComparison.OrdinalIgnoreCase));
                 if (sid != null && sid.Value != "")
                 {
                     return sid.Value;
