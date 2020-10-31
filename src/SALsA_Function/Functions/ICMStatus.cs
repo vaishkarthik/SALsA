@@ -19,7 +19,7 @@ namespace SALsA.Functions
 {
     public static class ICMStatus
     {
-        [FunctionName("ICMStatus")]
+        [FunctionName("Public_ICMStatus")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "status/{id:int}")] HttpRequestMessage req, int id,
             ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal)
@@ -28,7 +28,7 @@ namespace SALsA.Functions
             if(!Auth.CheckUser(claimsPrincipal.Identity.Name))
             {
                 log.LogWarning("Access denied");
-                return Auth.GenerateErrorForbidden(req);
+                return Auth.GenerateErrorForbidden(req, claimsPrincipal.Identity.Name));
             }
             log.LogWarning("Access Granted");
 

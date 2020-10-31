@@ -14,7 +14,7 @@ namespace SALsA.Functions
 {
     public static class ManualRunICMGet
     {
-        [FunctionName("ManualRunICM_Get")]
+        [FunctionName("Manual_RunICM_Get")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "manual/ManualRunICM")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
@@ -26,7 +26,7 @@ namespace SALsA.Functions
     }
     public static class ManualRunICMPost
     {
-        [FunctionName("ManualRunICM_Post")]
+        [FunctionName("Manual_RunICM_Post")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "manual/ManualRunICM")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)

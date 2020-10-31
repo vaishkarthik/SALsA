@@ -19,7 +19,7 @@ namespace SALsA.Functions
 {
     public static class SALsAStatus
     {
-        [FunctionName("SALsAStatus")]
+        [FunctionName("Public_SALsAStatus")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "status")] HttpRequestMessage req,
             ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal)
@@ -28,7 +28,7 @@ namespace SALsA.Functions
             if (!Auth.CheckUser(claimsPrincipal.Identity.Name))
             {
                 log.LogWarning("Access denied");
-                return Auth.GenerateErrorForbidden(req);
+                return Auth.GenerateErrorForbidden(req, claimsPrincipal.Identity.Name));
             }
             log.LogWarning("Access Granted");
             

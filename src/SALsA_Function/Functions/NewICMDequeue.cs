@@ -13,7 +13,7 @@ namespace SALsA_Function.Functions
 {
     public static class NewICMDequeue
     {
-        [FunctionName("NewICMDequeue")]
+        [FunctionName("Internal_NewICMDequeue")]
         public static void Run([QueueTrigger("salsaqueue", Connection = "AzureWebJobsStorage")] string myQueueItem, ILogger log)
         {
             try

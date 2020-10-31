@@ -187,11 +187,11 @@ namespace SALsA.General
             return Users.Contains(username.Split('@').First().Trim().ToLowerInvariant());
         }
 
-        public static HttpResponseMessage GenerateErrorForbidden(HttpRequestMessage req)
+        public static HttpResponseMessage GenerateErrorForbidden(HttpRequestMessage req, string username)
         {
             var response = req.CreateResponse(HttpStatusCode.Forbidden);
-            response.Content = new StringContent(String.Format("<b>Access denied</b><br>You do not have access to this page.<br>Please add your alias here : <b>{0}</b> and send a PR.",
-            Utility.UrlToHml("access.txt", "https://msazure.visualstudio.com/One/_git/Compute-CPlat-SALsA?path=%2Faccess.txt&version=GBmaster&_a=contents", 14)), System.Text.Encoding.UTF8, "text/html");
+            response.Content = new StringContent(String.Format("<b>Access denied</b><br>You do not have access to this page.<br>Please add your alias (<i> {0} </i>) here : <b>{1}</b> and send a PR.",
+            username.Split('@').First().Trim(), Utility.UrlToHml("access.txt", "https://msazure.visualstudio.com/One/_git/Compute-CPlat-SALsA?path=%2Faccess.txt&version=GBmaster&_a=contents", 14)), System.Text.Encoding.UTF8, "text/html");
 
             response.Headers.CacheControl = new CacheControlHeaderValue
             {

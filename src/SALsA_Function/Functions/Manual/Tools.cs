@@ -16,7 +16,7 @@ namespace SALsA.Functions
     public static class Tools
     {
 
-        [FunctionName("Tools")]
+        [FunctionName("Manual_Tools")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "manual/Tools")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)

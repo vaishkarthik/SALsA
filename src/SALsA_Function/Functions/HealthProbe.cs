@@ -19,7 +19,7 @@ namespace SALsA.Functions
 {
     public static class HealthProbe
     {
-        [FunctionName("HealthProbe")]
+        [FunctionName("Internal_HealthProbe")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "healthprobe")] HttpRequestMessage req,
             ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal)

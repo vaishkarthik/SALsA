@@ -14,7 +14,7 @@ namespace SALsA.Functions
 {
     public static class ManualRunIIDGet
     {
-        [FunctionName("ManualRunIID_Get")]
+        [FunctionName("Manual_RunIID_Get")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "manual/ManualRunIID")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
@@ -26,7 +26,7 @@ namespace SALsA.Functions
     }
     public static class ManualRunIIDPost
     {
-        [FunctionName("ManualRunIID_Post")]
+        [FunctionName("Manual_RunIID_Post")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "manual/ManualRunIID")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
