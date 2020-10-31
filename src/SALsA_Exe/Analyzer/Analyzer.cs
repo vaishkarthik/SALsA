@@ -563,7 +563,9 @@ namespace SALsA.LivesiteAutomation
                 BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerHAFilename,
                             GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamHA, startTime, endTime), Id),
                 BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerWSFilename,
-                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamWS, startTime, endTime), Id)
+                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamWS, startTime, endTime), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerIMDSFilename,
+                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamIMDS, startTime, endTime), Id)
             );
         }
     }

@@ -64,6 +64,7 @@ namespace SALsA.General
         public const string AnalyzerHGAPFilename = "HostGuestAgentPluginLogs.zip";
         public const string AnalyzerHAFilename = "HostAgentLogs.zip";
         public const string AnalyzerWSFilename = "WireServerLogs.zip";
+        public const string AnalyzerIMDSFilename = "MetaDataServerLogs.zip";
         public const string AnalyzerContainerSettings = "ContainerSettings.json";
 
         // GetARMSubscriptionRG.cs
@@ -109,6 +110,7 @@ namespace SALsA.General
         public const string GetNodeDiagnosticsFilesTagsParamHGAP = "GuestAgentLogs";
         public const string GetNodeDiagnosticsFilesTagsParamHA = "AgentLogs";
         public const string GetNodeDiagnosticsFilesTagsParamWS = "WireServerLogs";
+        public const string GetNodeDiagnosticsFilesTagsParamIMDS = "MetaDataServerLogs";
 
         // GetClassicVMConsoleScreenshot.cs
         public const string GetClassicVMClassicScreenshotExtensionName = "SupportabilityFabric";
