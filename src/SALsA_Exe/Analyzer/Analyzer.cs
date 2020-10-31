@@ -75,7 +75,10 @@ namespace SALsA.LivesiteAutomation
                         Fabric = instance.Last().Cluster
                     };
 
-                    this.ResourceGroupName = instance.FirstOrDefault().Usage_ResourceGroupName;
+                    if(!string.IsNullOrWhiteSpace(instance.FirstOrDefault().Usage_ResourceGroupName))
+                    {
+                        this.ResourceGroupName = instance.FirstOrDefault().Usage_ResourceGroupName;
+                    }
                     this.VMName = instance.FirstOrDefault().RoleInstanceName;
                 }
                 catch
@@ -110,6 +113,9 @@ namespace SALsA.LivesiteAutomation
                     SALsA.GetInstance(Id).TaskManager.AddTask(
                         BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, rdfeInfo), Id));
                     ExecuteKustoEnrichment(Id, rdfeInfo.ContainerID.ToString());
+                    var startTime = SALsA.GetInstance(Id).ICM.ICMImpactStartTime().AddHours(-12);
+                    var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
+                    GetAllNodeDiagnosticsFiles(rdfeInfo.Fabric, rdfeInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
                 }
             }
 

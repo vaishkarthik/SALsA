@@ -15,6 +15,8 @@ using System.Web;
 using Azure.Storage.Queues;
 using SALsA.LivesiteAutomation;
 using Microsoft.AspNetCore.Http.Internal;
+using System.IO;
+using System.Net.Http.Headers;
 
 namespace SALsA.General
 {
@@ -143,6 +145,62 @@ namespace SALsA.General
         public static string ReRunButton(int icm)
         {
             return String.Format("<form action=\"/api/icm/{0}\"><input type=\"submit\" value=\"Run again\"/></form>", icm);
+        }
+    }
+
+    public static class Auth
+    {
+        private static HashSet<string> _users = null;
+        private static HashSet<string> Users
+        {
+            get
+            {
+                if(_users == null)
+                {
+                    _users = new HashSet<string>();
+                    var currentDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                    var accessPath = Path.Combine(Directory.GetParent(currentDir).FullName, @"access.txt");
+                    foreach (var user in File.ReadAllLines(accessPath))
+                    {
+                        var u = user.Trim().ToLowerInvariant();
+                        if (u.StartsWith(" ") ||
+                            u.StartsWith(";") ||
+                            u.StartsWith("#") ||
+                            u.StartsWith("/") ||
+                            u.StartsWith("\\") ||
+                            u == "")
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            _users.Add(u);
+                        }
+                    }
+                }
+                return _users;
+            }
+        }
+
+        public static bool CheckUser(string username)
+        {
+            return Users.Contains(username.Split('@').First().Trim().ToLowerInvariant());
+        }
+
+        public static HttpResponseMessage GenerateErrorForbidden(HttpRequestMessage req)
+        {
+            var response = req.CreateResponse(HttpStatusCode.Forbidden);
+            response.Content = new StringContent(String.Format("<b>Access denied</b><br>You do not have access to this page.<br>Please add your alias here : <b>{0}</b> and send a PR.",
+            Utility.UrlToHml("access.txt", "https://msazure.visualstudio.com/One/_git/Compute-CPlat-SALsA?path=%2Faccess.txt&version=GBmaster&_a=contents", 14)), System.Text.Encoding.UTF8, "text/html");
+
+            response.Headers.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true,
+                NoStore = true,
+                MustRevalidate = true
+            };
+
+            return response;
         }
     }
 }

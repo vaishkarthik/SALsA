@@ -22,8 +22,16 @@ namespace SALsA.Functions
         [FunctionName("ICMStatus")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "status/{id:int}")] HttpRequestMessage req, int id,
-            ILogger log)
+            ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal)
         {
+            log.LogInformation("Connected Identity : {0}", claimsPrincipal.Identity.Name);
+            if(!Auth.CheckUser(claimsPrincipal.Identity.Name))
+            {
+                log.LogWarning("Access denied");
+                return Auth.GenerateErrorForbidden(req);
+            }
+            log.LogWarning("Access Granted");
+
             var icm = TableStorage.ListAllEntity().Where(x => x.RowKey == id.ToString()).ToList();
             HttpResponseMessage response;
             if (icm.Count == 0)

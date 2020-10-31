@@ -17,6 +17,7 @@
     <None Remove="HTMLTemplate\ManualRunRdfeFabric.html" />
     <None Remove="HTMLTemplate\ManualRunRdfeTenant.html" />
     <None Remove="HTMLTemplate\Tools.html" />
+    <None Remove="..\..\access.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="HTMLTemplate\ManualRunICM.html">
@@ -32,6 +33,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="HTMLTemplate\Tools.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\access.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
