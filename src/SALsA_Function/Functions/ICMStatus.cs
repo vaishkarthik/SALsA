@@ -28,7 +28,7 @@ namespace SALsA.Functions
             if(!Auth.CheckUser(claimsPrincipal.Identity.Name))
             {
                 log.LogWarning("Access denied");
-                return Auth.GenerateErrorForbidden(req, claimsPrincipal.Identity.Name));
+                return Auth.GenerateErrorForbidden(req, claimsPrincipal.Identity.Name);
             }
             log.LogWarning("Access Granted");
 
