@@ -22,18 +22,9 @@ namespace SALsA.Functions
         [FunctionName("Internal_HealthProbe")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "healthprobe")] HttpRequestMessage req,
-            ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal)
+            ILogger log)
         {
-            var allExistingIcms = ICM.GetAllICM().value.Select(x => x.Id.ToString() ).ToList();
-            var allOurIcms = TableStorage.ListAllEntity().Select(x => x.RowKey).ToList();
-
-            foreach (var icm in allExistingIcms)
-            {
-                if(!allOurIcms.Contains(icm))
-                {
-                    FunctionUtility.AddRunToSALsA(int.Parse(icm));
-                }
-            }
+            FunctionUtility.HealthProbe();
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.CacheControl = new CacheControlHeaderValue
             {

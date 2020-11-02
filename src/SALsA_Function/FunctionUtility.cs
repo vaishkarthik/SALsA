@@ -146,6 +146,20 @@ namespace SALsA.General
         {
             return String.Format("<form action=\"/api/icm/{0}\"><input type=\"submit\" value=\"Run again\"/></form>", icm);
         }
+
+        internal static void HealthProbe()
+        {
+            var allExistingIcms = ICM.GetAllICM().value.Select(x => x.Id.ToString()).ToList();
+            var allOurIcms = TableStorage.ListAllEntity().Select(x => x.RowKey).ToList();
+
+            foreach (var icm in allExistingIcms)
+            {
+                if (!allOurIcms.Contains(icm))
+                {
+                    FunctionUtility.AddRunToSALsA(int.Parse(icm));
+                }
+            }
+        }
     }
 
     public static class Auth
