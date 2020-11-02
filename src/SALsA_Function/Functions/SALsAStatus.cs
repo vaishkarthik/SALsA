@@ -27,10 +27,10 @@ namespace SALsA.Functions
             log.LogInformation("Connected Identity : {0}", claimsPrincipal.Identity.Name);
             if (!Auth.CheckUser(claimsPrincipal.Identity.Name))
             {
-                log.LogWarning("Access denied");
+                log.LogWarning("Access Denied for {0}", claimsPrincipal.Identity.Name);
                 return Auth.GenerateErrorForbidden(req, claimsPrincipal.Identity.Name);
             }
-            log.LogWarning("Access Granted");
+            log.LogWarning("Access Granted for {0}", claimsPrincipal.Identity.Name);
             
             var icmsDic = new Dictionary<int, StatusLine>();
             var allExistingIcms = ICM.GetAllICM();
