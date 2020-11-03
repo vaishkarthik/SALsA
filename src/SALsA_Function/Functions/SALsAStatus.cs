@@ -24,14 +24,8 @@ namespace SALsA.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "status")] HttpRequestMessage req,
             ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal)
         {
-            log.LogInformation("Connected Identity : {0}", claimsPrincipal.Identity.Name);
-            if (!Auth.CheckUser(claimsPrincipal.Identity.Name))
-            {
-                log.LogWarning("Access Denied for {0}", claimsPrincipal.Identity.Name);
-                return Auth.GenerateErrorForbidden(req, claimsPrincipal.Identity.Name);
-            }
-            log.LogWarning("Access Granted for {0}", claimsPrincipal.Identity.Name);
-            
+            if (Auth.CheckIdentity(req, log, claimsPrincipal, out HttpResponseMessage err) == false) { return err; };
+
             var icmsDic = new Dictionary<int, StatusLine>();
             var allExistingIcms = ICM.GetAllICM();
             foreach(var icm in allExistingIcms.value)

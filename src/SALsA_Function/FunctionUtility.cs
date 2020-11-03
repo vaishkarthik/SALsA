@@ -17,6 +17,7 @@ using SALsA.LivesiteAutomation;
 using Microsoft.AspNetCore.Http.Internal;
 using System.IO;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.Logging;
 
 namespace SALsA.General
 {
@@ -215,6 +216,23 @@ namespace SALsA.General
             };
 
             return response;
+        }
+
+        public static bool CheckIdentity(HttpRequestMessage req, ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal, out HttpResponseMessage err)
+        {
+            log.LogInformation("Connected Identity : {0}", claimsPrincipal.Identity.Name);
+            if (!Auth.CheckUser(claimsPrincipal.Identity.Name))
+            {
+                log.LogWarning("Access Denied for {0}", claimsPrincipal.Identity.Name);
+                err = Auth.GenerateErrorForbidden(req, claimsPrincipal.Identity.Name);
+                return false;
+            }
+            else
+            { 
+                log.LogWarning("Access Granted for {0}", claimsPrincipal.Identity.Name);
+                err = null;
+                return true;
+            }
         }
     }
 }

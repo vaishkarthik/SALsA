@@ -24,13 +24,7 @@ namespace SALsA.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "status/{id:int}")] HttpRequestMessage req, int id,
             ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal)
         {
-            log.LogInformation("Connected Identity : {0}", claimsPrincipal.Identity.Name);
-            if(!Auth.CheckUser(claimsPrincipal.Identity.Name))
-            {
-                log.LogWarning("Access denied");
-                return Auth.GenerateErrorForbidden(req, claimsPrincipal.Identity.Name);
-            }
-            log.LogWarning("Access Granted");
+            if (Auth.CheckIdentity(req, log, claimsPrincipal, out HttpResponseMessage err) == false) { return err; };
 
             var icm = TableStorage.ListAllEntity().Where(x => x.RowKey == id.ToString()).ToList();
             HttpResponseMessage response;
