@@ -42,7 +42,7 @@ namespace SALsA.General
         public const string ICMTrnasferIncidentSuffix = "/TransferIncident";
         public const string ICMDescriptionEntriesSuffix = "/DescriptionEntries?$inlinecount=allpages";
         public static readonly bool ShouldPostToICM = false;
-        public const string ICMInfoHeaderHtml = "SALsA will now scan this ICM and generate a report.<br>For access to the report, please join salsaaccess@microsoft SecurityGroup in //idweb<br>";
+        public const string ICMInfoHeaderHtml = "SALsA will now scan this ICM and generate a report.";
         public const string ICMInfoReportName = "SALsA Report";
         public const string ICMInfoReportEndpoint = "https://salsafunction.azurewebsites.net/api/status/";
 
