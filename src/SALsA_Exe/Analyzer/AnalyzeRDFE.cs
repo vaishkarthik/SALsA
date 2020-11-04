@@ -52,7 +52,15 @@ namespace SALsA.LivesiteAutomation
                     pieces[1] = WebUtility.UrlEncode(pieces[1]);
                     xmlArray[i] = String.Format("{0}:{1}", pieces[0], pieces[1]);
                 }
+                xmlArray[i] = xmlArray[i].Trim();
+                // If its one of the weird label, or xml like <M P=... /> we want to ignore them due to some weird characters.
+                // an xml minimum size is 4 : <X/>
+                if (xmlArray[i].Length > 4 && xmlArray[i][0] == '<' && xmlArray[i][2] == ' ' && xmlArray[i].Last() == '>')
+                {
+                    xmlArray[i] = "";
+                }
             }
+            xmlArray = xmlArray.Where(x => !string.IsNullOrEmpty(x)).ToArray();
             xml = string.Join(Environment.NewLine, xmlArray);
             var serializer = new XmlSerializer(typeof(Json2Class.RDFESubscriptionWrapper.Subscription));
             using (var stream = new StringReader(xml))
