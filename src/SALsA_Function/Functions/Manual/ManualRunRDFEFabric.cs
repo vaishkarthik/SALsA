@@ -12,11 +12,11 @@ using SALsA.General;
 
 namespace SALsA.Functions
 {
-    public static class ManualRunRDFEFabricGet
+    public static class ManualRunRdfeFabricGet
     {
         [FunctionName("Manual_RunRDFEFabric_Get")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "manual/ManualRunRDFEFabric")] HttpRequestMessage req, ExecutionContext context,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "manual/ManualRunRdfeFabric")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);
@@ -24,11 +24,11 @@ namespace SALsA.Functions
             return FunctionUtility.ReturnTemplate(req, context);
         }
     }
-    public static class ManualRunRDFEFabricPost
+    public static class ManualRunRdfeFabricPost
     {
         [FunctionName("Manual_RunRDFEFabric_Post")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "manual/ManualRunRDFEFabric")] HttpRequestMessage req, ExecutionContext context,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "manual/ManualRunRdfeFabric")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
         {
             log.LogInformation($"C# HTTP trigger function {0} processed a request.", context.FunctionName);
