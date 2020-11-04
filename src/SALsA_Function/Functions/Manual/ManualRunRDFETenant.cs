@@ -14,7 +14,7 @@ namespace SALsA.Functions
 {
     public static class ManualRunRdfeTenantGet
     {
-        [FunctionName("Manual_RunRDFETenant_Get")]
+        [FunctionName("Manual_RunRdfeTenant_Get")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "manual/ManualRunRdfeTenant")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
@@ -26,7 +26,7 @@ namespace SALsA.Functions
     }
     public static class ManualRunRdfeTenantPost
     {
-        [FunctionName("Manual_RunRDFETenant_Post")]
+        [FunctionName("Manual_RunRdfeTenant_Post")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "manual/ManualRunRdfeTenant")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)

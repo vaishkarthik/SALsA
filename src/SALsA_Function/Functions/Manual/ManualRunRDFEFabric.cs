@@ -14,7 +14,7 @@ namespace SALsA.Functions
 {
     public static class ManualRunRdfeFabricGet
     {
-        [FunctionName("Manual_RunRDFEFabric_Get")]
+        [FunctionName("Manual_RunRdfeFabric_Get")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "manual/ManualRunRdfeFabric")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
@@ -26,7 +26,7 @@ namespace SALsA.Functions
     }
     public static class ManualRunRdfeFabricPost
     {
-        [FunctionName("Manual_RunRDFEFabric_Post")]
+        [FunctionName("Manual_RunRdfeFabric_Post")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "manual/ManualRunRdfeFabric")] HttpRequestMessage req, ExecutionContext context,
             ILogger log)
