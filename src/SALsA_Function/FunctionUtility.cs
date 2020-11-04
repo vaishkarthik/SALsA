@@ -81,11 +81,13 @@ namespace SALsA.General
             {
                 fileName = fileName.Substring(0, fileName.Length - 5);
             }
+            fileName = fileName.Replace("_", "");
 
+            var currentDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var filePath = Path.Combine(Directory.GetParent(currentDir).FullName, "HTMLTemplate");
+            filePath = Path.Combine(filePath, String.Format("{0}.html", fileName));
             var response = req.CreateResponse(HttpStatusCode.OK);
-            response.Content = new StringContent(System.IO.File.ReadAllText(
-                        System.IO.Path.Combine(context.FunctionDirectory,
-                        String.Format("../HTMLTemplate/{0}.html", fileName))),
+            response.Content = new StringContent(System.IO.File.ReadAllText(filePath),
                     System.Text.Encoding.UTF8, "text/html");
             return response;
         }
