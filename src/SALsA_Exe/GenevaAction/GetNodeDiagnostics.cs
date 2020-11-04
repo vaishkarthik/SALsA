@@ -34,7 +34,7 @@ namespace SALsA.LivesiteAutomation
 
         public static Task<Stream> GetNodeDiagnosticsFiles(int icm, string cluster, string nodeid, string logType, string startTime, string endTime)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetNodeDiagnostics (for host) with params cluster:{0} and nodeid:", cluster, nodeid);
+            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetNodeDiagnostics (for host type: {0}) with params cluster:{1} and nodeid:{2}", logType, cluster, nodeid);
             var param = new GenevaOperations.GetNodeDiagnosticsFiles
             {
                 smefabrichostparam = cluster,

@@ -54,7 +54,7 @@ namespace SALsA.LivesiteAutomation
 
         public bool PostICMHeader(string head = Constants.ICMInfoHeaderHtml)
         {
-            string entry = head + Utility.UrlToHml(Constants.ICMInfoReportName, Constants.ICMInfoReportEndpoint + this.Id.ToString(), 24);
+            string entry = head + "<br>" +  Utility.UrlToHml(Constants.ICMInfoReportName, Constants.ICMInfoReportEndpoint + this.Id.ToString(), 24);
             SALsA.GetInstance(Id)?.Log.Verbose("Adding to ICM String {0}", entry);
             var discussion = ICM.GetICMDiscussion(this.Id);
             foreach (var de in discussion)
