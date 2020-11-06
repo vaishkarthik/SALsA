@@ -67,7 +67,7 @@ namespace SALsA.LivesiteAutomation
                     }
 
                     SALsA.GetInstance(icm)?.Log.Verbose("Creating GenevaAction for {0}: {1}, with parameters : {2}", extensionName, operationName,
-                        actionParam.Select(kvp => kvp.Key + ": " + kvp.Value.ToString()));
+                        Utility.ObjectToJson(actionParam));
 
                     //sts = new ClientHomeSts(dstsUri);
                     cp = ConnectionParameters.Create(actionsEnvironments, Authentication.Instance.Cert, null, X509CertCredentialType.SubjectNameCredential);
