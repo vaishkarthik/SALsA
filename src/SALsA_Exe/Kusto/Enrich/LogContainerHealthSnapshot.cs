@@ -37,7 +37,7 @@ namespace SALsA.LivesiteAutomation.Kusto
 
         protected override void GenerateKustoQuery()
         {
-            KustoQuery = String.Format("where TIMESTAMP >= datetime({0}) | where containerId =~ \"{1}\" | project Timestamp=TIMESTAMP, containerState, actualOperationalState, containerLifecycleState, containerOsState, vmExpectedHealthState, faultInfo",
+            KustoQuery = String.Format("where TIMESTAMP >= datetime({0}) | where containerId =~ \"{1}\" | project Timestamp=TIMESTAMP, containerState, actualOperationalState, containerLifecycleState, containerOsState, vmExpectedHealthState, faultInfo | sort by TIMESTAMP desc",
                 _startTime, _containerId);
         }
     }
