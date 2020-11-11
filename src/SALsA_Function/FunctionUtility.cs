@@ -152,6 +152,28 @@ namespace SALsA.General
 
         internal static void HealthProbe()
         {
+            var salsaTableEntity = TableStorage.ListAllEntity();
+            var client = new QueueClient(Authentication.Instance.GenevaAutomationConnectionString, Constants.QueueName);
+
+            var messagesInQueue = -1;
+            try
+            { 
+                var peek = client.PeekMessages();
+                messagesInQueue = peek.Value.Length;
+            } catch { }
+
+            if (messagesInQueue == 0)
+            {
+                foreach (var entity in salsaTableEntity)
+                {
+                    if(entity.SALsAState == SALsAState.Queued.ToString())
+                    {
+                        Console.WriteLine("ICM:{0} stuck in Queued state. Will remove and reset.", entity.PartitionKey);
+                        TableStorage.RemoveEntity(entity);
+                    }
+                }
+            }
+
             var allExistingIcms = ICM.GetAllICM().value.Select(x => x.Id.ToString()).ToList();
             var allOurIcms = TableStorage.ListAllEntity().Select(x => x.RowKey).ToList();
 

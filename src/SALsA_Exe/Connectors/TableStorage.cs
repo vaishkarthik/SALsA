@@ -49,6 +49,13 @@ namespace SALsA.LivesiteAutomation
                 AppendEntity(icmId, state, salsaLog, log);
             }
         }
+
+        public static void RemoveEntity(SALsAEntity entity)
+        {
+            TableOperation insertOperation = TableOperation.Delete(entity);
+            Authentication.Instance.TableStorageClient.Execute(insertOperation);
+        }
+
         public static void AppendEntity(int icm, SALsAState state, string salsaLog = "", string log = "")
         {
             try
