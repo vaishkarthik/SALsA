@@ -128,12 +128,44 @@ namespace SALsA.LivesiteAutomation.Json2Class
 
     public class ShortRDFERoleInstance
     {
+        public int Icm;
         public string InstanceName;
         public string DeploymentId;
         public string DeploymentName;
-        public string Fabric;
+        private string _fabric;
+        public string Fabric {
+            get {
+                if (String.IsNullOrEmpty(_fabric) && NodeId != Guid.Empty)
+                {
+                    try
+                    {
+                        var kustoCluster = new Kusto.NodeId2Cluster(Icm, NodeId.ToString());
+                        _fabric = kustoCluster.Results.First().Cluster;
+                    }
+                    catch { }
+
+                }
+                return _fabric;
+            }
+            set { _fabric = value; }
+        }
         public Guid ContainerID;
         public Guid NodeId;
         public override string ToString() { return Utility.ObjectToJson(this, true); }
+        public void Update(Guid containerId, Guid nodeId, string fabric)
+        {
+            if(containerId != Guid.Empty)
+            {
+                this.ContainerID = containerId;
+            }
+            if (nodeId != Guid.Empty)
+            {
+                this.NodeId = nodeId;
+            }
+            if (!string.IsNullOrWhiteSpace(fabric))
+            {
+                this._fabric = fabric;
+            }
+        }
     }
 }

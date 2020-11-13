@@ -48,9 +48,10 @@ namespace SALsA.General
 
         // Analyser.cs
         public const string AnalyzerSubscriptionIdField = "SubscriptionId";
-        public const string AnalyzerStartTimeField = "time";
+        public readonly static string[] AnalyzerStartTimeField = { "time", "ImpactStartTime", "StartTime" };
         public const string AnalyzerVMNameField = "vmname";
         public const string AnalyzerResourceGroupField = "ResourceGroup";
+        public readonly static string[] AnalyzerNodeIdField = { "NodeId", "Nodes" };
         public const string AnalyzerARMDeploymentExtensionType = "extensions";
         public const string AnalyzerARMDeploymentIaaSType = "virtualMachines";
         public const string AnalyzerARMDeploymentVMSSType = "virtualMachineScaleSets";
@@ -132,6 +133,9 @@ namespace SALsA.General
 
         // GuestAgentExtensionEvents.cs
         public const string KustoGuestAgentExtensionEventsTable = "GuestAgentExtensionEvents";
+
+        // NodeId2Cluster.cs
+        public const string KustoHostAgentTable = "HostAgentEventsEtwTable";
 
         // GuestAgentPerformanceCounterEvents.cs
         public const string KustoGuestAgentPerformanceCounterEventsTable = "GuestAgentPerformanceCounterEvents";

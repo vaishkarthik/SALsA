@@ -19,6 +19,8 @@ namespace SALsA.LivesiteAutomation
         public DateTime StartTime { get; private set; }
         private int Id;
         private bool IsCustomRun = false;
+
+        private ShortRDFERoleInstance GlobalInfo = new ShortRDFERoleInstance();
         public Analyzer(int Id)
         {
             if (SALsA.GetInstance(Id).ICM.CurrentICM.Keywords?.Contains("AutomatedHGAP") == true)
@@ -27,6 +29,7 @@ namespace SALsA.LivesiteAutomation
                 return;
             }
             this.Id = Id;
+            this.GlobalInfo.Icm = Id;
             Nullable<Guid> sub;
             (sub, ResourceGroupName, VMName, StartTime) = AnalyzeICM();
             /*
@@ -38,13 +41,23 @@ namespace SALsA.LivesiteAutomation
             */
             if (!sub.HasValue || VMName == null)
             {
-                SALsA.GetInstance(Id).State = SALsAState.MissingInfo;
-                SALsA.GetInstance(Id).ICM.QueueICMDiscussion("Could not detect any valid SubscriptionId (must be a valid GUID). or VMName (!= null) Aborting analysis.");
-                throw new ArgumentNullException("SubscriptionId and VMName must not be null");
+                if (String.IsNullOrWhiteSpace(SALsA.GetInstance(Id).ICM.GetCustomField(Constants.AnalyzerNodeIdField)) == false)
+                {
+                    CallInternalCommon();
+                    return;
+                }
+                else
+                {
+                    SALsA.GetInstance(Id).State = SALsAState.MissingInfo;
+                    SALsA.GetInstance(Id).ICM.QueueICMDiscussion("Could not detect any valid SubscriptionId (must be a valid GUID). or VMName (!= null) Aborting analysis.");
+                    throw new ArgumentNullException("SubscriptionId and VMName must not be null");
+                }
             }
             SubscriptionId = (Guid)sub;
             SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(String.Format("{0}", Utility.ObjectToJson(this, true)));
             AnalyzerInternal();
+                
+            CallInternalCommon();
         }
 
         private (ARMSubscription arm, RDFESubscription rdfe) CallARMAndRDFE(bool checkARM = true, bool checkRDFE = true)
@@ -64,16 +77,14 @@ namespace SALsA.LivesiteAutomation
 
             if (dep == null && IsCustomRun == false)
             {
-                ShortRDFERoleInstance rdfeInfo;
                 try
                 {
                     var instance = AnalyzeARMResourceURI(SubscriptionId.ToString(), ResourceGroupName, VMName);
-                    rdfeInfo = new ShortRDFERoleInstance
-                    {
-                        ContainerID = new Guid(instance.Last().ContainerId),
-                        NodeId = new Guid(instance.Last().NodeId),
-                        Fabric = instance.Last().Cluster
-                    };
+                    GlobalInfo.Update(
+                        new Guid(instance.Last().ContainerId),
+                        new Guid(instance.Last().NodeId),
+                        instance.Last().Cluster
+                    );
 
                     if(!string.IsNullOrWhiteSpace(instance.FirstOrDefault().Usage_ResourceGroupName))
                     {
@@ -86,12 +97,11 @@ namespace SALsA.LivesiteAutomation
                     try
                     {
                         var instance = AnalyzeRDFEResourceURI(SubscriptionId.ToString(), ResourceGroupName, VMName);
-                        rdfeInfo = new ShortRDFERoleInstance
-                        {
-                            ContainerID = new Guid(instance.Last().ContainerId),
-                            NodeId = new Guid(instance.Last().NodeId),
-                            Fabric = instance.Last().Cluster
-                        };
+                        GlobalInfo.Update(
+                            new Guid(instance.Last().ContainerId),
+                            new Guid(instance.Last().NodeId),
+                            instance.Last().Cluster
+                        );
                         this.ResourceGroupName = instance.FirstOrDefault().TenantId;
                         this.VMName = instance.FirstOrDefault().RoleInstanceName;
                     }
@@ -111,15 +121,34 @@ namespace SALsA.LivesiteAutomation
 
                     // Lets try to check kusto data
                     SALsA.GetInstance(Id).TaskManager.AddTask(
-                        BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, rdfeInfo), Id));
-                    ExecuteKustoEnrichment(Id, rdfeInfo.ContainerID.ToString());
-                    var startTime = SALsA.GetInstance(Id).ICM.ICMImpactStartTime().AddHours(-12);
-                    var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
-                    GetAllNodeDiagnosticsFiles(rdfeInfo.Fabric, rdfeInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
+                        BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, GlobalInfo), Id));
                 }
             }
-
             CallInternalComputeTypes(type, dep);
+        }
+
+        private void CallInternalCommon()
+        {
+            try
+            {
+                if (GlobalInfo.NodeId == Guid.Empty)
+                {
+                    GlobalInfo.NodeId = new Guid(SALsA.GetInstance(Id).ICM.GetCustomField(Constants.AnalyzerNodeIdField));
+                }
+                var startTime = SALsA.GetInstance(Id).ICM.ICMImpactStartTime().AddHours(-12);
+                var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
+                GetAllNodeDiagnosticsFiles(GlobalInfo.Fabric, GlobalInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
+            }
+            catch (Exception ex)
+            {
+                SALsA.GetInstance(Id)?.Log.Critical("Failed to use GetAllNodeDiagnosticsFiles with exception : {0}", ex);
+                SALsA.GetInstance(Id)?.Log.Exception(ex);
+            }
+            if (GlobalInfo.ContainerID != Guid.Empty)
+            {
+                ExecuteKustoContainerEnrichment(Id, GlobalInfo.ContainerID.ToString());
+            }
+            SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(GlobalInfo.ToString());
         }
 
         private void CallInternalComputeTypes(ComputeType type, object dep)
@@ -224,7 +253,7 @@ namespace SALsA.LivesiteAutomation
             }
         }
 
-        public static void ExecuteKustoEnrichment(int Id, string containerId)
+        public static void ExecuteKustoContainerEnrichment(int Id, string containerId)
         {
             try
             {
@@ -282,19 +311,16 @@ namespace SALsA.LivesiteAutomation
             var rawInfo = LogContainerId(modelTask, Id);
             if (rawInfo != null)
             {
-                var vmInfo = new ShortRDFERoleInstance
-                {
-                    ContainerID = new Guid(rawInfo.ContainerId),
-                    Fabric = rawInfo.Cluster,
-                    NodeId = new Guid(rawInfo.NodeId)
-                };
+                GlobalInfo.Update(
+                    new Guid(rawInfo.ContainerId),
+                    new Guid(rawInfo.NodeId),
+                    rawInfo.Cluster
+                );
                 var startTime = SALsA.GetInstance(Id).ICM.ICMImpactStartTime().AddHours(-12);
                 var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
                 SALsA.GetInstance(Id).TaskManager.AddTask(
-                    BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
+                    BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, GlobalInfo), Id)
                 );
-                GetAllNodeDiagnosticsFiles(vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
-                ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
             }
         }
 
@@ -338,19 +364,14 @@ namespace SALsA.LivesiteAutomation
             var rawInfo = LogContainerId(modelTask, Id);
             if (rawInfo != null)
             {
-                var vmInfo = new ShortRDFERoleInstance
-                {
-                    ContainerID = new Guid(rawInfo.ContainerId),
-                    Fabric = rawInfo.Cluster,
-                    NodeId = new Guid(rawInfo.NodeId)
-                };
-                var startTime = SALsA.GetInstance(Id).ICM.ICMImpactStartTime().AddHours(-12);
-                var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
-                SALsA.GetInstance(Id).TaskManager.AddTask(
-                    BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, vmInfo), Id)
+                GlobalInfo.Update(
+                    new Guid(rawInfo.ContainerId),
+                    new Guid(rawInfo.NodeId),
+                    rawInfo.Cluster
                 );
-                GetAllNodeDiagnosticsFiles(vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
-                ExecuteKustoEnrichment(Id, rawInfo.ContainerId);
+                SALsA.GetInstance(Id).TaskManager.AddTask(
+                    BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByContainerId(Id, GlobalInfo), Id)
+                );
             }
         }
 
@@ -365,8 +386,9 @@ namespace SALsA.LivesiteAutomation
             {
                 instance = dep.RoleInstances.Where(x => String.Equals(x.ID.ToString(), VMName)).FirstOrDefault();
             }
-            var vmInfo = new ShortRDFERoleInstance
+            GlobalInfo = new ShortRDFERoleInstance
             {
+                Icm = Id,
                 Fabric = dep.FabricGeoId,
                 DeploymentId = dep.Id,
                 DeploymentName = dep.Name,
@@ -376,21 +398,15 @@ namespace SALsA.LivesiteAutomation
 
             Task<string> modelTask = null;
             SALsA.GetInstance(Id).TaskManager.AddTask(
-                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, vmInfo), Id),
-                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, vmInfo), Id),
-                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, vmInfo), Id)
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerVMScreenshotOutputFilename, GenevaActions.GetClassicVMConsoleScreenshot(Id, GlobalInfo), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerNodeDiagnosticsFilename, GenevaActions.GetNodeDiagnosticsFilesByDeploymentIdorVMName(Id, GlobalInfo), Id),
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerContainerSettings, modelTask = GenevaActions.GetContainerSettings(Id, GlobalInfo), Id)
             );
 
-            ExecuteKustoEnrichment(Id, instance.ID.ToString());
             try
             {
                 var model = Utility.JsonToObject<Json2Class.ContainerSettings>(modelTask.Result);
-                vmInfo.NodeId = new Guid(model.NodeId);
-
-                var startTime = SALsA.GetInstance(Id).ICM.ICMImpactStartTime().AddHours(-12);
-                var endTime = new DateTime(Math.Min(startTime.AddHours(+24).Ticks, DateTime.UtcNow.Ticks));
-
-                GetAllNodeDiagnosticsFiles(vmInfo.Fabric, vmInfo.NodeId.ToString(), startTime.ToString("s"), endTime.ToString("s"));
+                GlobalInfo.NodeId = new Guid(model.NodeId);
             }
             catch (Exception ex)
             {
@@ -399,7 +415,7 @@ namespace SALsA.LivesiteAutomation
             }
             finally
             {
-                SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(vmInfo.ToString());
+                SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(GlobalInfo.ToString());
             }
         }
 

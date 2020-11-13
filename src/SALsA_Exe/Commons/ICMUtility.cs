@@ -51,6 +51,17 @@ namespace SALsA.LivesiteAutomation
             }
             return null;
         }
+        public string GetCustomField(string[] lookups)
+        {
+            foreach (var lookup in lookups)
+            {
+                var value = GetCustomFieldInternal(CurrentICM.CustomFieldGroups, lookup);
+                if (String.IsNullOrWhiteSpace(value) == false)
+                { return value; }
+
+            }
+            return null;
+        }
 
         public bool PostICMHeader(string head = Constants.ICMInfoHeaderHtml)
         {
@@ -150,11 +161,11 @@ namespace SALsA.LivesiteAutomation
         {
             DateTime date;
             DateTime.TryParse(GetCustomField(Constants.AnalyzerStartTimeField), out date);
-            if (date == null)
+            if (date == null || date.Ticks == 0)
             {
                 date = this.CurrentICM.ImpactStartDate;
             }
-            if (date == null)
+            if (date == null || date.Ticks == 0)
             {
                 date = DateTime.Today.AddDays(-7).ToUniversalTime();
             }
