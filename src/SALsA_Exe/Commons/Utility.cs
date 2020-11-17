@@ -215,7 +215,7 @@ namespace SALsA.General
 
         internal static string CreateICMFolderInLogDirAndReturnFullPath(string name, int Id)
         {
-            var logDir = Path.Combine(Path.GetDirectoryName(Log.LogFullPath), Convert.ToString(Id));
+            var logDir = Path.Combine(Path.GetTempPath(), string.Format("SALSA-{0}_{1}", Log.UID, Id));
             if (!Directory.Exists(logDir))
             {
                 Directory.CreateDirectory(logDir);

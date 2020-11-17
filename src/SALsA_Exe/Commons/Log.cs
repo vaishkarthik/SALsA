@@ -13,12 +13,9 @@ namespace SALsA.General
     public static class Log
     {
         public static string UID { get; private set; }
-        private static StreamWriter sw = null;
+        public static StreamWriter LogStream { get; private set; }
         public static int Id = 0;
         public static string SAS { get; private set; }
-        public static string LogFileName { get; private set; }
-        public static string LogFullPath { get; private set; }
-        public static string LogFolderPath { get; private set; }
         public static string StartTime { get; private set; }
         static Log()
         {
@@ -29,29 +26,8 @@ namespace SALsA.General
         {
             StartTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
             UID = Utility.ShortRandom;
-            LogFolderPath = System.IO.Path.Combine(System.IO.Path.GetPathRoot(Environment.SystemDirectory), "Log");
-            LogFileName = String.Format("{0}-{1}{2}", Constants.LogFileNamePrefix, UID, Constants.LogFileNameExtension);
-            LogFullPath = System.IO.Path.Combine(LogFolderPath, LogFileName);
-            if (!File.Exists(LogFullPath))
-            {
-                try
-                {
-                    new System.IO.FileInfo(LogFolderPath).Directory.Create();
-                    sw = File.AppendText(LogFullPath);
-                }
-                catch
-                {
-                    // TODO : log this later
-                    LogFolderPath = System.IO.Path.GetTempPath();
-                    LogFullPath = Path.Combine(LogFolderPath, LogFileName);
-                    new System.IO.FileInfo(LogFolderPath).Directory.Create();
-                    sw = File.AppendText(LogFullPath);
-                }
-            }
-            else
-            {
-                sw = File.AppendText(LogFullPath);
-            }
+            MemoryStream ms = new MemoryStream();
+            LogStream = new StreamWriter(ms);
         }
 
         public static void SetSAS(string sas)
@@ -143,7 +119,7 @@ namespace SALsA.General
         {
             try
             {
-                sw?.WriteLine(ss);
+                LogStream?.WriteLine(ss);
             }
             catch { };
         }
@@ -173,9 +149,7 @@ namespace SALsA.General
         internal static void FlushAndClose()
         {
             Verbose("FlushAndClose called. Finished processing ICM");
-            sw?.Flush();
-            sw?.Close();
-            sw = null;
+            LogStream?.Flush();
         }
     }
 }
