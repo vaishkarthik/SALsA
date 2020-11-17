@@ -28,6 +28,7 @@ namespace SALsA.LivesiteAutomation
         public string SAS { get; private set; }
         public Incident CurrentICM { get; private set; }
         private ConcurrentBag<string> MessageQueue = new ConcurrentBag<string>();
+        private readonly object __lockObj = new object();
 
         public ICM(int icmId)
         {
@@ -111,6 +112,7 @@ namespace SALsA.LivesiteAutomation
             try
             {
                 MessageQueue.Add(entry.ToString());
+                RefreshTempPage(true);
                 return true;
             }
             catch (Exception ex)
@@ -128,11 +130,10 @@ namespace SALsA.LivesiteAutomation
             string reason = null;
             try
             {
-                var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray(), SALsA.GetInstance(Id)?.Log.StartTime);
-                SAS = BlobStorageUtility.UploadICMRun(Id, message);
+                RefreshTempPage();
                 if (Constants.ShouldPostToICM)
                 {
-                    message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
+                    var message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
                         DateTime.ParseExact(SALsA.GetInstance(Id)?.Log.StartTime, "yyMMddTHHmmss", null)
                             .ToString("yyyy-MM-ddTHH:mm:ssZ")), SAS);
                     if (message == null) throw new ArgumentNullException("Message is null, please verify run log");
@@ -153,6 +154,16 @@ namespace SALsA.LivesiteAutomation
             finally
             {
                 MessageQueue = new ConcurrentBag<string>(); // Dispose of our current one
+            }
+        }
+
+        private void RefreshTempPage(bool isTemp = false)
+        {
+            lock (__lockObj)
+            {
+                var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray(), SALsA.GetInstance(Id)?.Log.StartTime, isTemp);
+                SAS = BlobStorageUtility.UploadICMRun(Id, message);
+                SALsA.GetInstance(Id)?.RefreshTable();
             }
         }
 

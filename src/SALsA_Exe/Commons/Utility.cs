@@ -98,7 +98,7 @@ namespace SALsA.General
             }
         }
 
-        public static string GenerateICMHTMLPage(int Icm, string[] messages, string startTime)
+        public static string GenerateICMHTMLPage(int Icm, string[] messages, string startTime, bool isTemp)
         {
             StringBuilder sb = new StringBuilder();
             if(messages.Count() > 1)
@@ -107,6 +107,14 @@ namespace SALsA.General
             }    
             sb.AppendLine("<!DOCTYPE html>");
             sb.AppendLine("<html>");
+
+            if (isTemp)
+            {
+                sb.AppendLine("<h1 style=\"background-color:tomato;\">");
+                sb.AppendLine(String.Format("ICM analysis still in progress..."));
+                sb.AppendLine("</h1>");
+                sb.AppendLine("<br>");
+            }
 
             sb.AppendLine("<h1>");
             sb.AppendLine(String.Format("ICM Log #{0}. {1}", Icm, startTime));
