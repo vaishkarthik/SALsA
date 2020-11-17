@@ -243,10 +243,10 @@ namespace SALsA.General
         {
             if(fromKusto)
             {
-                return (result.Count > Constants.MaxResultCount ? "<details><summary>Results (click here for details)</summary>" : "") +
+                return (result.Count > Constants.MaxResultCount + 1 ? "<details><summary>Results (click here for details)</summary>" : "") +
                        "<table style=\"margin-right:auto;margin-left:auto;width:80%;overflow-x:scroll;overflow-y:scroll;height:500px;display:block;\">" +
                        List2DToHTMLInternal(result, raw) +
-                       "</table>" + (result.Count > Constants.MaxResultCount ? "</details>" : "");
+                       "</table>" + (result.Count > Constants.MaxResultCount + 1 ? "</details>" : "");
             }
             else
             {
