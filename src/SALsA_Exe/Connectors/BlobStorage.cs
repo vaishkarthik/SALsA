@@ -118,7 +118,7 @@ namespace SALsA.LivesiteAutomation
             }
         }
 
-        public static string GetSASToken(int icm, string blobName, int ExpiryInHours = 7 * 24, Task blobTask = null)
+        public static string GetSASToken(int icm, string blobName, int ExpiryInHours = Constants.BlobTimeoutInHours, Task blobTask = null)
         {
             try
             {

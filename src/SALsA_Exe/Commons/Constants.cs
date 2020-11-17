@@ -21,10 +21,11 @@ namespace SALsA.General
         // Authentication.cs
         public const string AuthenticationCertSecretURI = "https://azvmagent-automation.vault.azure.net/secrets/azurevmguestagentsandextensions-manual/935a9dc4ac9e437d935c0bf26ccfa160";
         public const string AuthenticationServicePrincioalSecretURI = "https://azvmagent-automation.vault.azure.net/secrets/SP-Geneva-Automation/e44409c17a6e4c2388b0dbada43fe875";
-        public const string AuthenticationBlobConnectionStringSecretURI = "https://azvmagent-automation.vault.azure.net/secrets/GenevaAutomationConnectionString/7c7bd5d6f9d144599500a4eb9d9ad4fc";
+        public const string Authentication1ConnectionStringSecretURI = "https://azvmagent-automation.vault.azure.net/secrets/GenevaAutomationConnectionString/7c7bd5d6f9d144599500a4eb9d9ad4fc";
         public const string QueueName = "salsaqueue";
 
         // BlobStorage.cs
+        public const int BlobTimeoutInHours = 30 * 24;
         public const string BlobStorageVault = "https://genevaautomation.blob.core.windows.net";
         public const string BlobStorageAccount = "incidents";
         public readonly static string BlobStorageConnection = string.Format("{0}/{1}", BlobStorageVault, BlobStorageAccount);
