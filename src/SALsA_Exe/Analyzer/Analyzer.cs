@@ -141,8 +141,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Critical("Failed to use GetAllNodeDiagnosticsFiles with exception : {0}", ex);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Critical("Failed to use GetAllNodeDiagnosticsFiles with exception : {0}", ex);
+                Log.Exception(ex);
             }
             if (GlobalInfo.ContainerID != Guid.Empty)
             {
@@ -174,7 +174,7 @@ namespace SALsA.LivesiteAutomation
             this.IsCustomRun = true;
             this.Id = Id;
             StartTime = SALsA.GetInstance(Id).ICM.CurrentICM.CreateDate;
-            SALsA.GetInstance(Id).Log.Information("Received ManualRun order type {0} with param {1} : ",
+            Log.Information("Received ManualRun order type {0} with param {1} : ",
                 manualRun.GetType(), Utility.ObjectToJson(manualRun));
             if (manualRun.GetType() == typeof(ManualRun_ICM))
             {
@@ -198,7 +198,7 @@ namespace SALsA.LivesiteAutomation
                 int instanceId = -1;
                 if (String.IsNullOrEmpty(manualIID.Region))
                 {
-                    SALsA.GetInstance(Id).Log.Information("Calling automatic ARM VMdetection. No Region parameter provided.");
+                    Log.Information("Calling automatic ARM VMdetection. No Region parameter provided.");
                     ARMSubscription arm = AnalyzeARMSubscription(SubscriptionId, this.ResourceGroupName);
                     dep = AnalyzeARMDeployment(arm);
                     instanceId = TryConvertInstanceNameToInstanceId(this.VMName);
@@ -214,7 +214,7 @@ namespace SALsA.LivesiteAutomation
                 }
                 if (instanceId < 0)
                 {
-                    SALsA.GetInstance(Id).Log.Information("No Instance ID detected. Assuming this is a normal single IaaS VM");
+                    Log.Information("No Instance ID detected. Assuming this is a normal single IaaS VM");
                     SALsA.GetInstance(Id).TaskManager.AddTask(
                         BlobStorageUtility.SaveAndSendBlobTask(
                             Constants.AnalyzerInspectIaaSDiskOutputFilename,
@@ -222,7 +222,7 @@ namespace SALsA.LivesiteAutomation
                 }
                 else
                 {
-                    SALsA.GetInstance(Id).Log.Information("No Instance ID detected. Assuming this is a normal single IaaS VM");
+                    Log.Information("No Instance ID detected. Assuming this is a normal single IaaS VM");
                     SALsA.GetInstance(Id).TaskManager.AddTask(
                         BlobStorageUtility.SaveAndSendBlobTask(
                             Constants.AnalyzerInspectIaaSDiskOutputFilename,
@@ -266,8 +266,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Critical("Failed to Enrich Kusto ");
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Critical("Failed to Enrich Kusto ");
+                Log.Exception(ex);
             }
         }
         /*
@@ -340,8 +340,8 @@ namespace SALsA.LivesiteAutomation
                 }
                 catch (Exception ex)
                 {
-                    SALsA.GetInstance(Id)?.Log.Critical("Failed to populate ContainerId");
-                    SALsA.GetInstance(Id)?.Log.Exception(ex);
+                    Log.Critical("Failed to populate ContainerId");
+                    Log.Exception(ex);
                 }
             }
             return null;
@@ -410,8 +410,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Critical("Failed to populate NodeId");
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Critical("Failed to populate NodeId");
+                Log.Exception(ex);
             }
             finally
             {
@@ -469,7 +469,7 @@ namespace SALsA.LivesiteAutomation
                 }
                 if (armDeps.Length > 1)
                 {
-                    SALsA.GetInstance(Id).Log.Error("Found more than one VM named {0} in RessourceGroup {1}, will take the first one.{2}{3}",
+                    Log.Error("Found more than one VM named {0} in RessourceGroup {1}, will take the first one.{2}{3}",
                         VMName, ResourceGroupName, Environment.NewLine, armDeps);
                 }
                 if (armDeps.Length > 0)

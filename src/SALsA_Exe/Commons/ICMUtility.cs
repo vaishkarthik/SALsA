@@ -35,8 +35,8 @@ namespace SALsA.LivesiteAutomation
             this.Id = icmId;
 
             this.CurrentICM = PopulateICMInfo(icmId);
-            SALsA.GetInstance(Id)?.Log.Verbose("Got response for IMC {0}", icmId);
-            SALsA.GetInstance(Id)?.Log.Verbose(CurrentICM);
+            Log.Verbose("Got response for IMC {0}", icmId);
+            Log.Verbose(CurrentICM);
         }
 
         public string GetCustomField(string lookup)
@@ -47,8 +47,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Error("Failed to find a valid value for <{0}> in ICM : {1}", lookup, Id);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Error("Failed to find a valid value for <{0}> in ICM : {1}", lookup, Id);
+                Log.Exception(ex);
             }
             return null;
         }
@@ -67,13 +67,13 @@ namespace SALsA.LivesiteAutomation
         public bool PostICMHeader(string head = Constants.ICMInfoHeaderHtml)
         {
             string entry = head + "<br>" +  Utility.UrlToHml(Constants.ICMInfoReportName, Constants.ICMInfoReportEndpoint + this.Id.ToString(), 24);
-            SALsA.GetInstance(Id)?.Log.Verbose("Adding to ICM String {0}", entry);
+            Log.Verbose("Adding to ICM String {0}", entry);
             var discussion = ICM.GetICMDiscussion(this.Id);
             foreach (var de in discussion)
             {
                 if (de.SubmittedBy == Constants.ICMIdentityName || de.Text.Contains(Constants.ICMInfoHeaderHtml))
                 {
-                    SALsA.GetInstance(Id)?.Log.Verbose("Did not add entry to ICM since already sent", this.Id);
+                    Log.Verbose("Did not add entry to ICM since already sent", this.Id);
                     return false;
                 }
             }
@@ -83,8 +83,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}", Id);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Error("Failed to add discussion element to ICM {0}", Id);
+                Log.Exception(ex);
                 return false;
             }
         }
@@ -95,7 +95,7 @@ namespace SALsA.LivesiteAutomation
             {
                 return false;
             }
-            SALsA.GetInstance(Id)?.Log.Verbose("Adding to ICM String {0}", entry);
+            Log.Verbose("Adding to ICM String {0}", entry);
             if (htmlfy)
             {
                 try
@@ -104,8 +104,8 @@ namespace SALsA.LivesiteAutomation
                 }
                 catch (Exception ex)
                 {
-                    SALsA.GetInstance(Id)?.Log.Warning("Failed to html encode {0}, will use raw input", entry);
-                    SALsA.GetInstance(Id)?.Log.Exception(ex);
+                    Log.Warning("Failed to html encode {0}, will use raw input", entry);
+                    Log.Exception(ex);
                 }
             }
 
@@ -117,15 +117,15 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Error("Failed to add discussion element to ICM {0}", this.Id);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Error("Failed to add discussion element to ICM {0}", this.Id);
+                Log.Exception(ex);
                 return false;
             }
         }
 
         public void EmptyMessageQueue()
         {
-            SALsA.GetInstance(Id)?.Log.Verbose("Empty Message Queue with {0} elements", MessageQueue.Count);
+            Log.Verbose("Empty Message Queue with {0} elements", MessageQueue.Count);
             if (MessageQueue.IsEmpty || SALsA.GetInstance(Id).State == SALsAState.Ignore || SALsA.GetInstance(Id).State == SALsAState.MissingInfo) return; // Ignore the ICM
             string reason = null;
             try
@@ -134,7 +134,7 @@ namespace SALsA.LivesiteAutomation
                 if (Constants.ShouldPostToICM)
                 {
                     var message = Utility.UrlToHml(String.Format("SALsA Logs {0}",
-                        DateTime.ParseExact(SALsA.GetInstance(Id)?.Log.StartTime, "yyMMddTHHmmss", null)
+                        DateTime.ParseExact(Log.StartTime, "yyMMddTHHmmss", null)
                             .ToString("yyyy-MM-ddTHH:mm:ssZ")), SAS);
                     if (message == null) throw new ArgumentNullException("Message is null, please verify run log");
                     var body = new StringContent(Utility.ObjectToJson(new Incident.DescriptionPost(message)));
@@ -142,14 +142,14 @@ namespace SALsA.LivesiteAutomation
                     var response = Client.PatchAsync(BuildUri(this.Id), body).Result;
                     reason = response.Content.ReadAsStringAsync().Result;
                     response.EnsureSuccessStatusCode();
-                    SALsA.GetInstance(Id)?.Log.Verbose("Got response for ICM {0}", this.Id);
+                    Log.Verbose("Got response for ICM {0}", this.Id);
                 }
             }
             catch (Exception ex)
             {
                 SALsA.GetInstance(Id).State = SALsAState.UnknownException;
-                SALsA.GetInstance(Id)?.Log.Error("Failed to add message element to ICM {0}. Reason : {1}", this.Id, reason);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Error("Failed to add message element to ICM {0}. Reason : {1}", this.Id, reason);
+                Log.Exception(ex);
             }
             finally
             {
@@ -161,7 +161,7 @@ namespace SALsA.LivesiteAutomation
         {
             lock (__lockObj)
             {
-                var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray(), SALsA.GetInstance(Id)?.Log.StartTime, isTemp);
+                var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray(), Log.StartTime, isTemp);
                 SAS = BlobStorageUtility.UploadICMRun(Id, message);
                 SALsA.GetInstance(Id)?.RefreshTable();
             }

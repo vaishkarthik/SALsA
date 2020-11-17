@@ -11,14 +11,14 @@ namespace SALsA.LivesiteAutomation
     {
         public class SALsAInstance
         {
-            public Log Log;
             public ICM ICM;
             public TaskManager TaskManager;
             private SALsAState _state;
             public SALsAState State { get { return _state; } set { _state = value; TableStorage.AppendEntity(ICM.Id, value, Log.SAS, ICM.SAS); } }
             public SALsAInstance(int icm)
             {
-                this.Log = new Log(icm);
+                Log.ResetLog();
+                Log.Id = icm;
                 this.ICM = new ICM(icm);
                 this.TaskManager = new TaskManager(icm);
                 this.State = SALsAState.Running;
@@ -31,7 +31,6 @@ namespace SALsA.LivesiteAutomation
             }
         }
 
-        public static Log GlobalLog;
         private static Dictionary<int, SALsAInstance> instances;
 
         public static void AddInstance(int icm)
@@ -59,15 +58,12 @@ namespace SALsA.LivesiteAutomation
 
         static SALsA()
         {
-
-            GlobalLog = new Log();
             instances = new Dictionary<int, SALsAInstance>();
             // Initialise singletons;
             _ = Authentication.Instance;
             _ = Authentication.Instance.Cert;
             _ = Authentication.Instance.BlobStorageCredentials;
             _ = Authentication.Instance.TableStorageClient;
-
         }
     }
 }

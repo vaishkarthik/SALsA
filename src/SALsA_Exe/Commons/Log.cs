@@ -10,22 +10,23 @@ using System.Text;
 namespace SALsA.General
 {
 
-    public sealed class Log
+    public static class Log
     {
-        public string UID { get; private set; }
-        private StreamWriter sw = null;
-        private int Id;
-        public string SAS { get; private set; }
-        public string LogFileName { get; private set; }
-        public string LogFullPath { get; private set; }
-        public string LogFolderPath { get; private set; }
-        public string StartTime { get; private set; }
-        public Log(int Id = 0)
+        public static string UID { get; private set; }
+        private static StreamWriter sw = null;
+        public static int Id = 0;
+        public static string SAS { get; private set; }
+        public static string LogFileName { get; private set; }
+        public static string LogFullPath { get; private set; }
+        public static string LogFolderPath { get; private set; }
+        public static string StartTime { get; private set; }
+        static Log()
         {
-            Utility.GlobalLog = this;
-            TableStorage.GlobalLog = this;
-            Authentication.GlobalLog = this;
-            this.Id = Id;
+            ResetLog();
+        }
+
+        public static void ResetLog()
+        {
             StartTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
             UID = Utility.ShortRandom;
             LogFolderPath = System.IO.Path.Combine(System.IO.Path.GetPathRoot(Environment.SystemDirectory), "Log");
@@ -53,65 +54,65 @@ namespace SALsA.General
             }
         }
 
-        public void SetSAS(string sas)
+        public static void SetSAS(string sas)
         {
-            this.SAS = sas;
+            SAS = sas;
         }
 
         // https://msdn.microsoft.com/en-us/magazine/ff714589.aspx
         private enum LogLevel { Online = 0x0020, Verbose = 0x0010, Information = 0x0008, Warning = 0x0004, Error = 0x002, Critical = 0x001 };
 
         // Forcing toString on simple objects
-        public void Verbose(object obj)
+        public static void Verbose(object obj)
         {
             Verbose("{0}", (string)(obj.ToString()));
         }
-        public void Information(object obj)
+        public static void Information(object obj)
         {
             Information("{0}", (string)(obj.ToString()));
         }
-        public void Warning(object obj)
+        public static void Warning(object obj)
         {
             Warning("{0}", (string)(obj.ToString()));
         }
-        public void Error(object obj)
+        public static void Error(object obj)
         {
             Error("{0}", (string)(obj.ToString()));
         }
-        public void Critical(object obj)
+        public static void Critical(object obj)
         {
             Critical("{0}", (string)(obj.ToString()));
         }
 
 
-        public void Verbose(string ss, params object[] arg)
+        public static void Verbose(string ss, params object[] arg)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Verbose);
         }
-        public void Information(string ss, params object[] arg)
+        public static void Information(string ss, params object[] arg)
         {
             Console.ForegroundColor = ConsoleColor.White;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Information);
         }
-        public void Warning(string ss, params object[] arg)
+        public static void Warning(string ss, params object[] arg)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Warning);
         }
-        public void Error(string ss, params object[] arg)
+        public static void Error(string ss, params object[] arg)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Error);
         }
-        public void Critical(string ss, params object[] arg)
+        public static void Critical(string ss, params object[] arg)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
             InternalLog(String.Format(CultureInfo.InvariantCulture, ss, arg), LogLevel.Critical);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public void Exception(Exception ex)
+        public static void Exception(Exception ex)
         {
             StringBuilder sb = new StringBuilder();
             if (ex is AggregateException)
@@ -127,7 +128,7 @@ namespace SALsA.General
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void InternalLog(string ss, LogLevel lvl)
+        private static void InternalLog(string ss, LogLevel lvl)
         {
 
             var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ", CultureInfo.InvariantCulture);
@@ -138,7 +139,7 @@ namespace SALsA.General
             WriteToLog(logLine);
         }
 
-        private void WriteToLog(string ss)
+        private static void WriteToLog(string ss)
         {
             try
             {
@@ -148,7 +149,7 @@ namespace SALsA.General
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private string GetCallerMethod()
+        private static string GetCallerMethod()
         {
             int level = 0;
             string currentCaller = new StackFrame(level++, true).GetMethod().DeclaringType.FullName;
@@ -169,12 +170,13 @@ namespace SALsA.General
             return caller;
         }
 
-        internal void FlushAndClose()
+        internal static void FlushAndClose()
         {
-            this.Verbose("FlushAndClose called. Finished processing ICM");
+            Verbose("FlushAndClose called. Finished processing ICM");
             sw?.Flush();
             sw?.Close();
             sw = null;
+            Log.ResetLog();
         }
     }
 }

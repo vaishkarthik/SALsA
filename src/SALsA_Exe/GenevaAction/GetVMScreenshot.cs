@@ -15,7 +15,7 @@ namespace SALsA.LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Image> GetVMConsoleScreenshot(int icm, ARMDeployment deployment)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction with params {0}", deployment);
+            Log.Information("Calling GenevaAction with params {0}", deployment);
             var param = new GenevaOperations.GetVMConsoleScreenshot
             {
                 smecrpregion = deployment.Location,
@@ -34,7 +34,7 @@ namespace SALsA.LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Image> GetVMConsoleScreenshot(int icm, ARMDeployment deployment, int id)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction of id:{0} with params {1}", id, deployment);
+            Log.Information("Calling GenevaAction of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.GetVMConsoleScreenshotVMSS
             {
                 smecrpregion = deployment.Location,

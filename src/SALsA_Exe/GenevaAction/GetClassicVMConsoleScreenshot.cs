@@ -14,7 +14,7 @@ namespace SALsA.LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<Image> GetClassicVMConsoleScreenshot(int icm, ShortRDFERoleInstance instance)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetARMSubscription with params {0}", instance);
+            Log.Information("Calling GenevaAction GetARMSubscription with params {0}", instance);
             var param = new GenevaOperations.GetClassicVMScreenshot
             {
                 smefabrichostparam = instance.Fabric,

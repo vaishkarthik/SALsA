@@ -28,7 +28,6 @@ namespace SALsA.General
 
     public static class Utility
     {
-        public static Log GlobalLog = new Log();
         public class TaskManager
         {
 
@@ -49,7 +48,7 @@ namespace SALsA.General
                 }
                 else
                 {
-                    GlobalLog.Warning("AddTask received a null task");
+                    Log.Warning("AddTask received a null task");
                 }
             }
 
@@ -63,7 +62,7 @@ namespace SALsA.General
 
             public void WaitAllTasks()
             {
-                GlobalLog.Information("Waiting for all {0} tasks...", Tasks.Count);
+                Log.Information("Waiting for all {0} tasks...", Tasks.Count);
                 try
                 {
                     Task.WaitAll(Tasks.ToArray());
@@ -81,8 +80,8 @@ namespace SALsA.General
                         }
                         catch (Exception ex)
                         {
-                            GlobalLog.Error("Error waiting for task.");
-                            GlobalLog.Exception(ex);
+                            Log.Error("Error waiting for task.");
+                            Log.Exception(ex);
                         }
                         finally
                         {
@@ -216,7 +215,7 @@ namespace SALsA.General
 
         internal static string CreateICMFolderInLogDirAndReturnFullPath(string name, int Id)
         {
-            var logDir = Path.Combine(Path.GetDirectoryName(GlobalLog.LogFullPath), Convert.ToString(Id));
+            var logDir = Path.Combine(Path.GetDirectoryName(Log.LogFullPath), Convert.ToString(Id));
             if (!Directory.Exists(logDir))
             {
                 Directory.CreateDirectory(logDir);

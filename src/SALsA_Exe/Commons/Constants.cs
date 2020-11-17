@@ -16,7 +16,7 @@ namespace SALsA.General
         public const string LogFileNameExtension = ".log";
         public const string LogICMFileNamePrefix = "ICM";
         public const string LogICMExtension = ".html";
-        public readonly static string LogICMQuick = String.Format("{0}{1}", Constants.LogICMFileNamePrefix, Constants.LogICMFileNamePrefix);
+        public readonly static string LogICMQuick = String.Format("{0}{1}", Constants.LogICMFileNamePrefix, Constants.LogFileNameExtension);
 
         // Authentication.cs
         public const string AuthenticationCertSecretURI = "https://azvmagent-automation.vault.azure.net/secrets/azurevmguestagentsandextensions-manual/935a9dc4ac9e437d935c0bf26ccfa160";

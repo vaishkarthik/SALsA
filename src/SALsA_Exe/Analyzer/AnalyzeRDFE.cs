@@ -31,8 +31,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Error("Unable to get or analyse the RDFE subscription {0}", this.SubscriptionId);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Error("Unable to get or analyse the RDFE subscription {0}", this.SubscriptionId);
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -121,8 +121,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Warning("No deployment found for : {0}", element.Text[0]);
-                SALsA.GetInstance(Id)?.Log.Warning(ex);
+                Log.Warning("No deployment found for : {0}", element.Text[0]);
+                Log.Warning(ex);
                 return null;
             }
         }
@@ -163,7 +163,7 @@ namespace SALsA.LivesiteAutomation
             }
 
             SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(vminfo.HTMLResults, htmlfy: false);
-            SALsA.GetInstance(Id)?.Log.Information(vminfo.Results);
+            Log.Information(vminfo.Results);
             return vminfo.Results;
         }
     }

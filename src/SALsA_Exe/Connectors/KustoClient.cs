@@ -20,7 +20,7 @@ namespace SALsA.LivesiteAutomation.Connectors
         ICslQueryProvider client;
         public KustoClient(string clusterName, string database, int icm)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Creating Kusto connector for Cluster : {0} in database : {1}", clusterName, database);
+            Log.Information("Creating Kusto connector for Cluster : {0} in database : {1}", clusterName, database);
 
             var authority = Authentication.Instance.ServicePrincipal.tenant;
             var applicationClientId = Authentication.Instance.ServicePrincipal.appId;
@@ -29,7 +29,7 @@ namespace SALsA.LivesiteAutomation.Connectors
                 .WithAadApplicationKeyAuthentication(applicationClientId, applicationKey, authority);
             client = KustoClientFactory.CreateCslQueryProvider(kcsb);
 
-            SALsA.GetInstance(icm)?.Log.Information("Finished creating Kusto connector : {0}", kcsb);
+            Log.Information("Finished creating Kusto connector : {0}", kcsb);
         }
 
         public List<object[]> Query(string table, ref string query, int icm, string timestampField = "TIMESTAMP", int limit = Constants.KustoClientQueryLimit)
@@ -50,7 +50,7 @@ namespace SALsA.LivesiteAutomation.Connectors
             {
                 query = String.Format("{0} | {1} | limit {2}", table, query, limit);
             }
-            SALsA.GetInstance(icm)?.Log.Verbose("Sending {0} query : {1}", client.DefaultDatabaseName, query);
+            Log.Verbose("Sending {0} query : {1}", client.DefaultDatabaseName, query);
             var clientRequestProperties = new ClientRequestProperties() { ClientRequestId = Guid.NewGuid().ToString() };
             using (var reader = client.ExecuteQuery(query, clientRequestProperties))
             {

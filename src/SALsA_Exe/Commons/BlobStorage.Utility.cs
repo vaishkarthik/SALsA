@@ -18,10 +18,10 @@ namespace SALsA.LivesiteAutomation
         private static void SendSASToICM(string name, int Id)
         {
             var sasToken = BlobStorage.GetSASToken(Id, name);
-            // Since we build our own HTML, we directly call the AddICMDiscussion instead of callign SALsA.GetInstance(icm)?.Log.Online
+            // Since we build our own HTML, we directly call the AddICMDiscussion instead of callign Log.Online
             if (!SALsA.GetInstance(Id).ICM.QueueICMDiscussion(Utility.UrlToHml(name, sasToken), false))
             {
-                SALsA.GetInstance(Id)?.Log.Information("Did not add ICM discussion : {0} with sasToken {1}. Probably already exists", name, sasToken);
+                Log.Information("Did not add ICM discussion : {0} with sasToken {1}. Probably already exists", name, sasToken);
             }
         }
 
@@ -31,7 +31,7 @@ namespace SALsA.LivesiteAutomation
             var output = (await task).Open();
             if (output == null)
             {
-                SALsA.GetInstance(Id)?.Log.Warning("Could not create File {0} because Task output was null", name);
+                Log.Warning("Could not create File {0} because Task output was null", name);
                 return;
             }
             await BlobStorage.UploadStream(Id, name, output);
@@ -53,7 +53,7 @@ namespace SALsA.LivesiteAutomation
             var output = await task;
             if (output == null)
             {
-                SALsA.GetInstance(Id)?.Log.Warning("Could not create File {0} because Task output was null", name);
+                Log.Warning("Could not create File {0} because Task output was null", name);
                 return;
             }
             using (MemoryStream ms = new MemoryStream())
@@ -76,7 +76,7 @@ namespace SALsA.LivesiteAutomation
             var output = await task;
             if (output == null)
             {
-                SALsA.GetInstance(Id)?.Log.Warning("Could not create File {0} because Task output was null", name);
+                Log.Warning("Could not create File {0} because Task output was null", name);
                 return;
             }
             await BlobStorage.UploadStream(Id, name, output);
@@ -88,18 +88,18 @@ namespace SALsA.LivesiteAutomation
             try
             {
                 var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
-                var blobName = String.Format("{0}-{1}_{2}_{3}{4}", Constants.LogFileNamePrefix, SALsA.GetInstance(Id)?.Log.UID,
+                var blobName = String.Format("{0}-{1}_{2}_{3}{4}", Constants.LogFileNamePrefix, Log.UID,
                     currentTime, Id, Constants.LogFileNameExtension);
-                SALsA.GetInstance(Id)?.Log.FlushAndClose();
-                BlobStorage.UploadFile(Id, blobName, SALsA.GetInstance(Id)?.Log.LogFullPath, "text/plain").GetAwaiter().GetResult();
+                Log.FlushAndClose();
+                BlobStorage.UploadFile(Id, blobName, Log.LogFullPath, "text/plain").GetAwaiter().GetResult();
                 var sas = BlobStorage.GetSASToken(Id, blobName);
-                SALsA.GetInstance(Id)?.Log.SetSAS(sas);
-                SALsA.GetInstance(Id)?.Log.Information("Log for this automatic run are available here : {0}", sas);
+                Log.SetSAS(sas);
+                Log.Information("Log for this automatic run are available here : {0}", sas);
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Warning("Failed to upload log for this run");
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Warning("Failed to upload log for this run");
+                Log.Exception(ex);
             }
         }
 
@@ -108,19 +108,18 @@ namespace SALsA.LivesiteAutomation
             try
             {
                 var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
-                var blobName = String.Format("{0}-{1}_{2}_{3}{4}", Constants.LogICMFileNamePrefix, SALsA.GetInstance(Id)?.Log.UID,
+                var blobName = String.Format("{0}-{1}_{2}_{3}{4}", Constants.LogICMFileNamePrefix, Log.UID,
                     currentTime, Id, Constants.LogICMExtension);
-                SALsA.GetInstance(Id)?.Log.FlushAndClose();
                 BlobStorage.UploadText(Id, blobName, html, "text/html").GetAwaiter().GetResult();
                 BlobStorage.UploadText(Id, Constants.LogICMQuick, html, "text/html").GetAwaiter().GetResult();
                 var sas = BlobStorage.GetSASToken(Id, blobName);
-                SALsA.GetInstance(Id)?.Log.Information("ICM log for this run are available here : {0}", sas);
+                Log.Information("ICM log for this run are available here : {0}", sas);
                 return sas;
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Warning("Failed to upload ICM log for this run");
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Warning("Failed to upload ICM log for this run");
+                Log.Exception(ex);
                 return null;
             }
         }

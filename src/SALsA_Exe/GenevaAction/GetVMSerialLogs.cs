@@ -14,7 +14,7 @@ namespace SALsA.LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<String> GetVMConsoleSerialLogs(int icm, ARMDeployment deployment)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GetVMConsoleSerialLogs with params {0}", deployment);
+            Log.Information("Calling GetVMConsoleSerialLogs with params {0}", deployment);
             var param = new GenevaOperations.GetVMConsoleSerialLogs
             {
                 smecrpregion = deployment.Location,
@@ -33,7 +33,7 @@ namespace SALsA.LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<String> GetVMConsoleSerialLogs(int icm, ARMDeployment deployment, int id)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GetVMConsoleSerialLogs of id:{0} with params {1}", id, deployment);
+            Log.Information("Calling GetVMConsoleSerialLogs of id:{0} with params {1}", id, deployment);
             var param = new GenevaOperations.GetVMConsoleSerialLogsVMSS
             {
                 smecrpregion = deployment.Location,

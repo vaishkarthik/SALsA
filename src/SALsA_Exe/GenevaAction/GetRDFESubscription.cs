@@ -13,7 +13,7 @@ namespace SALsA.LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<String> GetRDFESubscription(int icm, Guid guid)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetRDFESubscription with guid:{0}", guid);
+            Log.Information("Calling GenevaAction GetRDFESubscription with guid:{0}", guid);
             var param = new GenevaOperations.GetRDFESubscriptionResources
             {
                 wellknownsubscriptionid = guid.ToString(),

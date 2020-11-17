@@ -13,7 +13,7 @@ namespace SALsA.LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<String> GetContainerSettings(int icm, ShortRDFERoleInstance dep)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetContainerSettings with ContainerId: {0}", dep.ContainerID);
+            Log.Information("Calling GenevaAction GetContainerSettings with ContainerId: {0}", dep.ContainerID);
             var param = new GenevaOperations.GetContainerSettings
             {
                 smefabrichostparam = dep.Fabric,

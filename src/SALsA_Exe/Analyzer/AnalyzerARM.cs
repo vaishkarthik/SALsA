@@ -23,8 +23,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(Id)?.Log.Error("Unable to get or analyse the ARM subscription {0}", this.SubscriptionId);
-                SALsA.GetInstance(Id)?.Log.Exception(ex);
+                Log.Error("Unable to get or analyse the ARM subscription {0}", this.SubscriptionId);
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -66,7 +66,7 @@ namespace SALsA.LivesiteAutomation
                 }
                 catch (Exception)
                 {
-                    SALsA.GetInstance(Id)?.Log.Warning("Unable to get or analyse the ARM deployment {0}", deployment);
+                    Log.Warning("Unable to get or analyse the ARM deployment {0}", deployment);
                     continue;
                 }
             }
@@ -86,7 +86,7 @@ namespace SALsA.LivesiteAutomation
             }
 
             SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(vminfo.HTMLResults, htmlfy: false);
-            SALsA.GetInstance(Id)?.Log.Information(vminfo.Results);
+            Log.Information(vminfo.Results);
             return vminfo.Results;
         }
     }

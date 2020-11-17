@@ -15,7 +15,7 @@ namespace SALsA.LivesiteAutomation
         // TODO : make sovereign cloud available
         public static Task<ZipArchiveEntry> GetNodeDiagnosticsFilesByDeploymentIdorVMName(int icm, ShortRDFERoleInstance instance)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetNodeDiagnostics with params {0}", instance);
+            Log.Information("Calling GenevaAction GetNodeDiagnostics with params {0}", instance);
             var param = new GenevaOperations.GetNodeDiagnosticsDeployment
             {
                 smefabrichostparam = instance.Fabric,
@@ -34,7 +34,7 @@ namespace SALsA.LivesiteAutomation
 
         public static Task<Stream> GetNodeDiagnosticsFiles(int icm, string cluster, string nodeid, string logType, string startTime, string endTime)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetNodeDiagnostics (for host type: {0}) with params cluster:{1} and nodeid:{2}", logType, cluster, nodeid);
+            Log.Information("Calling GenevaAction GetNodeDiagnostics (for host type: {0}) with params cluster:{1} and nodeid:{2}", logType, cluster, nodeid);
             var param = new GenevaOperations.GetNodeDiagnosticsFiles
             {
                 smefabrichostparam = cluster,
@@ -53,7 +53,7 @@ namespace SALsA.LivesiteAutomation
         }
         public static Task<ZipArchiveEntry> GetNodeDiagnosticsFilesByContainerId(int icm, ShortRDFERoleInstance instance)
         {
-            SALsA.GetInstance(icm)?.Log.Information("Calling GenevaAction GetNodeDiagnostics with params {0}", instance);
+            Log.Information("Calling GenevaAction GetNodeDiagnostics with params {0}", instance);
             var param = new GenevaOperations.GetNodeDiagnosticsFiles
             {
                 smefabrichostparam = instance.Fabric,

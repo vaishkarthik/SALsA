@@ -58,8 +58,8 @@ namespace SALsA.LivesiteAutomation.Kusto
                 }
                 catch (Exception ex)
                 {
-                    SALsA.GetInstance(this.Icm)?.Log.Critical("Failed to query Kusto {0}.{1}.{2}", Cluster, DataBase, Table);
-                    SALsA.GetInstance(this.Icm)?.Log.Exception(ex);
+                    Log.Critical("Failed to query Kusto {0}.{1}.{2}", Cluster, DataBase, Table);
+                    Log.Exception(ex);
                 }
             });
             InitTask.Start();
@@ -70,7 +70,7 @@ namespace SALsA.LivesiteAutomation.Kusto
         {
             if (_Results.Length == 0)
             {
-                SALsA.GetInstance(this.Icm)?.Log.Information("Kusto query for {0}.{1}.{2} yielded empty results. Will skip.", Cluster, DataBase, Table);
+                Log.Information("Kusto query for {0}.{1}.{2} yielded empty results. Will skip.", Cluster, DataBase, Table);
                 _HTMLResults = null;
                 return;
             }
@@ -103,7 +103,7 @@ namespace SALsA.LivesiteAutomation.Kusto
                         }
                         catch (Exception ex)
                         {
-                            SALsA.GetInstance(this.Icm).Log.Warning("While processing {0}.{1}.{2}, failed to assign value : \"{3}\") to field {4}. Exception : {5}"
+                            Log.Warning("While processing {0}.{1}.{2}, failed to assign value : \"{3}\") to field {4}. Exception : {5}"
                                 , Cluster, DataBase, Table, _RawResults[i][j], _RawResults[0][j], ex);
                         }
                     }

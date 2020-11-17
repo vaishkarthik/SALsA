@@ -35,8 +35,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to write to blob : {0}", blobName);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                Log.Error("Failed to write to blob : {0}", blobName);
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -54,8 +54,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to write to blob : {0}", blobName);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                Log.Error("Failed to write to blob : {0}", blobName);
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -69,8 +69,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to read from blob : {0}", blobName);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                Log.Error("Failed to read from blob : {0}", blobName);
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -84,8 +84,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to read from blob : {0}", blobName);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                Log.Error("Failed to read from blob : {0}", blobName);
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -98,8 +98,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to read from blob : {0}", blobName);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                Log.Error("Failed to read from blob : {0}", blobName);
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -112,8 +112,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to read from blob : {0}", blobName);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                Log.Error("Failed to read from blob : {0}", blobName);
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -134,13 +134,13 @@ namespace SALsA.LivesiteAutomation
                     SharedAccessExpiryTime = DateTime.UtcNow.AddHours(ExpiryInHours),
                     Permissions = SharedAccessBlobPermissions.Read
                 });
-                SALsA.GetInstance(icm)?.Log.Information("Generated a valid SAS key for {0} : {1}{2}", blobName, blob.StorageUri.PrimaryUri.AbsoluteUri, sas);
+                Log.Information("Generated a valid SAS key for {0} : {1}{2}", blobName, blob.StorageUri.PrimaryUri.AbsoluteUri, sas);
                 return String.Format("{0}{1}", blob.StorageUri.PrimaryUri.AbsoluteUri, sas);
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to generate SAS from blob : {0}", blobName);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                Log.Error("Failed to generate SAS from blob : {0}", blobName);
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -154,8 +154,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Error("Failed to check storage for blob : {0}", blobName);
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                Log.Error("Failed to check storage for blob : {0}", blobName);
+                Log.Exception(ex);
                 return false;
             }
         }

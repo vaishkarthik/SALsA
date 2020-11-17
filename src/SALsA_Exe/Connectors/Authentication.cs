@@ -20,7 +20,6 @@ namespace SALsA.General
         private ServicePrincipal servicePrincipal = null;
         private static Authentication instance = null;
         private static string genevaAutomationConnectionString = null;
-        public static Log GlobalLog = new Log();
 
         public X509Certificate2 Cert
         {
@@ -28,7 +27,7 @@ namespace SALsA.General
             {
                 if (cert == null)
                 {
-                    GlobalLog?.Information("First time calling Cert, creating cert...");
+                    Log.Information("First time calling Cert, creating cert...");
                     cert = PopulateCertificate();
                 }
                 return cert;
@@ -45,8 +44,8 @@ namespace SALsA.General
                 }
                 catch (Exception ex)
                 {
-                    GlobalLog?.Error("Error getting Storage Credentials");
-                    GlobalLog?.Exception(ex);
+                    Log.Error("Error getting Storage Credentials");
+                    Log.Exception(ex);
                     return null;
                 }
                 return genevaAutomationConnectionString;
@@ -58,7 +57,7 @@ namespace SALsA.General
             {
                 if (blobStorageCredentials == null)
                 {
-                    GlobalLog?.Information("First time calling BlobStorageCredentials, creating StorageCredentials...");
+                    Log.Information("First time calling BlobStorageCredentials, creating StorageCredentials...");
                     blobStorageCredentials = PopulateBlobStorageCredentials();
                 }
                 return blobStorageCredentials;
@@ -70,7 +69,7 @@ namespace SALsA.General
             {
                 if (tableStorageClient == null)
                 {
-                    GlobalLog?.Information("First time calling TableStorageCredentials, creating StorageCredentials...");
+                    Log.Information("First time calling TableStorageCredentials, creating StorageCredentials...");
                     var creds = PopulateTableStorageCredentials();
                     var tableStorageAccount = new CloudStorageAccount(creds, new Uri(Constants.TableStorageVault));
                     var client = tableStorageAccount.CreateCloudTableClient();
@@ -86,7 +85,7 @@ namespace SALsA.General
             {
                 if (servicePrincipal == null)
                 {
-                    GlobalLog?.Information("First time calling servicePrincipal, creating servicePrincipal...");
+                    Log.Information("First time calling servicePrincipal, creating servicePrincipal...");
                     servicePrincipal = PopulateServicePrincipal();
                 }
                 return servicePrincipal;
@@ -119,8 +118,8 @@ namespace SALsA.General
             }
             catch (Exception ex)
             {
-                GlobalLog?.Critical("Failed to get token from AzureServiceTokenProvider", Constants.AuthenticationCertSecretURI);
-                GlobalLog?.Exception(ex);
+                Log.Critical("Failed to get token from AzureServiceTokenProvider", Constants.AuthenticationCertSecretURI);
+                Log.Exception(ex);
                 throw ex;
             }
         }
@@ -137,14 +136,14 @@ namespace SALsA.General
                     X509KeyStorageFlags.DefaultKeySet |
                     X509KeyStorageFlags.MachineKeySet |
                     X509KeyStorageFlags.PersistKeySet /*| X509KeyStorageFlags.Exportable*/);
-                GlobalLog?.Verbose("Successfully got certificate : {0}", cert.SubjectName.Name);
+                Log.Verbose("Successfully got certificate : {0}", cert.SubjectName.Name);
 
                 return cert;
             }
             catch (Exception ex)
             {
-                GlobalLog?.Critical("Error getting Cerificate from {0} keyvault", Constants.AuthenticationCertSecretURI);
-                GlobalLog?.Exception(ex);
+                Log.Critical("Error getting Cerificate from {0} keyvault", Constants.AuthenticationCertSecretURI);
+                Log.Exception(ex);
                 throw ex;
             }
         }
@@ -165,8 +164,8 @@ namespace SALsA.General
             }
             catch (Exception ex)
             {
-                GlobalLog?.Error("Error getting Storage Credentials");
-                GlobalLog?.Exception(ex);
+                Log.Error("Error getting Storage Credentials");
+                Log.Exception(ex);
                 return null;
             }
         }
@@ -179,8 +178,8 @@ namespace SALsA.General
             }
             catch (Exception ex)
             {
-                GlobalLog?.Error("Error getting Storage Credentials");
-                GlobalLog?.Exception(ex);
+                Log.Error("Error getting Storage Credentials");
+                Log.Exception(ex);
                 return null;
             }
         }

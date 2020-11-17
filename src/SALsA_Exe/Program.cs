@@ -58,19 +58,19 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                SALsA.GetInstance(icm)?.Log.Critical("Main failed !");
-                SALsA.GetInstance(icm)?.Log.Exception(ex);
+                Log.Critical("Main failed !");
+                Log.Exception(ex);
 
                 SALsA.GetInstance(icm)?.TaskManager.WaitAllTasks();
 
                 try
                 {
-                    SALsA.GetInstance(icm)?.Log.Information("ICM State : {0}", Utility.ObjectToJson(SALsA.GetInstance(icm).ICM));
+                    Log.Information("ICM State : {0}", Utility.ObjectToJson(SALsA.GetInstance(icm).ICM));
                 }
                 catch { }
                 try
                 {
-                    SALsA.GetInstance(icm)?.Log.Information("ICM SALsA : {0}", Utility.ObjectToJson(SALsA.GetInstance(icm)));
+                    Log.Information("ICM SALsA : {0}", Utility.ObjectToJson(SALsA.GetInstance(icm)));
                 }
                 catch { }
                 //throw ex;

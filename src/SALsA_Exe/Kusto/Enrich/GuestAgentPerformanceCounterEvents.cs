@@ -46,7 +46,7 @@ namespace SALsA.LivesiteAutomation.Kusto
         {
             if (_Results.Length == 0)
             {
-                SALsA.GetInstance(this.Icm)?.Log.Information("Kusto query for {0}.{1}.{2} yielded empty results. Will skip.", Cluster, DataBase, Table);
+                Log.Information("Kusto query for {0}.{1}.{2} yielded empty results. Will skip.", Cluster, DataBase, Table);
                 _HTMLResults = null;
                 return;
             }

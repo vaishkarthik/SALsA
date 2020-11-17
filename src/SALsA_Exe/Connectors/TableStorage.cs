@@ -26,8 +26,6 @@ namespace SALsA.LivesiteAutomation
             public string SALsAState { get; set; }
         }
 
-        public static Log GlobalLog = new Log();
-
         public static List<SALsAEntity> ListAllEntity()
         {
             try
@@ -69,8 +67,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                GlobalLog?.Error("Failed to get all Table entity.");
-                GlobalLog?.Exception(ex);
+                Log.Error("Failed to get all Table entity.");
+                Log.Exception(ex);
             }
         }
 
@@ -110,8 +108,8 @@ namespace SALsA.LivesiteAutomation
             }
             catch (Exception ex)
             {
-                GlobalLog?.Error("Failed to get Entity.");
-                GlobalLog?.Exception(ex);
+                Log.Error("Failed to get Entity.");
+                Log.Exception(ex);
                 return null;
             }
         }
