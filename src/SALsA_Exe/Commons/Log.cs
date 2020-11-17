@@ -176,7 +176,6 @@ namespace SALsA.General
             sw?.Flush();
             sw?.Close();
             sw = null;
-            Log.ResetLog();
         }
     }
 }

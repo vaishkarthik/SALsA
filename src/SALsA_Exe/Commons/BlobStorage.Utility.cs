@@ -90,8 +90,9 @@ namespace SALsA.LivesiteAutomation
                 var currentTime = DateTime.UtcNow.ToString("yyMMddTHHmmss", CultureInfo.InvariantCulture);
                 var blobName = String.Format("{0}-{1}_{2}_{3}{4}", Constants.LogFileNamePrefix, Log.UID,
                     currentTime, Id, Constants.LogFileNameExtension);
+                var logFullPath = Log.LogFullPath;
                 Log.FlushAndClose();
-                BlobStorage.UploadFile(Id, blobName, Log.LogFullPath, "text/plain").GetAwaiter().GetResult();
+                BlobStorage.UploadFile(Id, blobName, logFullPath, "text/plain").GetAwaiter().GetResult();
                 var sas = BlobStorage.GetSASToken(Id, blobName);
                 Log.SetSAS(sas);
                 Log.Information("Log for this automatic run are available here : {0}", sas);

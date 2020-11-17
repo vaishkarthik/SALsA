@@ -110,7 +110,7 @@ namespace SALsA.General
             if (isTemp)
             {
                 sb.AppendLine("<h1 style=\"background-color:tomato;\">");
-                sb.AppendLine(String.Format("ICM analysis still in progress..."));
+                sb.AppendLine(String.Format("Preliminary results. SALsA is still running..."));
                 sb.AppendLine("</h1>");
                 sb.AppendLine("<br>");
             }
