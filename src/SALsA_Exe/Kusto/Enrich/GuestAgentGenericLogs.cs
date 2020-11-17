@@ -21,8 +21,8 @@ namespace SALsA.LivesiteAutomation.Kusto
             public string Region { get; set; }
             public string OSVersion { get; set; }
             public string ExecutionMode { get; set; }
-            public string RAM { get; set; }
-            public string Processors { get; set; }
+            public long RAM { get; set; }
+            public long Processors { get; set; }
             public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
 

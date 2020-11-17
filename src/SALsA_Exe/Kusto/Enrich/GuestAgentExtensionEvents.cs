@@ -16,21 +16,29 @@ namespace SALsA.LivesiteAutomation.Kusto
         public class MessageLine
         {
             public DateTime PreciseTimeStamp { get; set; }
-            public string EventName { get; set; }
-            public string Level { get; set; }
-            public string Event { get; set; }
+            public string ExtensionName { get; set; }
+            public string ExtensionVersion { get; set; }
+            public string ExtensionOperation { get; set; }
+            public bool OperationSuccess { get; set; }
             public string Message { get; set; }
+            public string TaskName { get; set; }
+            public string Duration { get; set; }
+            public string IsInternal { get; set; }
+            public string ExtensionType { get; set; }
             public string Cluster { get; set; }
             public string NodeId { get; set; }
             public string ContainerId { get; set; }
             public string RoleInstanceName { get; set; }
             public string TenantName { get; set; }
+            public string ResourceGroupName { get; set; }
+            public string SubscriptionId { get; set; }
             public string GAVersion { get; set; }
             public string Region { get; set; }
             public string OSVersion { get; set; }
             public string ExecutionMode { get; set; }
-            public string RAM { get; set; }
-            public string Processors { get; set; }
+            public long RAM { get; set; }
+            public long Processors { get; set; }
+
             public override string ToString() { return Utility.ObjectToJson(this, true); }
         }
 
