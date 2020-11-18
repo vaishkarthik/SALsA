@@ -122,14 +122,15 @@ namespace SALsA.LivesiteAutomation.Kusto
             }
 
             var _startTime = SALsA.GetInstance(Icm).ICM.GetCustomField(Constants.AnalyzerStartTimeField);
-            if (_startTime == null)
+            if (_startTime != null)
             {
-                return Kusto.KustoBase<DateTime>.DefaultStartTime;
+                try 
+                {
+                    return DateTime.Parse(_startTime).AddDays(-1).ToUniversalTime().ToString("o");
+                }
+                catch { }
             }
-            else
-            {
-                return DateTime.Parse(_startTime).AddDays(-1).ToUniversalTime().ToString("o");
-            }
+            return Kusto.KustoBase<DateTime>.DefaultStartTime;
         }
     }
 }
