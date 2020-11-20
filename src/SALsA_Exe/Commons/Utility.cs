@@ -241,10 +241,11 @@ namespace SALsA.General
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                var ipos = input.Position;
-                input.Position = 0;
+                if(input.CanSeek)
+                {
+                    input.Position = 0;
+                }
                 input.CopyTo(ms);
-                ipos = input.Position;
                 return ms.ToArray();
             }
         }

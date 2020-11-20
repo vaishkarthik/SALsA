@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SALsA.General;
+using System.IO.Compression;
 
 namespace SALsA.LivesiteAutomation
 {
@@ -574,14 +575,8 @@ namespace SALsA.LivesiteAutomation
         private void GetAllNodeDiagnosticsFiles(string cluster, string nodeid, string startTime, string endTime)
         {
             SALsA.GetInstance(Id).TaskManager.AddTask(
-                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerHGAPFilename,
-                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamHGAP, startTime, endTime), Id),
-                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerHAFilename,
-                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamHA, startTime, endTime), Id),
-                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerWSFilename,
-                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamWS, startTime, endTime), Id),
-                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerIMDSFilename,
-                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, Constants.GetNodeDiagnosticsFilesTagsParamIMDS, startTime, endTime), Id)
+                BlobStorageUtility.SaveAndSendBlobTask(Constants.AnalyzerHostMultiFilename,
+                            GenevaActions.GetNodeDiagnosticsFiles(Id, cluster, nodeid, String.Join(",", Constants.GetNodeDiagnosticsFilesTagsParamMultiHost), startTime, endTime), Id)
             );
         }
     }

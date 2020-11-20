@@ -69,6 +69,11 @@ namespace SALsA.LivesiteAutomation
                 var result = (Json2Class.RDFESubscriptionWrapper.Subscription)serializer.Deserialize(reader);
 
                 var multiDeployments = result.HostedService;
+                if(multiDeployments == null)
+                {
+                    Log.Warning("No RDFE HostedService deployment found.");
+                    return null;
+                }
                 var rdfeSubscription = new RDFESubscription();
                 foreach (var element in multiDeployments)
                 {

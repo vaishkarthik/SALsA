@@ -63,10 +63,8 @@ namespace SALsA.General
         public const string AnalyzerVMModelAndViewOutputFilename = "ModelAndView.json";
         public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zip";
         public const string AnalyzerNodeDiagnosticsFilename = "Logs.zip";
-        public const string AnalyzerHGAPFilename = "HostGuestAgentPluginLogs.zip";
-        public const string AnalyzerHAFilename = "HostAgentLogs.zip";
-        public const string AnalyzerWSFilename = "WireServerLogs.zip";
-        public const string AnalyzerIMDSFilename = "MetaDataServerLogs.zip";
+        public readonly static string AnalyzerHostMultiFilename = String.Format("{0}.zip", String.Join('_', GetNodeDiagnosticsFilesTagsParamMultiHost));
+
         public const string AnalyzerContainerSettings = "ContainerSettings.json";
 
         // GetARMSubscriptionRG.cs
@@ -109,10 +107,7 @@ namespace SALsA.General
         public const string GetNodeDiagnosticsOperatorNameFiles = "GetNodeDiagnosticsFiles";
         public const string GetNodeDiagnosticsParam = "GuestAgentVMLogs";
         public const string GetNodeDiagnosticsAllFilesParam = "AllLogs";
-        public const string GetNodeDiagnosticsFilesTagsParamHGAP = "GuestAgentLogs";
-        public const string GetNodeDiagnosticsFilesTagsParamHA = "AgentLogs";
-        public const string GetNodeDiagnosticsFilesTagsParamWS = "WireServerLogs";
-        public const string GetNodeDiagnosticsFilesTagsParamIMDS = "MetaDataServerLogs";
+        public static readonly string[] GetNodeDiagnosticsFilesTagsParamMultiHost = { "MetaDataServerLogs", "WireServerLogs", "AgentLogs", "GuestAgentLogs" } ;
 
         // GetClassicVMConsoleScreenshot.cs
         public const string GetClassicVMClassicScreenshotExtensionName = "SupportabilityFabric";
