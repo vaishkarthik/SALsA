@@ -32,6 +32,7 @@ namespace SALsA.LivesiteAutomation
         private ARMSubscription AnalyzeARMSubscriptionResult(string json)
         {
             var armSubscription = Utility.JsonToObject<ARMSubscriptionRaw>(json);
+            if (armSubscription.value == null) return null;
             var armAnalysed = new Dictionary<string, ARMDeployment>();
             foreach (var deployment in armSubscription.value)
             {

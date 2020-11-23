@@ -197,8 +197,10 @@ namespace SALsA.General
             return ObjectToJson(obj, true);
         }
 
-        public static ZipArchive ExtractZip(Stream result)
+        public static ZipArchive ExtractZip(Stream stream)
         {
+            MemoryStream result = new MemoryStream();
+            stream.CopyTo(result);
             return new ZipArchive(result, ZipArchiveMode.Read);
         }
         public static string UrlToHml(string name, string url, int size = 30)

@@ -451,6 +451,7 @@ namespace SALsA.LivesiteAutomation
 
         private ARMDeployment AnalyzeARMDeployment(ARMSubscription arm)
         {
+            if (arm == null) return null;
             ARMDeployment dep = new ARMDeployment();
             try
             {
