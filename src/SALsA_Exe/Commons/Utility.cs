@@ -199,9 +199,16 @@ namespace SALsA.General
 
         public static ZipArchive ExtractZip(Stream stream)
         {
-            MemoryStream result = new MemoryStream();
-            stream.CopyTo(result);
-            return new ZipArchive(result, ZipArchiveMode.Read);
+            try
+            { 
+                MemoryStream result = new MemoryStream();
+                stream.CopyTo(result);
+                return new ZipArchive(result, ZipArchiveMode.Read);
+            }
+            catch
+            {
+                return new ZipArchive(stream, ZipArchiveMode.Read);
+            }
         }
         public static string UrlToHml(string name, string url, int size = 30)
         {
