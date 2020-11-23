@@ -63,8 +63,6 @@ namespace SALsA.General
         public const string AnalyzerVMModelAndViewOutputFilename = "ModelAndView.json";
         public const string AnalyzerInspectIaaSDiskOutputFilename = "InspectIaaSDisk.zip";
         public const string AnalyzerNodeDiagnosticsFilename = "Logs.zip";
-        public readonly static string AnalyzerHostMultiFilename = String.Format("{0}.zip", String.Join('_', GetNodeDiagnosticsFilesTagsParamMultiHost));
-
         public const string AnalyzerContainerSettings = "ContainerSettings.json";
 
         // GetARMSubscriptionRG.cs
@@ -108,6 +106,7 @@ namespace SALsA.General
         public const string GetNodeDiagnosticsParam = "GuestAgentVMLogs";
         public const string GetNodeDiagnosticsAllFilesParam = "AllLogs";
         public static readonly string[] GetNodeDiagnosticsFilesTagsParamMultiHost = { "MetaDataServerLogs", "WireServerLogs", "AgentLogs", "GuestAgentLogs" } ;
+        public readonly static string AnalyzerHostMultiFilename = String.Format("{0}.zip", String.Join("_", GetNodeDiagnosticsFilesTagsParamMultiHost));
 
         // GetClassicVMConsoleScreenshot.cs
         public const string GetClassicVMClassicScreenshotExtensionName = "SupportabilityFabric";
