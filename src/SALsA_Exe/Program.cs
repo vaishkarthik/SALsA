@@ -51,6 +51,7 @@ namespace SALsA.LivesiteAutomation
             try
             {
                 SALsA.AddInstance(icm);
+                SALsA.GetInstance(icm).ICM.PostICMHeader();
                 // We do not need to keep the analyzer in memory, for now.
                 _ = manualRun == null ? new Analyzer(icm) : new Analyzer(icm, manualRun);
 

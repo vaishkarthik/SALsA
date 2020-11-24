@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,6 +47,7 @@ namespace SALsA.General
         public const string ICMInfoHeaderHtml = "SALsA will now scan this ICM and generate a report.";
         public const string ICMInfoReportName = "SALsA Report";
         public const string ICMInfoReportEndpoint = "https://salsafunction.azurewebsites.net/api/status/";
+        public readonly static string[] ICMTeamsAlwaysPostHeader = { "AzLinux" };
 
         // Analyser.cs
         public const string AnalyzerSubscriptionIdField = "SubscriptionId";

@@ -69,13 +69,24 @@ namespace SALsA.LivesiteAutomation
             string entry = head + "<br>" +  Utility.UrlToHml(Constants.ICMInfoReportName, Constants.ICMInfoReportEndpoint + this.Id.ToString(), 24);
             Log.Verbose("Adding to ICM String {0}", entry);
             var discussion = ICM.GetICMDiscussion(this.Id);
-            foreach (var de in discussion)
+            var cur = SALsA.GetInstance(this.Id).ICM.CurrentICM;
+            if (Constants.ICMTeamsAlwaysPostHeader.Contains(
+                SALsA.GetInstance(this.Id).ICM.CurrentICM.OwningTeamId.Split('\\').First(),
+                StringComparer.InvariantCultureIgnoreCase) == false)
             {
-                if (de.SubmittedBy == Constants.ICMIdentityName || de.Text.Contains(Constants.ICMInfoHeaderHtml))
+                foreach (var de in discussion)
                 {
-                    Log.Verbose("Did not add entry to ICM since already sent", this.Id);
-                    return false;
+                    if (de.SubmittedBy == Constants.ICMIdentityName || de.Text.Contains(Constants.ICMInfoHeaderHtml))
+                    {
+                        Log.Verbose("Did not add entry to ICM since already sent", this.Id);
+                        return false;
+                    }
                 }
+            }
+            else 
+            {
+                var currentTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
+                entry = String.Format("[{0}] {1}", currentTime, entry);
             }
             try
             {
