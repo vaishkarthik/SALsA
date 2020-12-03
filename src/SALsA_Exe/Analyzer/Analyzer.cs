@@ -495,45 +495,52 @@ namespace SALsA.LivesiteAutomation
         private RDFEDeployment AnalyseRDFEDeployment(RDFESubscription rdfe)
         {
             if (rdfe == null) return null;
-            string VMName = TryConvertInstanceNameToVMNamePaaS(this.VMName);
-            List<RDFEDeployment> rdfeDeps = new List<RDFEDeployment>();
-            rdfeDeps = rdfe.deployments.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()
-                                      || this.ResourceGroupName.ToLowerInvariant().Contains(x.Id.ToLowerInvariant())).ToList();
-            if (rdfeDeps.Count > 1)
-            {
-                var tmp = rdfeDeps.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()
-                                      || this.ResourceGroupName.ToLowerInvariant().Contains(x.Id.ToLowerInvariant())).ToList();
-                if (tmp.Count > 0)
+
+            try 
+            { 
+                string VMName = TryConvertInstanceNameToVMNamePaaS(this.VMName);
+                List<RDFEDeployment> rdfeDeps = new List<RDFEDeployment>();
+                rdfeDeps = rdfe.deployments.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()
+                                          || this.ResourceGroupName.ToLowerInvariant().Contains(x.Id.ToLowerInvariant())).ToList();
+                if (rdfeDeps.Count > 1)
                 {
-                    rdfeDeps = tmp;
+                    var tmp = rdfeDeps.Where(x => x.HostedServiceName.ToLowerInvariant() == this.ResourceGroupName.ToLowerInvariant()
+                                          || this.ResourceGroupName.ToLowerInvariant().Contains(x.Id.ToLowerInvariant())).ToList();
+                    if (tmp.Count > 0)
+                    {
+                        rdfeDeps = tmp;
+                    }
                 }
-            }
-            if (rdfeDeps.Count == 1)
-            {
-                return rdfeDeps.First();
-            }
-            else if (rdfeDeps.Count > 1)
-            {
-                // Best effort guess
-                var paasVMName = VMName == this.VMName ? String.Format("{0}_IN_0", VMName) : this.VMName;
-                var ret = rdfeDeps.Where(x => x.RoleInstances.Where(
-                    y => y.RoleInstanceName.ToLowerInvariant().Trim() == paasVMName.ToLowerInvariant().Trim()
-                      || y.ID.ToString().ToLowerInvariant() == VMName.ToLowerInvariant().Trim()
-                    ).ToList().Count >= 1).ToList();
-                if (ret.Count() > 0)
-                {
-                    return ret.First();
-                }
-                else
+                if (rdfeDeps.Count == 1)
                 {
                     return rdfeDeps.First();
                 }
+                else if (rdfeDeps.Count > 1)
+                {
+                    // Best effort guess
+                    var paasVMName = VMName == this.VMName ? String.Format("{0}_IN_0", VMName) : this.VMName;
+                    var ret = rdfeDeps.Where(x => x.RoleInstances.Where(
+                        y => y.RoleInstanceName.ToLowerInvariant().Trim() == paasVMName.ToLowerInvariant().Trim()
+                          || y.ID.ToString().ToLowerInvariant() == VMName.ToLowerInvariant().Trim()
+                        ).ToList().Count >= 1).ToList();
+                    if (ret.Count() > 0)
+                    {
+                        return ret.First();
+                    }
+                    else
+                    {
+                        return rdfeDeps.First();
+                    }
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            catch // Unknown, should check Kusto
             {
                 return null;
             }
-
         }
 
         private string TryConvertInstanceNameToVMName(string VMName)
