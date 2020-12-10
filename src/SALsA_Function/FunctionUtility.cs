@@ -196,7 +196,7 @@ namespace SALsA.General
                 case "active":
                 case "new":
                 case "correlating":
-                    c = Color.DarkRed;
+                    c = Color.Red;
                     break;
                 case "mitigated":
                 case "mitigating":
@@ -209,7 +209,17 @@ namespace SALsA.General
                     c = Color.Gray;
                     break;
             }
-            return String.Format("<span style=\"color: {0}\">{1}</span>", System.Drawing.ColorTranslator.ToHtml(c), owningTeamId);
+            return ColorICMStatus(owningTeamId, c);
+        }
+
+        public static string ColorICMStatus(string owningTeamId, Color c)
+        {
+            return String.Format(
+                "<span style=\"color: {0}\">{1}</span>",
+                    System.Drawing.ColorTranslator.ToHtml(c),
+                    owningTeamId
+             );
+
         }
     }
 

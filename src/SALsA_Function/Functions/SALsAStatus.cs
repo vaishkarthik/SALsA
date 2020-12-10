@@ -14,6 +14,8 @@ using SALsA.General;
 using System.Net.Http.Headers;
 using SALsA.LivesiteAutomation;
 using System.Linq;
+using Microsoft.Spatial;
+using System.Drawing;
 
 namespace SALsA.Functions
 {
@@ -62,6 +64,12 @@ namespace SALsA.Functions
                     var logPath = run.Log;
                     if (run.Log != null && run.Log.StartsWith("http"))
                     {
+                        if(tuple.IcmStatus == "Unknown" && tuple.IcmCreation.HasValue == false)
+                        {
+                            run.SALsAState = SALsAState.ICMNotAccessible.ToString();
+                            tuple.IcmStatus = FunctionUtility.ColorICMStatus("Request for assistance", Color.Blue);
+                            TableStorage.AppendEntity(tuple.IcmId, SALsAState.ICMNotAccessible);
+                        }
                         status = Utility.UrlToHml(run.SALsAState, run.SALsALog, 20);
                     }
                     else
@@ -88,12 +96,6 @@ namespace SALsA.Functions
                         FunctionUtility.AddRunToSALsA(int.Parse(value._icm));
                     }
                     catch { };
-                }
-                else if(value.IcmCreation.HasValue == false)
-                {
-                    value.SalsaStatus = SALsAState.ICMNotAccessible.ToString();
-                    value.IcmStatus = "Request for assistance";
-                    TableStorage.AppendEntity(value.IcmId, SALsAState.ICMNotAccessible);
                 }
             }
             lst.AddRange(values.Select(x => x.ToArray()).ToList());
