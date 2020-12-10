@@ -43,6 +43,7 @@ namespace SALsA_Function.Functions
             catch (Exception ex)
             {
                 TableStorage.AppendEntity(myQueueItem.Split(" ").First(), SALsA.General.SALsAState.UnknownException, "Not available", ex.Message);
+                throw ex;
             }
         }
         public class LogManager
