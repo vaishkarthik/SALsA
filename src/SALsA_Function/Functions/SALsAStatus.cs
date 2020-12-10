@@ -27,13 +27,8 @@ namespace SALsA.Functions
             if (Auth.CheckIdentity(req, log, claimsPrincipal, out HttpResponseMessage err) == false) { return err; };
 
             var icmsDic = new Dictionary<int, StatusLine>();
-            var allExistingIcms = ICM.GetAllICM();
-            foreach(var icm in allExistingIcms.value)
-            {
-                icmsDic[int.Parse(icm.Id)] = new StatusLine(icm.Id, icm.Status, icm.CreateDate);
-            }
 
-            var icms = SALsA.LivesiteAutomation.TableStorage.GetRecentEntity(allExistingIcms.value.Select(x => x.Id).ToArray());
+            var icms = SALsA.LivesiteAutomation.TableStorage.ListAllEntity();
             var lst = new List<string[]>();
             lst.Add(StatusLine.Headers);
             if(icms != null)
@@ -52,11 +47,7 @@ namespace SALsA.Functions
                         try
                         {
                             var currentIcm = ICM.PopulateICMInfo(int.Parse(run.PartitionKey));
-                            tuple = new StatusLine(currentIcm.Id, currentIcm.Status, currentIcm.CreateDate);
-                            if (currentIcm.Status != "Resolved") // We do not care about the Owning team if it is closed / resolved
-                            {
-                                tuple.IcmStatus = currentIcm.OwningTeamId;
-                            }
+                            tuple = new StatusLine(currentIcm.Id, FunctionUtility.ColorICMStatus(currentIcm.OwningTeamId, currentIcm.Status), currentIcm.CreateDate);
                         }
                         catch
                         {

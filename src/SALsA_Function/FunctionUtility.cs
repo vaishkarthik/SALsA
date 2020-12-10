@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Http.Internal;
 using System.IO;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Logging;
+using System.Drawing;
 
 namespace SALsA.General
 {
@@ -59,7 +60,7 @@ namespace SALsA.General
         public string IcmId;
         public string SalsaStatus = "N/A";
         public string SalsaLogIngestion = "N/A";
-        public string IcmStatus = "Transferred out";
+        public string IcmStatus = "Unknown";
         public Nullable<DateTime> IcmCreation = null;
         public Nullable<DateTime> _SalsaInternalIngestion = null;
 
@@ -152,7 +153,7 @@ namespace SALsA.General
 
         internal static void HealthProbe()
         {
-            var salsaTableEntity = TableStorage.ListAllEntity();
+            var salsaTableEntity = TableStorage.CleanRecentEntity();
             var client = new QueueClient(Authentication.Instance.GenevaAutomationConnectionString, Constants.QueueName);
 
             var messagesInQueue = -1;
@@ -184,6 +185,31 @@ namespace SALsA.General
                     FunctionUtility.AddRunToSALsA(int.Parse(icm));
                 }
             }
+        }
+
+        internal static string ColorICMStatus(string owningTeamId, string status)
+        {
+            Color c;
+            switch (status.ToLowerInvariant())
+            {
+                case "holding":
+                case "active":
+                case "new":
+                case "correlating":
+                    c = Color.DarkRed;
+                    break;
+                case "mitigated":
+                case "mitigating":
+                    c = Color.Orange;
+                    break;
+                case "resolved":
+                    c = Color.Green;
+                    break;
+                default:
+                    c = Color.Gray;
+                    break;
+            }
+            return String.Format("<span style=\"color: {0}\">{1}</span>", System.Drawing.ColorTranslator.ToHtml(c), owningTeamId);
         }
     }
 

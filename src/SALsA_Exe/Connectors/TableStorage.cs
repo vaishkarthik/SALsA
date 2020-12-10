@@ -73,28 +73,21 @@ namespace SALsA.LivesiteAutomation
         }
 
         // Get all entity and remvoe older ones.
-        public static List<SALsAEntity> GetRecentEntity(string[] icms = null)
+        public static List<SALsAEntity> CleanRecentEntity()
         {
-            if (icms == null) icms = new string[] { };
             var allEntity = ListAllEntity();
 
-            try
+            foreach (SALsAEntity entity in allEntity)
             {
-                foreach (SALsAEntity entity in allEntity)
+                var status = ICM.PopulateICMInfo(int.Parse(entity.PartitionKey)).Status;
+                if(status.Equals("Resolved", StringComparison.InvariantCultureIgnoreCase) && DateTime.Now.AddDays(Constants.TableStorageRecentDays) > entity.Timestamp)
                 {
-                    if(!icms.Contains(entity.PartitionKey) && DateTime.Now.AddDays(Constants.TableStorageRecentDays) > entity.Timestamp)
-                    {
-                        TableOperation deleteOperation = TableOperation.Delete(entity);
-                        Authentication.Instance.TableStorageClient.Execute(deleteOperation);
-                    }
+                    TableOperation deleteOperation = TableOperation.Delete(entity);
+                    Authentication.Instance.TableStorageClient.Execute(deleteOperation);
                 }
-                allEntity.RemoveAll(x => DateTime.Now.AddDays(Constants.TableStorageRecentDays) > x.Timestamp);
+            }
+            allEntity.RemoveAll(x => DateTime.Now.AddDays(Constants.TableStorageRecentDays) > x.Timestamp);
 
-            }
-            catch /*(Exception ex)*/
-            {
-                return null;
-            }
             return allEntity;
         }
 
