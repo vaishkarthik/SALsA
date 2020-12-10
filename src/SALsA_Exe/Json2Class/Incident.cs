@@ -11,6 +11,21 @@ namespace SALsA.LivesiteAutomation
     {
         public Incident[] value;
     }
+
+
+    public class MiniIncidents
+    {
+        public class MiniIncident
+        {
+            public string Id;
+            public string Status;
+            public string CreateDate;
+            public string OwningTeamId;
+        }
+
+        public MiniIncident[] value;
+    }
+
     public class Incident
     {
         public class NewDiscussionEntry

@@ -25,10 +25,13 @@ namespace SALsA.Functions
             ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal)
         {
             if (Auth.CheckIdentity(req, log, claimsPrincipal, out HttpResponseMessage err) == false) { return err; };
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
 
             var icmsDic = new Dictionary<int, StatusLine>();
 
             var icms = SALsA.LivesiteAutomation.TableStorage.ListAllEntity();
+            var incidents = ICM.GetIncidentsWithId(icms.Select(x => x.PartitionKey).ToList());
             var lst = new List<string[]>();
             lst.Add(StatusLine.Headers);
             if(icms != null)
@@ -46,8 +49,8 @@ namespace SALsA.Functions
                     {
                         try
                         {
-                            var currentIcm = ICM.PopulateICMInfo(int.Parse(run.PartitionKey));
-                            tuple = new StatusLine(currentIcm.Id, FunctionUtility.ColorICMStatus(currentIcm.OwningTeamId, currentIcm.Status), currentIcm.CreateDate);
+                            var currentIcm = incidents[run.PartitionKey];
+                            tuple = new StatusLine(currentIcm.Id, FunctionUtility.ColorICMStatus(currentIcm.OwningTeamId, currentIcm.Status), DateTime.Parse(currentIcm.CreateDate));
                         }
                         catch
                         {
@@ -95,7 +98,6 @@ namespace SALsA.Functions
             }
             lst.AddRange(values.Select(x => x.ToArray()).ToList());
 
-            string result = Utility.List2DToHTML(lst, true) + String.Format("<p style=\"text - align: right\">Page generated at : {0}Z</p>", DateTime.UtcNow.ToString("s"));
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Headers.CacheControl = new CacheControlHeaderValue
             {
@@ -103,6 +105,8 @@ namespace SALsA.Functions
                 NoStore = true,
                 MustRevalidate = true
             };
+            watch.Stop();
+            string result = Utility.List2DToHTML(lst, true) + String.Format("<p style=\"text-align: right\">Page generated at : {0}Z (in {1} seconds)</p>", DateTime.UtcNow.ToString("s"), watch.Elapsed.TotalSeconds);
             response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/html");
 
             return response;

@@ -175,7 +175,7 @@ namespace SALsA.General
                 }
             }
 
-            var allExistingIcms = ICM.GetAllICM().value.Select(x => x.Id.ToString()).ToList();
+            var allExistingIcms = ICM.GetAllWithTeamsICM(Constants.ICMTeamToTenantLookupTable.Keys.ToList()).value.Select(x => x.Id.ToString()).ToList();
             var allOurIcms = TableStorage.ListAllEntity().Select(x => x.RowKey).ToList();
 
             foreach (var icm in allExistingIcms)
@@ -271,6 +271,12 @@ namespace SALsA.General
         public static bool CheckIdentity(HttpRequestMessage req, ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal, out HttpResponseMessage err)
         {
             log.LogInformation("Connected Identity : {0}", claimsPrincipal.Identity.Name);
+            if(claimsPrincipal.Identity.Name == null && req.RequestUri.Host.ToLowerInvariant() == "localhost")
+            {
+                // Test mode, running in localhost
+                err = null;
+                return true;
+            }    
             if (!Auth.CheckUser(claimsPrincipal.Identity.Name))
             {
                 log.LogWarning("Access Denied for {0}", claimsPrincipal.Identity.Name);

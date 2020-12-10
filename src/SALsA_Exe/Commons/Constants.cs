@@ -48,6 +48,7 @@ namespace SALsA.General
         public const string ICMInfoReportName = "SALsA Report";
         public const string ICMInfoReportEndpoint = "https://salsafunction.azurewebsites.net/api/status/";
         public readonly static string[] ICMTeamsAlwaysPostHeader = { "AzLinux" };
+        public const int ICMMaxElementsInUri = 50;
 
         // Analyser.cs
         public const string AnalyzerSubscriptionIdField = "SubscriptionId";

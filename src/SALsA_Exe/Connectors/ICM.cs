@@ -27,10 +27,44 @@ namespace SALsA.LivesiteAutomation
 
         private static HttpClient client = null;
 
-        public static AllIncidents GetAllICM()
+        public static Dictionary<string, MiniIncidents.MiniIncident> GetIncidentsWithId(List<string> icmIds)
+        {
+            var miniIncidents = new Dictionary<string, MiniIncidents.MiniIncident>();
+            for (int i = 0; i < icmIds.Count; i += Constants.ICMMaxElementsInUri)
+            {
+                foreach(var incident in InternalGetIncidentsWithId(
+                    icmIds.GetRange(i, Math.Min(Constants.ICMMaxElementsInUri, icmIds.Count - i))
+                    ))
+                {
+                    miniIncidents[incident.Id] = incident;
+                }
+            }
+            return miniIncidents;
+        }
+
+        private static MiniIncidents.MiniIncident[] InternalGetIncidentsWithId(List<string> icmIds)
         {
             String tenantQuery = String.Join(" or ",
-                Constants.ICMTeamToTenantLookupTable.Keys.ToList().ConvertAll(
+                icmIds.ConvertAll(
+                    e => String.Format("Id eq {0}", e)));
+            try
+            {
+                var query = new Uri(String.Format("{0}?$filter=({1})&$select=Status,Id,OwningTeamId,CreateDate", Constants.ICMRelativeBaseAPIUri, tenantQuery), UriKind.Relative);
+
+                var response = Client.GetAsync(query).Result;
+                response.EnsureSuccessStatusCode();
+                var result = ReadResponseBody(response);
+                var allIncidents = Utility.JsonToObject<MiniIncidents>(result);
+                return allIncidents.value;
+
+            }
+            catch { return new MiniIncidents.MiniIncident[0]; }
+        }
+
+        public static AllIncidents GetAllWithTeamsICM(List<string> icmTeams)
+        {
+            String tenantQuery = String.Join(" or ",
+                icmTeams.ConvertAll(
                     e => String.Format("OwningTeamId eq '{0}'", e.ToUpperInvariant())));
             try
             {
