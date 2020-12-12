@@ -37,8 +37,9 @@ jobs:
         pushd './src'
         dotnet build --configuration release
         dotnet publish --configuration release
+        pwd
+        tree /a /f ../${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
         popd
-        tree /a /f ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
 
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
