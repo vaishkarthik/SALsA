@@ -80,11 +80,22 @@ namespace SALsA.LivesiteAutomation
 
             foreach (SALsAEntity entity in allEntity)
             {
-                var status = icmEntity[entity.PartitionKey].Status;
-                if (status.Equals("Resolved", StringComparison.InvariantCultureIgnoreCase) && DateTime.Now.AddDays(Constants.TableStorageRecentDays) > entity.Timestamp)
+                if(icmEntity.ContainsKey(entity.PartitionKey))
                 {
-                    TableOperation deleteOperation = TableOperation.Delete(entity);
-                    Authentication.Instance.TableStorageClient.Execute(deleteOperation);
+                    var status = icmEntity[entity.PartitionKey].Status;
+                    if (status.Equals("Resolved", StringComparison.InvariantCultureIgnoreCase) && DateTime.Now.AddDays(Constants.TableStorageRecentDays) > entity.Timestamp)
+                    {
+                        TableOperation deleteOperation = TableOperation.Delete(entity);
+                        Authentication.Instance.TableStorageClient.Execute(deleteOperation);
+                    }
+                }
+                else
+                {
+                    if (DateTime.Now.AddDays(Constants.TableStorageRecentDays) > allEntity.Where(x => x.PartitionKey == x.PartitionKey).First().Timestamp)
+                    {
+                        TableOperation deleteOperation = TableOperation.Delete(entity);
+                        Authentication.Instance.TableStorageClient.Execute(deleteOperation);
+                    }
                 }
             }
             allEntity.RemoveAll(x => DateTime.Now.AddDays(Constants.TableStorageRecentDays) > x.Timestamp);
