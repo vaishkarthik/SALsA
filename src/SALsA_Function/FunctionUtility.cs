@@ -33,7 +33,7 @@ namespace SALsA.General
             IcmStatus = _IcmStatus;
             IcmCreation = _IcmCreation;
         }
-        public void Update(string _IcmId, string _SalsaStatus, string _SalsALog, Nullable<DateTime> _SalsaLogIngestion = null)
+        public void Update(string _IcmId, string _SalsaStatus, string _SalsaLog, Nullable<DateTime> _SalsaLogIngestion = null)
         {
             _icm = _IcmId;
             var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", _IcmId);
@@ -42,13 +42,13 @@ namespace SALsA.General
             SalsaStatus = _SalsaStatus;
 
             _SalsaInternalIngestion = _SalsaLogIngestion.Value;
-            if (_SalsALog.StartsWith("http"))
+            if (_SalsaLog.StartsWith("http"))
             {
-                SalsaLogIngestion = Utility.UrlToHml(_SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToUniversalTime().ToString("s") + "Z" : "HTML", _SalsALog, 20);
+                SalsaLogIngestion = Utility.UrlToHml(_SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToUniversalTime().ToString("s") + "Z" : "HTML", _SalsaLog, 20);
             }
             else
             {
-                SalsaLogIngestion = _SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToString("s") + "Z" : _SalsALog;
+                SalsaLogIngestion = _SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToString("s") + "Z" : _SalsaLog;
             }
         }
         public string[] ToArray()
@@ -266,7 +266,7 @@ namespace SALsA.General
         {
             var response = req.CreateResponse(HttpStatusCode.Forbidden);
             response.Content = new StringContent(String.Format("<b>Access denied</b><br>You do not have access to this page.<br>Please add your alias (<i> {0} </i>) here : <b>{1}</b> and send a PR.",
-            username.Split('@').First().Trim(), Utility.UrlToHml("access.txt", "https://msazure.visualstudio.com/One/_git/Compute-CPlat-SALsA?path=%2Faccess.txt&version=GBmaster&_a=contents", 14)), System.Text.Encoding.UTF8, "text/html");
+            username.Split('@').First().Trim(), Utility.UrlToHml("access.txt", "https://github.com/Azure/SALsA/edit/master/access.txt", 14)), System.Text.Encoding.UTF8, "text/html");
 
             response.Headers.CacheControl = new CacheControlHeaderValue
             {

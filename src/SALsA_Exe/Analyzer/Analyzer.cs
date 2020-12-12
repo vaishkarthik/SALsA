@@ -149,24 +149,36 @@ namespace SALsA.LivesiteAutomation
             {
                 ExecuteKustoContainerEnrichment(Id, GlobalInfo.ContainerID.ToString());
             }
+            if(GlobalInfo.ContainerID == GlobalInfo.NodeId) // If they are equal, it means Guid.Empty
+            {
+                SALsA.GetInstance(Id).State = SALsAState.MissingInfo;
+            }
             SALsA.GetInstance(Id)?.ICM.QueueICMDiscussion(GlobalInfo.ToString());
         }
 
         private void CallInternalComputeTypes(ComputeType type, object dep)
         {
-            switch (type)
+            try
+            { 
+                switch (type)
+                {
+                    case ComputeType.IaaS:
+                        ExecuteAllActionsForIaaS((ARMDeployment)dep);
+                        break;
+                    case ComputeType.VMSS:
+                        ExecuteAllActionsForVMSS((ARMDeployment)dep);
+                        break;
+                    case ComputeType.PaaS:
+                        ExecuteAllActionsForPaaS((RDFEDeployment)dep);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch(Exception ex)
             {
-                case ComputeType.IaaS:
-                    ExecuteAllActionsForIaaS((ARMDeployment)dep);
-                    break;
-                case ComputeType.VMSS:
-                    ExecuteAllActionsForVMSS((ARMDeployment)dep);
-                    break;
-                case ComputeType.PaaS:
-                    ExecuteAllActionsForPaaS((RDFEDeployment)dep);
-                    break;
-                default:
-                    break;
+                Log.Error("Failed to run Compute type {0}.", type);
+                Log.Exception(ex);
             }
         }
 
@@ -387,6 +399,7 @@ namespace SALsA.LivesiteAutomation
             {
                 instance = dep.RoleInstances.Where(x => String.Equals(x.ID.ToString(), VMName)).FirstOrDefault();
             }
+            
             GlobalInfo = new ShortRDFERoleInstance
             {
                 Icm = Id,

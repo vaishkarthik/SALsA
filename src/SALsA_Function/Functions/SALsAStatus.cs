@@ -70,12 +70,12 @@ namespace SALsA.Functions
                             tuple.IcmStatus = FunctionUtility.ColorICMStatus("Request for assistance", Color.Blue);
                             TableStorage.AppendEntity(tuple.IcmId, SALsAState.ICMNotAccessible);
                         }
-                        status = Utility.UrlToHml(run.SALsAState, run.SALsALog, 20);
                     }
                     else
                     {
                         logPath = run.SALsAState == SALsAState.Running.ToString() || run.SALsAState == SALsAState.Queued.ToString() ? "Wait..." : "Unavailable";
                     }
+                    status = Utility.UrlToHml(run.SALsAState, run.SALsALog, 20);
                     tuple.Update(run.PartitionKey, status, logPath, run.Timestamp.UtcDateTime);
                     icmsDic[int.Parse(run.PartitionKey)] = tuple;
                 }
