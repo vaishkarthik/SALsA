@@ -51,7 +51,8 @@ jobs:
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
       uses: github/codeql-action/autobuild@v1
-
+      env:
+        MSAZUREOFFICIAL_PAT: ${{ secrets.MSAZUREOFFICIAL_PAT }}
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 https://git.io/JvXDl
 
@@ -62,6 +63,6 @@ jobs:
     #- run: |
     #   make bootstrap
     #   make release
-
+     
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
