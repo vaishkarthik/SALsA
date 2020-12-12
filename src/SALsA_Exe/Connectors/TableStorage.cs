@@ -76,11 +76,12 @@ namespace SALsA.LivesiteAutomation
         public static List<SALsAEntity> CleanRecentEntity()
         {
             var allEntity = ListAllEntity();
+            var icmEntity = ICM.GetIncidentsWithId(allEntity.Select(x => x.PartitionKey).ToList());
 
             foreach (SALsAEntity entity in allEntity)
             {
-                var status = ICM.PopulateICMInfo(int.Parse(entity.PartitionKey)).Status;
-                if(status.Equals("Resolved", StringComparison.InvariantCultureIgnoreCase) && DateTime.Now.AddDays(Constants.TableStorageRecentDays) > entity.Timestamp)
+                var status = icmEntity[entity.PartitionKey].Status;
+                if (status.Equals("Resolved", StringComparison.InvariantCultureIgnoreCase) && DateTime.Now.AddDays(Constants.TableStorageRecentDays) > entity.Timestamp)
                 {
                     TableOperation deleteOperation = TableOperation.Delete(entity);
                     Authentication.Instance.TableStorageClient.Execute(deleteOperation);
