@@ -38,7 +38,7 @@ jobs:
         dotnet build --configuration release
         dotnet publish --configuration release
         pwd
-        tree /a /f ../${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        tree /a /f $(Join-Path -Path $pwd -ChildPath "../")
         popd
 
     - name: 'Run Azure Functions Action'
