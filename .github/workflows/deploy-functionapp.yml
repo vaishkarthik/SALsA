@@ -35,8 +35,10 @@ jobs:
         MSAZUREOFFICIAL_PAT: ${{ secrets.MSAZUREOFFICIAL_PAT }}
       run: |
         pushd './src'
+        dotnet build --configuration release
         dotnet publish --configuration release
         popd
+        tree /a /f %AZURE_FUNCTIONAPP_PACKAGE_PATH%
 
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
