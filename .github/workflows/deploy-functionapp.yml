@@ -37,9 +37,9 @@ jobs:
         pushd './src'
         dotnet build --configuration release
         dotnet publish --configuration release
-        pwd
-        tree /a /f $(Join-Path -Path $pwd -ChildPath "../")
         popd
+        echo "PWD = $pwd.Path"
+        Get-ChildItem -Recurse 
 
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
