@@ -70,9 +70,9 @@ namespace SALsA.LivesiteAutomation
             Log.Verbose("Adding to ICM String {0}", entry);
             var discussion = ICM.GetICMDiscussion(this.Id);
             var cur = SALsA.GetInstance(this.Id).ICM.CurrentICM;
-            if (Constants.ICMTeamsAlwaysPostHeader.Contains(
+            if (Constants.ICMTeamsDoNotRepostHeaderIfPreviouslyAlreadyPosted.Contains(
                 SALsA.GetInstance(this.Id).ICM.CurrentICM.OwningTeamId.Split('\\').First(),
-                StringComparer.InvariantCultureIgnoreCase) == false)
+                StringComparer.InvariantCultureIgnoreCase) == true)
             {
                 foreach (var de in discussion)
                 {
