@@ -30,7 +30,7 @@ namespace SALsA.LivesiteAutomation
                 return rdfeSubscription;
             }
             catch (Exception ex)
-            {
+                {
                 Log.Error("Unable to get or analyse the RDFE subscription {0}", this.SubscriptionId);
                 Log.Exception(ex);
                 return null;
@@ -39,7 +39,18 @@ namespace SALsA.LivesiteAutomation
 
         private RDFESubscription AnalyzeRDFESubscriptionResult(string xml)
         {
-            xml = xml.Replace("=== <", "<").Replace("> ===", ">").Replace("&", "&amp;").Trim();
+            xml = xml.Replace("=== <", "<").Replace("> ===", ">").
+                      Replace(":<", ": <").Replace("&", "&amp;").Trim();
+            var duck = new Regex(@".?<.*>", RegexOptions.Compiled);
+            foreach(var match in duck.Matches(xml))
+            {
+                var subs = match.ToString();
+                if(!subs.Trim().StartsWith("<"))
+                {
+                    subs = subs.Replace("<", "&lt;").Replace(">", "&gt;");
+                    xml = xml.Replace(match.ToString(), subs);
+                }
+            }
             xml = xml.Replace("<", "\n<").Replace(">", ">\n").Trim();
             xml = xml.Replace("xmlns:xsd", "xmlns_xsd").Replace("xmlns:xsi", "xmlns_xsi");
             var xmlArray = xml.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);

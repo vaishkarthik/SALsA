@@ -1,5 +1,13 @@
-# In case you have issues with CBT or building the project, try this :
-# From the root of the repo Compute-CPlat-SALsA
-msbuild build\Local\CBTModules\CBTModules.proj  /t:restore
-nuget restore src
-msbuild src\SALsA.src
+# SALsA
+
+## Build
+
+Open `src\SALsA.sln` with VS2019 to build the solution.
+
+You can also build from command prompt:
+
+```
+cd src
+dotnet restore
+dotnet build
+```

@@ -78,7 +78,7 @@ namespace SALsA.LivesiteAutomation
 
         public VMA2ContainerId.MessageLine[] AnalyzeARMResourceURI(string subscriptions, string resourceGroups, string virtualMachines)
         {
-            var vminfo = new VMA2ContainerId(Id, subscriptions, resourceGroups, virtualMachines);
+            var vminfo = new VMA2ContainerId(Id, virtualMachines, subscriptions, resourceGroups);
 
             if (vminfo.Results.Length == 0)
             {

@@ -16,11 +16,39 @@ namespace SALsA.LivesiteAutomation
             var subscriptionId = GetSubscriptionId(currentICM);
             var resourceGroupName = currentICM.GetCustomField(Constants.AnalyzerResourceGroupField);
             var VMName = currentICM.GetCustomField(Constants.AnalyzerVMNameField);
-            DateTime startTime;
-            if (!DateTime.TryParse(currentICM.GetCustomField(Constants.AnalyzerStartTimeField), out startTime))
+
+            // If the VMName is a ContainerId, we should ignore any other data, and check with Kusto instead
+            Guid containerId;
+            bool isValid = Guid.TryParse(currentICM.GetCustomField(Constants.AnalyzerVMNameField), out containerId);
+            if(isValid)
             {
-                Log.Warning("Failed to parse DateTime");
+                try 
+                { 
+                    var vma = new Kusto.VMA2ContainerId(currentICM.Id, containerId.ToString(),
+                                                        null, null).Results.First();
+
+                    if (!string.IsNullOrEmpty(vma.ContainerId))
+                    {
+                        VMName = vma.ContainerId;
+                    }
+                    if (!string.IsNullOrWhiteSpace(vma.Usage_ResourceGroupName) || !string.IsNullOrWhiteSpace(vma.TenantName))
+                    {
+                        resourceGroupName = vma.Usage_ResourceGroupName;
+                        if(string.IsNullOrWhiteSpace(resourceGroupName))
+                        {
+                            resourceGroupName = vma.TenantName;
+                        }
+                    }
+                    if(!string.IsNullOrWhiteSpace(vma.LastKnownSubscriptionId))
+                    {
+                        subscriptionId = Guid.Parse(vma.LastKnownSubscriptionId);
+                    }
+                    GlobalInfo.Update(containerId, Guid.Parse(vma.NodeId), vma.Cluster);
+                }
+                catch
+                { } // This is a best case, just ignore.
             }
+            DateTime startTime = currentICM.ICMImpactStartTime();
             return (subscriptionId, resourceGroupName, VMName, startTime);
         }
 
@@ -40,9 +68,6 @@ namespace SALsA.LivesiteAutomation
                     if (!CheckIfSubscriptionIdIsValid(subscriptionId))
                     {
                         Log.Verbose("Failed to get SubscriptionId from SubscriptionId ICM Field");
-                        var regex = new Regex("[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}", RegexOptions.IgnoreCase);
-                        Match m = regex.Match(icm.CurrentICM.Summary);
-                        subscriptionId = m.Value;
                         // If we coudnt find it, fail it.
                         if (!CheckIfSubscriptionIdIsValid(subscriptionId))
                         {

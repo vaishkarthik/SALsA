@@ -137,7 +137,7 @@ namespace SALsA.LivesiteAutomation
         public void EmptyMessageQueue()
         {
             Log.Verbose("Empty Message Queue with {0} elements", MessageQueue.Count);
-            if (MessageQueue.IsEmpty || SALsA.GetInstance(Id).State == SALsAState.Ignore || SALsA.GetInstance(Id).State == SALsAState.MissingInfo) return; // Ignore the ICM
+            if (MessageQueue.IsEmpty || SALsA.GetInstance(Id).State == SALsAState.Ignore) return; // Ignore the ICM
             string reason = null;
             try
             {
@@ -170,6 +170,7 @@ namespace SALsA.LivesiteAutomation
 
         private void RefreshTempPage(bool isTemp = false)
         {
+            if (SALsA.GetInstance(Id).State == SALsAState.Ignore) return; // Ignore the ICM
             lock (__lockObj)
             {
                 var message = Utility.GenerateICMHTMLPage(Id, MessageQueue.ToArray(), Log.StartTime, isTemp);

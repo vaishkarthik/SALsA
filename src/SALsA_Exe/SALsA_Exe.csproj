@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GenevaActionsLibrary" Version="4.0.4.1310" />
+    <PackageReference Include="GenevaActionsLibrary" Version="4.0.4.1470" />
     <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
     <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.5" />
     <PackageReference Include="Microsoft.Azure.Kusto.Data" Version="8.1.5" />
