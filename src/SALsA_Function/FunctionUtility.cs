@@ -22,50 +22,70 @@ using System.Drawing;
 
 namespace SALsA.General
 {
-    internal class StatusLine
+    public class SALsAReport
     {
-        public StatusLine() { }
-        public StatusLine(string _IcmId, string _IcmStatus, Nullable<DateTime> _IcmCreation = null)
-        {
-            _icm = _IcmId;
-            var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", _IcmId);
-            IcmId = Utility.UrlToHml(_IcmId, icmLink, 20);
-            IcmStatus = _IcmStatus;
-            IcmCreation = _IcmCreation;
-        }
-        public void Update(string _IcmId, string _SalsaStatus, string _SalsaLog, Nullable<DateTime> _SalsaLogIngestion = null)
-        {
-            _icm = _IcmId;
-            var icmLink = String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", _IcmId);
-            IcmId = Utility.UrlToHml(_IcmId, icmLink, 20);
+        public List<StatusLine> Rows = new List<StatusLine>();
 
-            SalsaStatus = _SalsaStatus;
+        public class StatusLine
+        {
+            public int IcmId;
+            public string IcmStatus = null;
+            public string IcmOwningTeam = null;
+            public Nullable<DateTime> IcmCreation = null;
+            public string SalsaStatus = null;
+            public string SalsaInternalLog = null;
+            public string SalsaLogLink = null;
+            public Nullable<DateTime> SalsaIngestionTime = null;
 
-            _SalsaInternalIngestion = _SalsaLogIngestion.Value;
-            if (_SalsaLog.StartsWith("http"))
+            public string[] Arrayify()
             {
-                SalsaLogIngestion = Utility.UrlToHml(_SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToUniversalTime().ToString("s") + "Z" : "HTML", _SalsaLog, 20);
-            }
-            else
-            {
-                SalsaLogIngestion = _SalsaLogIngestion.HasValue ? _SalsaLogIngestion.Value.ToString("s") + "Z" : _SalsaLog;
-            }
-        }
-        public string[] ToArray()
-        {
-            return new string[] { IcmId, SalsaStatus, SalsaLogIngestion, FunctionUtility.ReRunButton(int.Parse(_icm)),
-                    IcmStatus, IcmCreation.HasValue ? IcmCreation.Value.ToUniversalTime().ToString("s") + "Z" : "N/A" };
-        }
-        public string _icm;
-        public string IcmId;
-        public string SalsaStatus = "N/A";
-        public string SalsaLogIngestion = "N/A";
-        public string IcmStatus = "Unknown";
-        public Nullable<DateTime> IcmCreation = null;
-        public Nullable<DateTime> _SalsaInternalIngestion = null;
+                try
+                {
+                    List<string> e = new List<string>();
+                    e.Add(FunctionUtility.UrlToHml(String.Format("https://portal.microsofticm.com/imp/v3/incidents/details/{0}/home", IcmId), IcmId.ToString()));
+                    e.Add(SalsaInternalLog != null ? FunctionUtility.UrlToHml(SalsaInternalLog, SalsaStatus) : SalsaStatus);
+                    var stringSalsaIngestionTime = string.Format("{0:yyyy-MM-ddTHH:mm:ssZ}", SalsaIngestionTime.Value);
+                    e.Add(SalsaLogLink != null ? FunctionUtility.UrlToHml(SalsaLogLink, stringSalsaIngestionTime) : stringSalsaIngestionTime);
+                    e.Add(FunctionUtility.ReRunButton(IcmId));
+                    e.Add(FunctionUtility.ColorICMStatus(IcmOwningTeam, IcmStatus));
+                    e.Add(IcmCreation != null ? string.Format("{0:yyyy-MM-ddTHH:mm:ssZ}", IcmCreation) : "N/A");
+                    return e.ToArray();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(String.Format("StatusLine.ToArray) of ICM {0} failed due to ex : {1}", IcmId, ex));
+                    // Fallback to plaintext
+                    List<string> e = new List<string>();
+                    e.Add(IcmId.ToString());
+                    e.Add(IcmStatus ?? "");
+                    e.Add(IcmOwningTeam ?? "");
+                    e.Add(IcmCreation?.ToString() ?? "");
+                    e.Add(SalsaStatus ?? "");
+                    e.Add(SalsaInternalLog ?? "");
+                    e.Add(SalsaLogLink ?? "");
+                    e.Add(SalsaIngestionTime?.ToString() ?? "");
+                    return e.ToArray();
+                }
 
-        public static string[] Headers = new string[] { "ICM", "Status", "SALsA Ingested", "Rerun SALsA", "ICM State", "ICM Creation (UTC)" };
-}
+            }
+        }
+        public string[][] Arrayify()
+        {
+            List<string[]> e = new List<string[]>();
+            var values = Rows.ToList();
+            values.Sort((y, x) => {
+                int ret = DateTime.Compare(x.SalsaIngestionTime.HasValue ? x.SalsaIngestionTime.Value : new DateTime(0),
+                                           y.SalsaIngestionTime.HasValue ? y.SalsaIngestionTime.Value : new DateTime(0));
+                return ret != 0 ? ret : DateTime.Compare(x.IcmCreation.HasValue ? x.IcmCreation.Value : new DateTime(0),
+                                                         y.IcmCreation.HasValue ? y.IcmCreation.Value : new DateTime(0));
+            });
+            foreach (var r in values)
+            {
+                e.Add(r.Arrayify());
+            }
+            return e.ToArray();
+        }
+    }
 
     static class FunctionUtility
     {
@@ -84,13 +104,18 @@ namespace SALsA.General
             }
             fileName = fileName.Replace("_", "");
 
-            var currentDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            var filePath = Path.Combine(Directory.GetParent(currentDir).FullName, "HTMLTemplate");
-            filePath = Path.Combine(filePath, String.Format("{0}.html", fileName));
             var response = req.CreateResponse(HttpStatusCode.OK);
-            response.Content = new StringContent(System.IO.File.ReadAllText(filePath),
+            response.Content = new StringContent(GetFileContent(String.Format("{0}.html", fileName)),
                     System.Text.Encoding.UTF8, "text/html");
             return response;
+        }
+
+        public static string GetFileContent(string fileName, string subPath = "HTMLTemplate")
+        {
+            var currentDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var filePath = Path.Combine(Directory.GetParent(currentDir).FullName, subPath);
+            filePath = Path.Combine(filePath, String.Format("{0}", fileName));
+            return System.IO.File.ReadAllText(filePath);
         }
 
         internal static Dictionary<string, string> RequestStreamToDic(HttpRequestMessage req)
@@ -108,6 +133,38 @@ namespace SALsA.General
             var obj = Utility.JsonToObject<T>(
                 Utility.ObjectToJson(dic));
             return RunIfReadySALsA(req, icmId, obj);
+        }
+
+        // TODO : improve on this and do something about the messy one in Utility.List2DToHTML
+        internal static string List2DToHTMLWithFilter(string[][] lst, KeyValuePair<string, bool>[] headers)
+        {
+            using (var sw = new StringWriter())
+            {
+                sw.WriteLine(@"<table id=""table"">");
+                sw.WriteLine(@"<thead>");
+                sw.WriteLine(@"<tr>");
+                foreach (var e in headers)
+                {
+                    sw.WriteLine(String.Format("<th {0}>{1}</th>",
+                        (e.Value ? "" : @" class="".disable-filter"""), e.Key));
+                }
+                sw.WriteLine(@"<tr>");
+                sw.WriteLine(@"</tr>");
+                sw.WriteLine(@"</thead>");
+                sw.WriteLine(@"<tbody>");
+                foreach (var line in lst)
+                {
+                    sw.WriteLine(@"<tr>");
+                    foreach (var e in line)
+                    {
+                        sw.WriteLine(String.Format("<td>{0}</td>", e));
+                    }
+                    sw.WriteLine(@"</tr>");
+                }
+                sw.WriteLine(@"</tbody");
+                sw.WriteLine(@"</table>");
+                return sw.ToString();
+            }
         }
 
         internal static HttpResponseMessage RunIfReadySALsA(HttpRequestMessage req, int icm, object manual = null)
@@ -189,6 +246,8 @@ namespace SALsA.General
 
         internal static string ColorICMStatus(string owningTeamId, string status)
         {
+            if (status == null) status = String.Empty;
+            if (string.IsNullOrWhiteSpace(owningTeamId)) owningTeamId = "Unknown - No access";
             Color c;
             switch (status.ToLowerInvariant())
             {
@@ -220,6 +279,11 @@ namespace SALsA.General
                     owningTeamId
              );
 
+        }
+
+        internal static string UrlToHml(string url, string name)
+        {
+            return String.Format("<a href=\"{0}\">{1}</a>", url, name);
         }
     }
 
