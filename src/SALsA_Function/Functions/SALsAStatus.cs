@@ -16,11 +16,23 @@ using SALsA.LivesiteAutomation;
 using System.Linq;
 using Microsoft.Spatial;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace SALsA.Functions
 {
     public static class SALsAStatus
     {
+        // Kvp of Header name, and should it be filter(able)
+        public static KeyValuePair<string, bool>[] StatusHeaders = new KeyValuePair<string, bool>[]
+            {
+            new KeyValuePair<string, bool>("ICM", false),
+            new KeyValuePair<string, bool>("Status", true),
+            new KeyValuePair<string, bool>("SALsA Ingested", false),
+            new KeyValuePair<string, bool>("Rerun SALsA", false),
+            new KeyValuePair<string, bool>("ICM State", true),
+            new KeyValuePair<string, bool>("ICM Creation (UTC)", false)
+            };
+    
         [FunctionName("Public_SALsAStatus")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "status")] HttpRequestMessage req,
@@ -30,75 +42,7 @@ namespace SALsA.Functions
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
 
-            var icmsDic = new Dictionary<int, StatusLine>();
-
-            var icms = SALsA.LivesiteAutomation.TableStorage.ListAllEntity();
-            var incidents = ICM.GetIncidentsWithId(icms.Select(x => x.PartitionKey).ToList());
-            var lst = new List<string[]>();
-            lst.Add(StatusLine.Headers);
-            if(icms != null)
-            {
-                foreach (var run in icms)
-                {
-                    if (run.SALsAState == SALsA.General.SALsAState.Ignore.ToString()) continue;
-
-                    StatusLine tuple;
-                    if (icmsDic.ContainsKey(int.Parse(run.PartitionKey)))
-                    {
-                        tuple = icmsDic[int.Parse(run.PartitionKey)];
-                    }
-                    else
-                    {
-                        try
-                        {
-                            var currentIcm = incidents[run.PartitionKey];
-                            tuple = new StatusLine(currentIcm.Id, FunctionUtility.ColorICMStatus(currentIcm.OwningTeamId, currentIcm.Status), DateTime.Parse(currentIcm.CreateDate));
-                        }
-                        catch
-                        {
-                            tuple = new StatusLine();
-                        }
-                    }
-
-                    var status = run.SALsAState;
-                    var logPath = run.Log;
-                    if (run.Log != null && run.Log.StartsWith("http"))
-                    {
-                        if(tuple.IcmStatus == "Unknown" && tuple.IcmCreation.HasValue == false)
-                        {
-                            run.SALsAState = SALsAState.ICMNotAccessible.ToString();
-                            tuple.IcmStatus = FunctionUtility.ColorICMStatus("Request for assistance", Color.Blue);
-                            TableStorage.AppendEntity(tuple.IcmId, SALsAState.ICMNotAccessible);
-                        }
-                    }
-                    else
-                    {
-                        logPath = run.SALsAState == SALsAState.Running.ToString() || run.SALsAState == SALsAState.Queued.ToString() ? "Wait..." : "Unavailable";
-                    }
-                    status = Utility.UrlToHml(run.SALsAState, run.SALsALog, 20);
-                    tuple.Update(run.PartitionKey, status, logPath, run.Timestamp.UtcDateTime);
-                    icmsDic[int.Parse(run.PartitionKey)] = tuple;
-                }
-            }
-            var values = icmsDic.Values.ToList();
-            values.Sort((y, x) => {
-                int ret = DateTime.Compare(x._SalsaInternalIngestion.HasValue ? x._SalsaInternalIngestion.Value : new DateTime(0),
-                                           y._SalsaInternalIngestion.HasValue ? y._SalsaInternalIngestion.Value : new DateTime(0));
-                return ret != 0 ? ret : DateTime.Compare(x.IcmCreation.HasValue ? x.IcmCreation.Value : new DateTime(0),
-                                                         y.IcmCreation.HasValue ? y.IcmCreation.Value : new DateTime(0));
-            });
-            foreach(var value in values)
-            {
-                if(value.SalsaLogIngestion == "N/A")
-                {
-                    try
-                    {
-                        FunctionUtility.AddRunToSALsA(int.Parse(value._icm));
-                    }
-                    catch { };
-                }
-            }
-            lst.AddRange(values.Select(x => x.ToArray()).ToList());
+            var report = SALsAStatus_internal.GenerateStatusReport();
 
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Headers.CacheControl = new CacheControlHeaderValue
@@ -107,9 +51,17 @@ namespace SALsA.Functions
                 NoStore = true,
                 MustRevalidate = true
             };
+            string table   = FunctionUtility.List2DToHTMLWithFilter(report.Arrayify(), StatusHeaders);
+            var table_js   = FunctionUtility.GetFileContent("excel-bootstrap-table-filter-bundle.js", Path.Join("HTMLTemplate", "excel-bootstrap-table-filter-bundle"));
+            var table_css  = FunctionUtility.GetFileContent("excel-bootstrap-table-filter-style.css", Path.Join("HTMLTemplate", "excel-bootstrap-table-filter-bundle"));
+            var table_html = FunctionUtility.GetFileContent("SALsAStatus.html");
+
+            var ret = table_html.Replace("__TABLE_INPUT_PLACEHOLDER__", table)
+                      .Replace("__excel-bootstrap-table-filter-bundle.js__", table_js)
+                      .Replace("__excel-bootstrap-table-filter-style.css__", table_css)
+                      .Replace("__GENERATED_TIMESTAMP__", string.Format("{0:yyyy-MM-ddTHH:mm:ssZ}", DateTime.UtcNow));
             watch.Stop();
-            string result = Utility.List2DToHTML(lst, true) + String.Format("<p style=\"text-align: right\">Page generated at : {0}Z (in {1} seconds)</p>", DateTime.UtcNow.ToString("s"), watch.Elapsed.TotalSeconds);
-            response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/html");
+            response.Content = new StringContent(ret.Replace("__LOADDING_TIME__", watch.Elapsed.TotalSeconds.ToString()), System.Text.Encoding.UTF8, "text/html");
 
             return response;
         }

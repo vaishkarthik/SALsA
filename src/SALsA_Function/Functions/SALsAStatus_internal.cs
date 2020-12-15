@@ -21,33 +21,29 @@ namespace SALsA.Functions
 {
     public static class SALsAStatus_internal
     {
-        internal class SALsAReport
-        {
-            public DateTime StartTime = DateTime.UtcNow;
-            public TimeSpan Ellapsed;
-            public List<StatusLine> Rows = new List<StatusLine>();
-
-            public class StatusLine
-            {
-                public int IcmId;
-                public string IcmStatus = null;
-                public string IcmOwningTeam = null;
-                public Nullable<DateTime> IcmCreation = null;
-                public string SalsaStatus = null;
-                public string SalsaInternalLog = null;
-                public string SalsaLogLink = null;
-                public Nullable<DateTime> SalsaIngestionTime = null;
-            }
-        }
         [FunctionName("Internal_SALsAStatus")]
         public static async Task<HttpResponseMessage> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "internal/status")] HttpRequestMessage req,
             ILogger log, System.Security.Claims.ClaimsPrincipal claimsPrincipal)
         {
             if (Auth.CheckIdentity(req, log, claimsPrincipal, out HttpResponseMessage err) == false) { return err; };
-            var watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
 
+            var report = GenerateStatusReport();
+
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Headers.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true,
+                NoStore = true,
+                MustRevalidate = true
+            };
+            response.Content = new StringContent(Utility.ObjectToJson(report, true), System.Text.Encoding.UTF8, "application/json");
+
+            return response;
+        }
+
+        public static SALsAReport GenerateStatusReport()
+        {
             var icmsDic = new List<SALsAReport.StatusLine>();
 
             var salsaIncident = SALsA.LivesiteAutomation.TableStorage.ListAllEntity();
@@ -68,7 +64,7 @@ namespace SALsA.Functions
                         SalsaStatus = run.SALsAState
                     };
 
-                    if(incidents.ContainsKey(run.PartitionKey))
+                    if (incidents.ContainsKey(run.PartitionKey))
                     {
                         line.IcmCreation = DateTime.Parse(incidents[run.PartitionKey].CreateDate);
                         line.IcmOwningTeam = incidents[run.PartitionKey].OwningTeamId;
@@ -77,19 +73,7 @@ namespace SALsA.Functions
                     report.Rows.Add(line);
                 }
             }
-
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Headers.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = true,
-                NoStore = true,
-                MustRevalidate = true
-            };
-            watch.Stop();
-            report.Ellapsed = watch.Elapsed;
-            response.Content = new StringContent(Utility.ObjectToJson(report, true), System.Text.Encoding.UTF8, "application/json");
-
-            return response;
+            return report;
         }
     }
 }
