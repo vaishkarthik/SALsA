@@ -108,7 +108,7 @@ namespace SALsA.General
         public const string GetNodeDiagnosticsOperatorNameFiles = "GetNodeDiagnosticsFiles";
         public const string GetNodeDiagnosticsParam = "GuestAgentVMLogs";
         public const string GetNodeDiagnosticsAllFilesParam = "AllLogs";
-        public static readonly string[] GetNodeDiagnosticsFilesTagsParamMultiHost = { "MetaDataServerLogs", "WireServerLogs", "AgentLogs", "GuestAgentLogs" } ;
+        public static readonly string[] GetNodeDiagnosticsFilesTagsParamMultiHost = { "MetaDataServerLogs", "WireServerLogs", "AgentLogs", "GuestAgentLogs", "OsLogs" } ;
         public readonly static string AnalyzerHostMultiFilename = String.Format("{0}.zip", String.Join("_", GetNodeDiagnosticsFilesTagsParamMultiHost));
 
         // GetClassicVMConsoleScreenshot.cs
