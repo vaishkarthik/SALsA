@@ -1,0 +1,47 @@
+<style>
+td {
+  font-size: 18px;
+  text-align: center;
+  padding: 5px
+}
+th {
+  text-align: left;
+  font-size: 22px;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+thead {
+  font-weight: bold;
+  background-color: #d3d3d3;
+}
+form {
+  margin: 0;
+  top: 50%;
+}
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+__excel-bootstrap-table-filter-style.css__
+</style>
+
+<body>
+  <!-- Load jQuery -->
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.12.4.min.js"></script>
+  <script>
+__excel-bootstrap-table-filter-bundle.js__	
+	</script>
+__TABLE_INPUT_PLACEHOLDER__
+  <script>
+    // Use the plugin once the DOM has been loaded.
+    $(function () {
+      // Apply the plugin 
+      $('#table').excelTableFilter();
+    });
+  </script>
+</body>
+<footer>
+  <p>Page generated at : __GENERATED_TIMESTAMP__ (in __LOADDING_TIME__ seconds)</p>
+</footer>
+</html>
+

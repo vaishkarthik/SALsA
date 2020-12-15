@@ -35,6 +35,15 @@
     <Content Include="HTMLTemplate\Tools.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="HTMLTemplate\SALsAStatus.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTMLTemplate\excel-bootstrap-table-filter-bundle\excel-bootstrap-table-filter-bundle.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTMLTemplate\excel-bootstrap-table-filter-bundle\excel-bootstrap-table-filter-style.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\..\access.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
